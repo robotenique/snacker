@@ -25,10 +25,10 @@ By deliverable 3, we should finish everything and our web app should be running 
 
 
 For this iteration, our presentable artifacts include :
-* these 3 documents (namely *product.md, iteration-01.plan.md an iteration-01.review.md*)
-* [the user diagram] (resources/d1/UML.png)
-* the website [wireframes](#)
-* the [personas](https://app.xtensio.com/nbimdqra)
+* These 3 documents (namely *product.md, iteration-01.plan.md and iteration-01.review.md*)
+* [The user diagram](resources/d1/UML.png)
+* The website [wireframes](resources/d1)
+* The [personas](https://app.xtensio.com/nbimdqra)
    * Young Everyday Snacker Jane
    * Traveller Albert
    * Snack Distributor - Shop owner Jack
