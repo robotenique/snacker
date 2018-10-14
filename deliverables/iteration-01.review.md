@@ -18,7 +18,7 @@
 
 #### Decisions that did not turn out as well as we hoped
 
-* Trying to set up a meeting time outside of tutorials didn’t turn out so well. We seem not to be able to find the time that works for all of us, and whenever someone tries to initiate the physical meet up in the group chat, the group chat becomes silent.
+* Trying to set up a meeting time outside of tutorials didn’t turn out so well. We seem not to be able to find the time that works for all of us, even when it comes to online meetings.
 
 
 * Two attempts to organize online group call didn’t turn out well. First of all, there is no time that would work for all members of the team, so there are always 1 or 2 members who can’t attend the online meeting. Second of all, some people who were supposed to join the online meeting weren’t showing up at the scheduled time due to various reasons. Lastly, communication through the online call turns out to be inefficient, when compared to each member individually editing the documents on Google drive and using messages on the group chat in case of any doubts.
