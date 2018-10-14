@@ -20,3 +20,20 @@ For deliverable 2, we should go through the list and finish creating a snack, an
 
 
 By deliverable 3, we should finish everything and our web app should be running publicly with all proposed functionalities working.
+
+#### Artifacts
+
+
+For this iteration, our presentable artifacts include :
+* these 3 documents (namely *product.md, iteration-01.plan.md an iteration-01.review.md*)
+* [the user diagram] (resources/d1/UML.png)
+* the website [wireframes](#)
+* the [personas](https://app.xtensio.com/nbimdqra)
+   * Young Everyday Snacker Jane
+   * Traveller Albert
+   * Snack Distributor - Shop owner Jack
+   * Snack Manufacturer - Oreo management team member May
+
+
+For deliverable 2, aside from the web app running locally (or on heroku) with basic features to show, we plan to create a video and class diagram to further illustrate our app to public.
+For deliverable 3, we should have a fully publicly running web app and a video explaining all features.
