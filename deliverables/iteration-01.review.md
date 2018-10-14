@@ -22,3 +22,29 @@
 
 
 * Two attempts at phone conference didn’t turn out well. For starters, there is absolutely no time that works for all members of the team so there are always 1 or 2 members who can’t attend the conference. Secondly, for people who could attend the phone conference, some of them weren’t showing up at the promised time due to various reasons. Lastly, communication through the phone turns out to be inefficient compared to each member just individually editing the documents in google drive and communicate through online messages for any confusion.
+
+
+#### Planned changes
+
+* Assign responsibilities for each member of the team related to our repository, e.g. maintain issues on the repo, documentation, etc. With clearer responsibilities, we can organize better the development of our product.
+
+ * Decide an additional fixed time to meet every week, probably online so everyone can hopefully leave that time slot open when they do their planning.
+
+## Product - Review
+
+#### Goals and/or tasks that were met/completed:
+
+* Defined the scope and features of our project. This was the main task of this iteration, and we successfully came up with an idea, after some time and exploration of other ideas. The artifact is the *project.md* file.
+
+#### Goals and/or tasks that were planned but not met/completed:
+
+* FYFB (Fort York Food Bank)  non profit project was discarded. We spent some time scoping this project, talked to the instructor and the TA about our interest in this project, and then talked about it with a representative of the organization. We had some conflicts because the project they wanted wouldn’t suffice as a project for CSC301, and they didn’t had any other software for us to work on, so in the end, the group decided to pursue our own idea.
+
+## Meeting Highlights
+
+
+* Create the basis to work in our project, as soon as we get the repo. This means, creating a standard environment for development: Decide on more specific technologies, setting up the environment, high level architecture of the system, etc.
+
+* Division of labour for the next iteration: Assign specific tasks (maybe teams) to work on the *barebones* of the project, through our Trello board. In a more meta related sense, assign responsibilities to maintain our Scrum task board on Trello.
+
+* We should have some sort of ways to hold members accountable to make sure everyone does what they promise. I.e. attend meetings when they promised beforehand and do the work they promised to do etc. We decided to use trello board and a google doc to keep track of member performance for the coming iterations. And for members who are reliably unreliable, we can try to talk with them to resolve the issue directly and at the worst case have other members cover their work for them and result in their lowered participation marks.
