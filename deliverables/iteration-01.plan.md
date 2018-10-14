@@ -43,6 +43,10 @@ We currently have a trello board for tasks. Each person is accountable for their
 
 We also have a google drive folder that stores all word type documents related to our project so members can edit them in real time. Since we didn't received our Github repo, we started on google drive.
 
+Some specific documents that we used to organize the team include:
+    * Brainstormed Ideas Record [google doc](https://docs.google.com/document/d/1HIz9iWERbfbjXMLSlUGoFzjWEtrcn9UZ5tYSw8XyAyY/edit?usp=sharing)
+    * Team member skillset Record [google spreadsheets]( (https://docs.google.com/spreadsheets/d/1riy3x4aIyMRrWx_dGIKMRx8mTvMNrbBqOT9Y_UK14ak/edit?usp=sharing)
+
 ## Product
 
 
