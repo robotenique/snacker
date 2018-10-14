@@ -11,7 +11,7 @@
 
 * Individual thinking of ideas for project and voting. We decided that each one of our team should think about an idea, then explain it (i.e. write the idea, usability and impact of it, and possible problems that can arise), writing it out in a document. After that, we discussed them and voted to define our project. This decision made us think of different ideas and impacts of our products, and open our minds to different viewpoints.
 
-* Creation of a group chat and a folder in Google Drive for our documents in this first iteration. Since in this first iteration we had to talk and discuss the scope and how our project would be implemented, this was a successful decision because it made it possible for us to discuss some urgent matters on the chat, and also collaborate on our documents more easily (since we don’t have our Github repo already).
+* Creation of a group chat and a folder in Google Drive for our documents in this first iteration. Since in this first iteration we had to talk and discuss the scope and how our project would be implemented, this was a successful decision because it made it possible for us to discuss some urgent matters on the chat, and also collaborate on our documents more easily (since we didn't had our Github repo already).
 
 
 * Writing an “ideas” file. Since it’s difficult for our group to meet up in person, we decided to create a file where we wrote down some features we thought of our own product (snack recommender). This helped a lot because people could argue in favor or against other features, and write possible solutions to problems others have found, all in the ideas doc.
