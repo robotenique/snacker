@@ -44,8 +44,9 @@ Currently we have a Trello board for tasks. Each person is accountable for their
 We also have a Google drive folder that stores all documents related to our project, so that members can edit them in real time. Since we didn't have our Github repositories at the beginning of the collaboration process, we started using Google drive.
 
 Some specific documents that we used to organize the team include:
-    * Brainstormed Ideas Record [Google doc](https://docs.google.com/document/d/1HIz9iWERbfbjXMLSlUGoFzjWEtrcn9UZ5tYSw8XyAyY/edit?usp=sharing)
-    * Team member skillset Record [Google spreadsheet](https://docs.google.com/spreadsheets/d/1riy3x4aIyMRrWx_dGIKMRx8mTvMNrbBqOT9Y_UK14ak/edit?usp=sharing)
+* A document for members to keep track of their ideas for the app  [Brainstormed Ideas Record](https://docs.google.com/document/d/1HIz9iWERbfbjXMLSlUGoFzjWEtrcn9UZ5tYSw8XyAyY/edit?usp=sharing)
+* A document to keep track of members' skill sets [Team member skillset Record](https://docs.google.com/spreadsheets/d/1riy3x4aIyMRrWx_dGIKMRx8mTvMNrbBqOT9Y_UK14ak/edit?usp=sharing)
+* A document to keep track of inital FYFB stuff and initial project idea brainstorming phase [Initial Project Planning Record](https://docs.google.com/document/d/1bO1K0x_Pc-s6SVEmBnhessNr2z6z1iQZ4c8CjTYVOOE/edit?usp=sharing)
 
 ## Product
 
