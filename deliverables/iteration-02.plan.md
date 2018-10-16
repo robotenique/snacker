@@ -41,7 +41,7 @@ Weekly Online Review Meeting during weekends
 
 Trello Board
  * Tasks are listed in order of priority
- * Each member can select tasks they want to do on their own and drag them into their personal to-do list
+ * Each member can select tasks they want to do on their own and assign those tasks to themselves
  * Everyone is expected to complete some tasks and report their progress weekly
 
 Google Drive
