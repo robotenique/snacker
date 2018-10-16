@@ -9,12 +9,13 @@
 
 #### Roles & responsibilities
 
-Scrum master: Juliano
-Project manager: Adam
-Front end lead: Alex
-Backend lead: Harry
-Note taking: Jayde
-Everyone is also a developer
+Some roles each member takes on:
+ * Scrum master: Juliano
+ * Project manager: Adam
+ * Front end lead: Alex
+ * Backend lead: Harry
+ * Note taking: Jayde
+ * Everyone is also a developer
 
 Everyone is a developer, and each member can select tasks on trello board that they want to do and drag their desired tasks into their own personal boards. Each member is expected to complete some tasks on their own, and to participate in group meeting and discussion.
 
@@ -34,24 +35,15 @@ In Person Meeting 3
 
 
 Weekly Online Review Meeting during weekends
- * Oct 30, 2018 in tut
+ * 1st one between Oct 20 and Oct 21, 2nd one between Oct 27 and Oct 28
  * These meetings serve to keep everyone on the same page and for the team to re-prioritize work if needed and to make sure the team has accomplished something in the previous week
 
 #### Artifacts
-
-List/describe the artifacts you will produce in order to organize your team.       
- * Artifacts can be To-do lists, Task boards, schedule(s), etc.
- * We want to understand:
-   * How do you keep track of what needs to get done?
-   * How do you prioritize tasks?
-   * How do tasks get assigned to team members?
-
 
 Trello Board
  * Tasks are listed in order of priority
  * Each member can select tasks they want to do on their own and drag them into their personal to-do list
  * Everyone is expected to complete some tasks and report their progress weekly
-
 
 Google Drive
  * Meeting Notes and Planning documents are updated in real time
@@ -69,9 +61,6 @@ By deliverable 3, we should finish everything and our web app should be running 
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
-
-
- * Database schema graph
- * Video presenting the idea of our web app
- * A website running locally that supports users to create acn account/login/search a snack/create a snack.
+ * We should have a database schema graph to help others understand the relationships between our data
+ * Video presenting the main idea of our web app
+ * A draft website running locally that supports users to create acn account/login/search a snack/create a snack.
