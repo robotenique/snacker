@@ -33,7 +33,6 @@ In Person Meeting 3
  * Oct 30, 2018 in tut
  * Progress Review, we should finish search a snack and create a snack, and we should finish a rough draft of our video to show and we should polish up the video and our presentation during the meeting
 
-
 Weekly Online Review Meeting during weekends
  * 1st one between Oct 20 and Oct 21, 2nd one between Oct 27 and Oct 28
  * These meetings serve to keep everyone on the same page and for the team to re-prioritize work if needed and to make sure the team has accomplished something in the previous week
