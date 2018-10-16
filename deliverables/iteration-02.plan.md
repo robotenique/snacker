@@ -17,7 +17,7 @@ Some roles each member takes on:
  * Note taking: Jayde
  * Everyone is also a developer
 
-Everyone is a developer, and each member can select tasks on trello board that they want to do and drag their desired tasks into their own personal boards. Each member is expected to complete some tasks on their own, and to participate in group meeting and discussion.
+Everyone is a developer, and each member can select tasks on trello board that they want to do and drag their desired tasks and assign those tasks to themselves. Each member is expected to complete at least one task by the end of each week and to participate in group meeting and discussion.
 
 #### Events
 
