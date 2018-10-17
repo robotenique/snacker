@@ -13,3 +13,4 @@ Pycharm IDE: https://www.jetbrains.com/pycharm/ (Download community version)
 Install Flask:
 pip install Flask
 pip install Flask-PyMongo
+pip install dnspython
