@@ -15,3 +15,5 @@ Install Flask: pip install Flask
 pip install Flask-PyMongo
 
 pip install dnspython
+
+Create a mongo account and tell Jayde your mongo email address
