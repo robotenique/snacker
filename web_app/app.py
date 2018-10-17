@@ -5,6 +5,7 @@ import sys
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
+# Don't worry password.txt and username.txt are already added to gitignore so your private info won't be exposed
 app = Flask(__name__)
 mongo_uri = "mongodb+srv://" + open('username.txt', 'r').read() + ":" + urllib.parse.quote(open('password.txt', 'r').read()) + "@csc301-v3uno.mongodb.net/test?retryWrites=true"
 app.config["MONGO_URI"] = mongo_uri
