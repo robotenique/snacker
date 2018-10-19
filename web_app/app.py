@@ -7,7 +7,23 @@ import sys
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
 # Don't worry password.txt and username.txt are already added to gitignore so your private info won't be exposed
 app = Flask(__name__)
-mongo_uri = "mongodb+srv://" + open('username.txt', 'r').read() + ":" + urllib.parse.quote(open('password.txt', 'r').read()) + "@csc301-v3uno.mongodb.net/test?retryWrites=true"
+
+# With these constants strings, we can connect to generic databases
+USERNAME_FILE = "username.txt"
+PASSWORD_FILE = "password.txt"
+""" DATABASE = "test"
+MONGO_SERVER = "csc301-v3uno.mongodb.net"
+ """
+DATABASE = "snackdb"
+MONGO_SERVER = "snackcluster-6haxi.mongodb.net"
+
+try:
+    username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
+    pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
+except Exception as inst:
+    print("Error while reading username and password for database connection:", inst)
+    exit()
+mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
 app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
@@ -15,9 +31,15 @@ mongo = PyMongo(app)
 @app.route('/')
 def hello_world():
     print('This is standard output', file=sys.stdout)
-    # The one item in the testCollection db should be printed in console after refreshing page
-    for x in mongo.db.testCollection.find({}):
-        print(x, file=sys.stdout)
+    print((f"All collections in the database '{DATABASE}':"
+           f"\n\t{mongo.db.list_collection_names()}"), file=sys.stdout)
+    # This prints all collections inside the database with name DATABASE
+    print("Documents inside all collections: ", file=sys.stdout)
+    for collec in mongo.db.list_collection_names():
+        print(f"    {collec}", file=sys.stdout)
+        for doc in mongo.db[collec].find({}):
+            print(f"        {doc}", file=sys.stdout)
+    print("", file=sys.stdout)
     return 'Hello World!'
 
 
