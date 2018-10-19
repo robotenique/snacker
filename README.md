@@ -5,7 +5,7 @@ CSC301, Fall 2018, team project.
 
 We're gonna use python and the flask framework, and the pycharm IDE.
 
-Links: 
+Links:
 
 Flask: http://flask.pocoo.org/
 
@@ -60,3 +60,6 @@ Always use a `.py` filename extension. Never use dashes.
 -   dashes (`-`) in any package/module name
 -   `__double_leading_and_trailing_underscore__` names (reserved by Python)
 
+pip install dnspython
+
+Create a mongo account and tell Jayde your mongo email address

@@ -1,0 +1,6 @@
+.DS_Store
+/.idea
+.idea
+/__pycache__
+password.txt
+username.txt
