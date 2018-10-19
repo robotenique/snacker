@@ -1,1 +1,0 @@
-### Database modelling details
