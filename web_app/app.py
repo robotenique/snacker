@@ -11,11 +11,8 @@ app = Flask(__name__)
 # With these constants strings, we can connect to generic databases
 USERNAME_FILE = "username.txt"
 PASSWORD_FILE = "password.txt"
-""" DATABASE = "test"
+DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
- """
-DATABASE = "snackdb"
-MONGO_SERVER = "snackcluster-6haxi.mongodb.net"
 
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
