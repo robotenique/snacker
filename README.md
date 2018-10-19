@@ -15,6 +15,18 @@ Install Flask:
 
 pip install Flask
 
+### Run the application
+
+You can run the application inside PyCharm, by clicking on the 'Run' button, or using `shift + F10`.
+
+You can also run the application with debug mode on terminal, by using (on linux):
+
+```bash
+$ cd snacker/flaskr
+$ export FLASK_APP='app.py' FLASK_ENV=debug
+$ flask run
+```
+
 ## Code Style
 
 ### Indentation

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_pymongo import PyMongo
 import urllib
 import sys
@@ -24,6 +24,9 @@ mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrite
 app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
+@app.route('/titlepage')
+def titlepage():
+    return render_template('index.html')
 
 @app.route('/')
 def hello_world():
