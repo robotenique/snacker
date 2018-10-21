@@ -1,5 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash, import session
 from flask_pymongo import PyMongo
+from forms import  RegistrationForm
+from flask_bcrypt import Bcrypt
 import urllib
 import sys
 
@@ -13,6 +15,7 @@ USERNAME_FILE = "username.txt"
 PASSWORD_FILE = "password.txt"
 DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
+APP_NAME = "Snacker"
 
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
@@ -23,10 +26,19 @@ except Exception as inst:
 mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
 app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
+# TODO: Need to change this to an env variable later
+app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
+bcrypt = Bcrypt(app)
 
-@app.route('/titlepage')
-def titlepage():
+@app.route("/index")
+def home():
     return render_template('index.html')
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html', title=f'About {APP_NAME}')
+
 
 @app.route('/')
 def hello_world():
@@ -43,5 +55,29 @@ def hello_world():
     return 'Hello World!'
 
 
+@app.route('/register/', methods=["GET","POST"])
+def register_page():
+    print("processing the user registration", file=sys.stdout)
+    try:
+        form = RegistrationForm(request.form)
+        if request.method == "POST" and form.validate():
+            username  = form.username.data
+            email = form.email.data
+            password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
+            flash(f"Thanks for registering! {username}")
+            session['logged_in'] = True
+            session['username'] = username
+            return redirect(url_for('titlepage'))
+        else:
+            flash("ERROR")
+        return render_template("register.html", form=form)
+    except Exception as e:
+        return(str(e))
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
 if __name__ == '__main__':
     app.run()
+
