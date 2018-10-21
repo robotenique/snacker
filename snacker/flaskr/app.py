@@ -31,7 +31,7 @@ app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 bcrypt = Bcrypt(app)
 
 @app.route("/index")
-def home():
+def index():
     return render_template('index.html')
 
 
@@ -71,6 +71,7 @@ def register_page():
             #TODO: User Login_manager package for security and reliability
             session['logged_in'] = True
             session['username'] = username
+            print(url_for('index'))
             return redirect(url_for('index'))
         else:
             flash("ERROR")
@@ -82,6 +83,11 @@ def register_page():
 def login():
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session['logged_in'] = False
+    session['username'] = None
+    return redirect(url_for('index'))
 if __name__ == '__main__':
     app.run()
 
