@@ -3,9 +3,8 @@ from flask_pymongo import PyMongo
 import urllib
 import sys
 
-# You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
-# Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-# Don't worry password.txt and username.txt are already added to gitignore so your private info won't be exposed
+# You need to create a mongo account and let Jayde know your mongo email address to add you to the db system so you can see stats online in mongo website
+# Then you need to create a password.txt and username.txt each storing Your first name with the first letter capitalized, it has been set up that your first name is your username and password for the particular test cluster
 app = Flask(__name__)
 
 # With these constants strings, we can connect to generic databases
