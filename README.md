@@ -3,7 +3,7 @@ CSC301, Fall 2018, team project.
 
 # Setup (Backend)
 
-We're gonna use python and the flask framework, and the pycharm IDE.
+We are using Python with the Flask framework, and the PyCharm IDE.
 
 Links:
 
@@ -31,7 +31,7 @@ $ flask run
 
 ### Indentation
 
-Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. In cases of implied line continuation, you should align wrapped elements either vertically: 
+Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. In cases of implied line continuation, you should align wrapped elements vertically: 
 ```python
        foo = long_function_name(var_one, var_two,
                                 var_three, var_four)
@@ -59,8 +59,9 @@ Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. I
 `local_var_name`.
 
 Function names, variable names, and filenames should be descriptive; eschew
-abbreviation. In particular, do not use abbreviations that are ambiguous or
-unfamiliar to readers outside your project, and do not abbreviate by deleting
+abbreviation. In particular, do not use abbreviations that are ambiguous
+to the readers not involved in your part of the project.
+Do not abbreviate by deleting
 letters within a word.
 
 Always use a `.py` filename extension. Never use dashes.
@@ -74,4 +75,4 @@ Always use a `.py` filename extension. Never use dashes.
 
 pip install dnspython
 
-Create a mongo account and tell Jayde your mongo email address
+Create a mongo account and tell Jayde your mongo email address.
