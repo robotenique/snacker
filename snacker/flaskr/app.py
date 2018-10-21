@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, flash, import session
-from flask_pymongo import PyMongo
+from flask import Flask, render_template, request, flash, session, redirect, url_for
 from forms import  RegistrationForm
 from flask_bcrypt import Bcrypt
+import mongoengine as mg
 import urllib
 import sys
 
@@ -20,12 +20,12 @@ APP_NAME = "Snacker"
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
+    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    app.config["MONGO_URI"] = mongo_uri
+    mongo = mg.connect(host=mongo_uri)
 except Exception as inst:
-    print("Error while reading username and password for database connection:", inst)
+    print("Error in database connection:", inst)
     exit()
-mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
-app.config["MONGO_URI"] = mongo_uri
-mongo = PyMongo(app)
 # TODO: Need to change this to an env variable later
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 bcrypt = Bcrypt(app)
@@ -43,13 +43,15 @@ def about():
 @app.route('/')
 def hello_world():
     print('This is standard output', file=sys.stdout)
+    # Selecting the database we want to work with
+    my_database = mongo[DATABASE]
     print((f"All collections in the database '{DATABASE}':"
-           f"\n\t{mongo.db.list_collection_names()}"), file=sys.stdout)
+           f"\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     # This prints all collections inside the database with name DATABASE
     print("Documents inside all collections: ", file=sys.stdout)
-    for collec in mongo.db.list_collection_names():
+    for collec in my_database.list_collection_names():
         print(f"    {collec}", file=sys.stdout)
-        for doc in mongo.db[collec].find({}):
+        for doc in my_database[collec].find({}):
             print(f"        {doc}", file=sys.stdout)
     print("", file=sys.stdout)
     return 'Hello World!'
@@ -65,9 +67,11 @@ def register_page():
             email = form.email.data
             password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
             flash(f"Thanks for registering! {username}")
+            # Register that someone logged into our system
+            #TODO: User Login_manager package for security and reliability
             session['logged_in'] = True
             session['username'] = username
-            return redirect(url_for('titlepage'))
+            return redirect(url_for('index'))
         else:
             flash("ERROR")
         return render_template("register.html", form=form)
