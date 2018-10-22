@@ -15,6 +15,14 @@ Install Flask:
 
 pip install Flask
 
+pip install flask-bcrypt
+
+pip install dnspython
+
+pip install mongoengine
+
+pip install Flask-WTF
+
 ### Run the application
 
 You can run the application inside PyCharm, by clicking on the 'Run' button, or using `shift + F10`.
@@ -31,7 +39,7 @@ $ flask run
 
 ### Indentation
 
-Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. In cases of implied line continuation, you should align wrapped elements vertically: 
+Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. In cases of implied line continuation, you should align wrapped elements vertically:
 ```python
        foo = long_function_name(var_one, var_two,
                                 var_three, var_four)
@@ -72,7 +80,5 @@ Always use a `.py` filename extension. Never use dashes.
     an exception identifier in try/except statements.
 -   dashes (`-`) in any package/module name
 -   `__double_leading_and_trailing_underscore__` names (reserved by Python)
-
-pip install dnspython
 
 Create a mongo account and tell Jayde your mongo email address.
