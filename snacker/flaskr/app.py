@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash, session, redirect, url_for
 from forms import  RegistrationForm
 from flask_bcrypt import Bcrypt
+from werkzeug.contrib.fixers import ProxyFix
 import mongoengine as mg
 import urllib
 import sys
@@ -23,11 +24,14 @@ try:
     mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
+    # This is necessary for user tracking
+    app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 except Exception as inst:
     print("Error in database connection:", inst)
     exit()
 # TODO: Need to change this to an env variable later
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
+app.config['DEBUG'] = True
 bcrypt = Bcrypt(app)
 
 @app.route("/index")
@@ -59,16 +63,16 @@ def hello_world():
 
 @app.route('/register/', methods=["GET","POST"])
 def register_page():
-    print("processing the user registration", file=sys.stdout)
     try:
         form = RegistrationForm(request.form)
         if request.method == "POST" and form.validate():
             username  = form.username.data
             email = form.email.data
+            print(f"A new user submited the registration form: {username} with email {email}", file=sys.stdout)
             password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
             flash(f"Thanks for registering! {username}")
             # Register that someone logged into our system
-            #TODO: User Login_manager package for security and reliability
+            #TODO: Use flask-login package for security and reliability
             session['logged_in'] = True
             session['username'] = username
             print(url_for('index'))
@@ -88,6 +92,7 @@ def logout():
     session['logged_in'] = False
     session['username'] = None
     return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run()
 
