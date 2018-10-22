@@ -1,15 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 class RegistrationForm(FlaskForm):
-    username = TextField("Username", [
+    username = StringField("Username", [
         DataRequired("You must provide a username"),
          Length(min=4, max=20)
     ])
-    first_name = TextField("First Name", [DataRequired(), Length(min=2, max=100)])
-    last_name = TextField("Last Name", [DataRequired(), Length(min=2, max=100)])
-    email = TextField("Email Address", [
+    first_name = StringField("First Name", [DataRequired(), Length(min=2, max=100)])
+    last_name = StringField("Last Name", [DataRequired(), Length(min=2, max=100)])
+    email = StringField("Email Address", [
         Email("Invalid email provided"),
         Length(min=6, max=50)
     ])
