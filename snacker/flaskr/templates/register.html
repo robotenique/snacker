@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        <fieldset class="form-group">
+            {{ form.hidden_tag() }}
+            {{render_field(form.username)}}
+            {{render_field(form.first_name)}}
+            {{render_field(form.last_name)}}
+            {{render_field(form.email)}}
+            {{render_field(form.is_company)}}
+            {{render_field(form.password)}}
+            {{render_field(form.confirm)}}
+            {{render_field(form.accept_tos)}}
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+
+{% if error %}
+<p class="error"><strong>Error:</strong>{{error}}</p>
+{% endif %}
+
+{% endblock content %}
