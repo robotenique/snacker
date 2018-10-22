@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Test page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-    <h1 class='title'>This is a sample title</h1>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+<h1>Welcome to our homepage</h1>
+{% endblock content %}
