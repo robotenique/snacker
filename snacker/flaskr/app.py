@@ -8,7 +8,9 @@ import sys
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-# Don't worry password.txt and username.txt are already added to gitignore so your private info won't be exposed
+# If the above doesn't work try setting mongo_uri directly to mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
+# If the above works, it should be a parsing problem try updating Python
+# If not ask for troubleshoot help in group chat
 app = Flask(__name__)
 
 # With these constants strings, we can connect to generic databases
@@ -21,7 +23,7 @@ APP_NAME = "Snacker"
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
-    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    mongo_uri = "mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -49,14 +51,13 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work with
     my_database = mongo[DATABASE]
-    print((f"All collections in the database '{DATABASE}':"
-           f"\n\t{my_database.list_collection_names()}"), file=sys.stdout)
+    print(("All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     # This prints all collections inside the database with name DATABASE
     print("Documents inside all collections: ", file=sys.stdout)
     for collec in my_database.list_collection_names():
-        print(f"    {collec}", file=sys.stdout)
+        print("    {collec}", file=sys.stdout)
         for doc in my_database[collec].find({}):
-            print(f"        {doc}", file=sys.stdout)
+            print("        {doc}", file=sys.stdout)
     print("", file=sys.stdout)
     return 'Hello World!'
 
@@ -68,9 +69,9 @@ def register_page():
         if request.method == "POST" and form.validate():
             username  = form.username.data
             email = form.email.data
-            print(f"A new user submited the registration form: {username} with email {email}", file=sys.stdout)
+            print("A new user submited the registration form: {username} with email {email}", file=sys.stdout)
             password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
-            flash(f"Thanks for registering! {username}")
+            flash("Thanks for registering! {username}")
             # Register that someone logged into our system
             #TODO: Use flask-login package for security and reliability
             session['logged_in'] = True
