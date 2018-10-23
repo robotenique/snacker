@@ -23,7 +23,7 @@ APP_NAME = "Snacker"
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
-    mongo_uri = "mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -51,13 +51,13 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work with
     my_database = mongo[DATABASE]
-    print(("All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
+    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     # This prints all collections inside the database with name DATABASE
     print("Documents inside all collections: ", file=sys.stdout)
     for collec in my_database.list_collection_names():
-        print("    {collec}", file=sys.stdout)
+        print(f"    {collec}", file=sys.stdout)
         for doc in my_database[collec].find({}):
-            print("        {doc}", file=sys.stdout)
+            print(f"        {doc}", file=sys.stdout)
     print("", file=sys.stdout)
     return 'Hello World!'
 
@@ -69,9 +69,9 @@ def register_page():
         if request.method == "POST" and form.validate():
             username  = form.username.data
             email = form.email.data
-            print("A new user submited the registration form: {username} with email {email}", file=sys.stdout)
+            print(f"A new user submited the registration form: {username} with email {email}", file=sys.stdout)
             password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
-            flash("Thanks for registering! {username}")
+            flash(f"Thanks for registering! {username}")
             # Register that someone logged into our system
             #TODO: Use flask-login package for security and reliability
             session['logged_in'] = True
