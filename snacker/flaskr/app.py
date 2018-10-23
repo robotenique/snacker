@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, session, redirect, url_for
-from forms import  RegistrationForm
+from forms import RegistrationForm
 from flask_bcrypt import Bcrypt
 from werkzeug.contrib.fixers import ProxyFix
 import mongoengine as mg
@@ -21,11 +21,15 @@ APP_NAME = "Snacker"
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
+    print("hello")
     mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    #mongo_uri = "mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
+    print("b")
     # This is necessary for user tracking
     app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
+    print("a")
 except Exception as inst:
     print("Error in database connection:", inst)
     exit()
@@ -41,13 +45,13 @@ def index():
 
 @app.route("/about")
 def about():
-    return render_template('about.html', title=f'About {APP_NAME}')
+    return render_template('about.html', title='About {APP_NAME}')
 
 
 @app.route('/')
 def hello_world():
     print('This is standard output', file=sys.stdout)
-    # Selecting the database we want to work with
+    # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
     print((f"All collections in the database '{DATABASE}':"
            f"\n\t{my_database.list_collection_names()}"), file=sys.stdout)
