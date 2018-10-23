@@ -8,7 +8,9 @@ import sys
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-# Don't worry password.txt and username.txt are already added to gitignore so your private info won't be exposed
+# If the above doesn't work try setting mongo_uri directly to mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
+# If the above works, it should be a parsing problem try updating Python
+# If not ask for troubleshoot help in group chat
 app = Flask(__name__)
 
 # With these constants strings, we can connect to generic databases
@@ -53,8 +55,7 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
-    print((f"All collections in the database '{DATABASE}':"
-           f"\n\t{my_database.list_collection_names()}"), file=sys.stdout)
+    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     # This prints all collections inside the database with name DATABASE
     print("Documents inside all collections: ", file=sys.stdout)
     for collec in my_database.list_collection_names():
@@ -99,4 +100,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run()
-
