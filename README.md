@@ -37,6 +37,13 @@ $ export FLASK_APP='app.py' FLASK_ENV=debug
 $ flask run
 ```
 
+```Windows cmd (Powershell different)
+$ cd snacker/flaskr
+$ set FLASK_APP=app.py
+$ flask run
+```
+
+To test the code, go to your local url displayed on the console and refresh the page, you should see printed stuff from db operations on your console. If having troubles, ask for help in groupchat.
 ## Code Style
 
 ### Indentation
