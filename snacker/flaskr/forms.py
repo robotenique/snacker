@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
+from schema import User
 
 class RegistrationForm(FlaskForm):
     first_name = StringField("First Name", [DataRequired(), Length(min=2, max=100)])
@@ -19,6 +20,13 @@ class RegistrationForm(FlaskForm):
     confirm = PasswordField("Repeat Password", [DataRequired()])
     accept_tos = BooleanField("I accept the Terms of Service and Privacy Notice", [DataRequired()])
     submit = SubmitField('Sign Up')
+
+    def validate_email(self, email):
+        """Prevents multiple users with the same email"""
+        user = User.objects(email=email.data).first();
+        if user is not None:
+            raise ValidationError("This email is already registered, please use another")
+
 
 class LoginForm(FlaskForm):
     email = StringField("Email Address", [

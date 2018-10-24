@@ -5,7 +5,7 @@ import mongoengine as mg
 from flask import Flask, render_template, request, flash, session, redirect, url_for
 from mongoengine import *
 from flask_bcrypt import Bcrypt
-from flask_login import login_manager
+from flask_login import login_manager, current_user
 from werkzeug.contrib.fixers import ProxyFix
 from forms import RegistrationForm
 from schema import *
@@ -63,10 +63,6 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
-<<<<<<< HEAD
-
-    # Test User and COmpanyUser
-=======
     print(mongo.database_names())
     print(my_database)
     print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
@@ -77,7 +73,6 @@ def hello_world():
         for doc in my_database[collec].find({}):
             print(f"        {doc}", file=sys.stdout)
     print("", file=sys.stdout)
->>>>>>> add new form and change the schema to use the form_login preset, will fix db insertion later
     for obj in User.objects:
         print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
@@ -143,33 +138,34 @@ def hello_world():
 
 
 @app.route('/register/', methods=["GET","POST"])
-def register_page():
-    try:
-        form = RegistrationForm(request.form)
-        if request.method == "POST" and form.validate():
-            email = form.email.data
-            print(f"A new user submited the registration form: {email}", file=sys.stdout)
-            flash(f"Thanks for registering! {email}")
-            # Add user to database
-            # TODO: Add user correctly to database
+def register():
+    # IMPORTANT: The user password should always be encripted for security purposes
+    encrypt_pw = lambda pw_str : bcrypt.generate_password_hash(pw_str).decode("utf-8")
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = RegistrationForm(request.form)
+    if request.method == "POST" and form.validate():
+        email = form.email.data
+        # Add user to database
+        # TODO: Add user correctly to database
+        try:
             new_user = User(email=form.email.data, first_name=form.first_name.data,
-                last_name=form.last_name.data, password=form.password.data)
+                last_name=form.last_name.data, password=encrypt_pw(form.password.data))
             print(new_user)
-            #print(User.objects(email='oi@png.com').first());
-
-            try:
-                new_user.save()
-            except Exception as e:
-                print(f"Error {e}. \n Couldn't add user with following registration form: {form}")
-            session['logged_in'] = True
-            session['username'] = username
-            print(url_for('index'))
-            return redirect(url_for('index'))
-        else:
-            flash("ERROR")
-        return render_template("register.html", form=form)
-    except Exception as e:
-        return(str(e))
+            #print(User.objects(email='oi@png.com').first());        
+            new_user.save()
+        except Exception as e:
+            print(f"Error {e}. \n Couldn't add user with following registration form: {form}")
+            exit()
+        print(f"A new user submited the registration form: {email}", file=sys.stdout)
+        flash(f"Thanks for registering! {email}")
+        session['logged_in'] = True
+        session['username'] = username
+        print(url_for('index'))
+        return redirect(url_for('index'))
+    else:
+        flash("User data is invalid, please fill the form with the correct information")
+    return render_template("register.html", title="Register", form=form)
 
 <<<<<<< HEAD
 
@@ -180,7 +176,7 @@ def register_page():
 def create_snack():
     # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation
     # Gets snacks from database
-    snacks = Snack.query.all()
+    snacks = Snack.objects
     for snk in snacks:
         print(snacks)
     return "The front-end of this isn't implemented! D:"
@@ -210,6 +206,7 @@ def logout():
     session['username'] = None
     return redirect(url_for('index'))
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 @app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
@@ -265,5 +262,7 @@ def bcrypt_instance():
         raise NameError("Bcrypt not loaded in app.py")
 >>>>>>> add new form and change the schema to use the form_login preset, will fix db insertion later
 
+=======
+>>>>>>> add user password encription in the register route
 if __name__ == '__main__':
     app.run()
