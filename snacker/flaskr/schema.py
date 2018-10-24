@@ -1,13 +1,4 @@
-from flask import Flask, render_template, request, flash, session, redirect, url_for
-from forms import  RegistrationForm
-from flask_bcrypt import Bcrypt
-from werkzeug.contrib.fixers import ProxyFix
-import mongoengine as mg
-import urllib
-import sys
 from mongoengine import *
-import datetime
-import app
 
 
 # An user of our app
@@ -34,11 +25,11 @@ class CompanyUser(User):
 # A snack
 # An unique ID should be automatically created, should be able to refer to it as snack._id
 class Snack(Document):
-    snack_name = StringField(required=True)
+    snack_name = StringField(required=True, unique_with='snack_brand')
     # Countries where the snacks have been reviewed
     available_at_locations = ListField(StringField(), required=True)
-    snack_Brand = StringField(required=True)
-    snack_Company_name = StringField()
+    snack_brand = StringField(required=True, unique_with='snack_name')
+    snack_company_name = StringField()
     # Can mess with img size here
     photo_files = ListField(ImageField())
     description = StringField()
@@ -57,14 +48,14 @@ class Review(Document):
     description = StringField()
     overall_rating = IntField(required=True)
     # Name of country
-    Geolocation = StringField(required=True)
+    geolocation = StringField(required=True)
+    meta = {'allow_inheritance': True}
 
 
 # Every MetricReview will be review as well, we can also directly get all metric reviews
 class MetricReview(Review):
-    Sourness = IntField()
-    Spiciness = IntField()
-    Bitterness = IntField()
-    Sweetness = IntField()
-    Saltiness = IntField()
-
+    sourness = IntField()
+    spiciness = IntField()
+    bitterness = IntField()
+    sweetness = IntField()
+    saltiness = IntField()
