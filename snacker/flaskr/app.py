@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, flash, session, redirect, url_for
-from forms import RegistrationForm
-from flask_bcrypt import Bcrypt
-from werkzeug.contrib.fixers import ProxyFix
-import mongoengine as mg
 import urllib
 import sys
-from mongoengine import *
 import datetime
+import mongoengine as mg
+from flask import Flask, render_template, request, flash, session, redirect, url_for
+from mongoengine import *
+from flask_bcrypt import Bcrypt
+from flask_login import login_manager
+from werkzeug.contrib.fixers import ProxyFix
+from forms import RegistrationForm
 from schema import *
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -23,18 +24,14 @@ PASSWORD_FILE = "password.txt"
 DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
-USERNAME_FILE = "username.txt"
-PASSWORD_FILE = "password.txt"
-DATABASE = "test"
-MONGO_SERVER = "csc301-v3uno.mongodb.net"
-APP_NAME = "Snacker"
 
 try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
-    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    #mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
     #mongo_uri = "mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
+    mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -45,6 +42,9 @@ except Exception as inst:
 # TODO: Need to change this to an env variable later
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 app.config['DEBUG'] = True
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 
 @app.route("/index")
@@ -63,6 +63,8 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
+    print(mongo.database_names())
+    print(my_database)
     print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     # This prints all collections inside the database with name DATABASE
     print("Documents inside all collections: ", file=sys.stdout)
@@ -114,13 +116,20 @@ def register_page():
     try:
         form = RegistrationForm(request.form)
         if request.method == "POST" and form.validate():
-            username  = form.username.data
             email = form.email.data
-            print(f"A new user submited the registration form: {username} with email {email}", file=sys.stdout)
-            password = bcrypt.generate_password_hash((str(form.password.data))).decode("utf-8")
-            flash(f"Thanks for registering! {username}")
-            # Register that someone logged into our system
-            #TODO: Use flask-login package for security and reliability
+            print(f"A new user submited the registration form: {email}", file=sys.stdout)
+            flash(f"Thanks for registering! {email}")
+            # Add user to database
+            # TODO: Add user correctly to database
+            new_user = User(email=form.email.data, first_name=form.first_name.data,
+                last_name=form.last_name.data, password=form.password.data)
+            print(new_user)
+            #print(User.objects(email='oi@png.com').first());
+
+            try:
+                new_user.save()
+            except Exception as e:
+                print(f"Error {e}. \n Couldn't add user with following registration form: {form}")
             session['logged_in'] = True
             session['username'] = username
             print(url_for('index'))
@@ -131,15 +140,42 @@ def register_page():
     except Exception as e:
         return(str(e))
 
-@app.route("/login")
+@app.route("/create-snack")
+@login_required
+def create_snack():
+    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation
+    # Gets snacks from database
+    snacks = Snack.query.all()
+    for snk in snacks:
+        print(snacks)
+    return "The front-end of this isn't implemented! D:"
+
+
+""" Routes and methods related to user login and authentication """
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.objects(pk=user_id).first()
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    """For GET requests, display the login form.
+    For POSTS, login the current user by processing the form."""
     return render_template("login.html")
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
     session['logged_in'] = False
     session['username'] = None
     return redirect(url_for('index'))
+
+
+""" Exposes variables to other modules """
+def bcrypt_instance():
+    if 'bcrypt' in globals():
+        return bcrypt
+    else:
+        raise NameError("Bcrypt not loaded in app.py")
 
 if __name__ == '__main__':
     app.run()
