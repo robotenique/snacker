@@ -5,6 +5,9 @@ from werkzeug.contrib.fixers import ProxyFix
 import mongoengine as mg
 import urllib
 import sys
+from flask_wtf import Form
+from wtforms import StringField, BooleanField
+from wtforms.validators import DataRequired
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
@@ -40,18 +43,15 @@ app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 app.config['DEBUG'] = True
 bcrypt = Bcrypt(app)
 
-@app.route("/index")
+class LoginForm(Form):
+    openid = StringField('openid', validators=[DataRequired()])
+    remember_me = BooleanField('remember_me', default=False)
+
+@app.route("/",methods=['GET', 'POST'])
+@app.route("/index",methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About {APP_NAME}')
-
-
-@app.route('/')
-def hello_world():
+    my_database = mongo[DATABASE]
+    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
@@ -63,7 +63,14 @@ def hello_world():
         for doc in my_database[collec].find({}):
             print(f"        {doc}", file=sys.stdout)
     print("", file=sys.stdout)
-    return 'Hello World!'
+    form = LoginForm()
+
+    return render_template('login.html', form=form)
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html', title='About {APP_NAME}')
 
 
 @app.route('/register/', methods=["GET","POST"])
