@@ -23,6 +23,8 @@ pip install mongoengine
 
 pip install Flask-WTF
 
+pip install Pillow
+
 ### Run the application
 
 You can run the application inside PyCharm, by clicking on the 'Run' button, or using `shift + F10`.
