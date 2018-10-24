@@ -11,12 +11,18 @@ from schema import *
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
 # Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-# If the above doesn't work try setting mongo_uri directly to mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
+# If the above doesn't work try setting mongo_uri directly to:
+# mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
 # If the above works, it should be a parsing problem try updating Python
 # If not ask for troubleshoot help in group chat
 app = Flask(__name__)
 
 # With these constants strings, we can connect to generic databases
+USERNAME_FILE = "username.txt"
+PASSWORD_FILE = "password.txt"
+DATABASE = "test"
+MONGO_SERVER = "csc301-v3uno.mongodb.net"
+APP_NAME = "Snacker"
 USERNAME_FILE = "username.txt"
 PASSWORD_FILE = "password.txt"
 DATABASE = "test"
