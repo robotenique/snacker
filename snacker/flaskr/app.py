@@ -53,6 +53,7 @@ def about():
 
 
 # Go to the local url and refresh that page to test
+# See below for use cases of different schema objects
 @app.route('/')
 def hello_world():
     print('This is standard output', file=sys.stdout)
@@ -159,42 +160,28 @@ def logout():
     return redirect(url_for('index'))
 
 
+# Done, tested
 @app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
 def find_reviews_for_snack(snack_id):
     """
     Find all reviews for a snack
+    You can enter loca/_url/snack_reviews/snack_id in your browser when flask is running and it should display a table
+        of reviews for that snack
     """
     reviews = Review.objects(snack_id=snack_id)
     print(f"snack_reviews: {reviews}", file=sys.stdout)
     if not reviews:
-        print(f"No review founds", file=sys.stdout)
-        return redirect("/")
+        return "No review founds"
     else:
-        display = Results(reviews)
+        display = ReviewResults(reviews)
         display.border = True
         return render_template('reviews_for_snack.html', table=display)
 
 
-@app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
-def find_reviews_for_snack(snack_id):
+class ReviewResults(Table):
     """
-    Find all reviews for a snack
-    """
-    reviews = Review.objects(snack_id=snack_id)
-    print(f"snack_reviews: {reviews}", file=sys.stdout)
-    if not reviews:
-        print(f"No review founds", file=sys.stdout)
-        return redirect("/")
-    else:
-        display = Results(reviews)
-        display.border = True
-        return render_template('reviews_for_snack.html', table=display)
-
-
-class Results(Table):
-    """
-    Test class that helps displays readable data to front end in the format of table easily so we can test backend
-    and html rendering without having to wait for front end to finish first
+    Test class that helps displays readable reviews data to front end in the format of table easily so we can test
+    backend and html rendering without having to wait for front end to finish first
     """
     id = Col('Review Id')
     user_id = Col('User ID')
@@ -202,6 +189,62 @@ class Results(Table):
     description = Col('Description')
     overall_rating = Col('Overall Rating')
     geolocation = Col('Geolocation')
+    sourness = Col('sourness')
+    spiciness = Col('spiciness')
+    bitterness = Col('bitterness')
+    sweetness = Col('sweetness')
+    saltiness = Col('saltiness')
+
+
+@app.route("/find_snacks?<string:filter>", methods=['GET'])
+def find_snack_by_filter(filter):
+    """
+    Find all snacks given a filter
+    /find_snacks?snack_name=abc&available_at_locations=a+b+c&...
+    """
+    filter_query = {}
+    all_filters = filter.split("&")
+    for individual_filter in all_filters:
+        this_filter = individual_filter.split("=")
+        if this_filter[0] == "snack_name":
+            filter_query['snack_name'] = this_filter[1]
+        elif this_filter[0] == "available_at_locations":
+            location_query = {}
+            location_query["$elemMatch"] = this_filter[1]
+            filter_query['available_at_locations'] = location_query
+        elif this_filter[0] == "snack_brand":
+            filter_query['snack_brand'] = this_filter[1]
+        elif this_filter[0] == "snack_company_name":
+            filter_query['snack_company_name'] = this_filter[1]
+        elif this_filter[0] == "is_verified":
+            filter_query['is_verified'] = this_filter[1]
+        elif this_filter[0] == "category":
+            filter_query['category'] = this_filter[1]
+    snacks = Snack.objects.find(filter_query)
+    print(f"snack_reviews: {snacks}", file=sys.stdout)
+    if not snacks:
+        return "No snacks founds"
+    else:
+        display = SnackResults(snacks)
+        display.border = True
+        # Use the same template as review since all it needs is to display a table
+        return render_template('reviews_for_snack.html', table=display)
+
+
+class SnackResults(Table):
+    """
+    Test class that helps displays readable snacks data to front end in the format of table easily so we can test
+    backend and html rendering without having to wait for front end to finish first
+    """
+    id = Col('Snack Id')
+    snack_name = Col('snack_name')
+    available_at_locations = Col('Location')
+    snack_brand = Col('Brand')
+    snack_company_name = Col('Company Name')
+    photo_files = Col('Photo')
+    description = Col('Description')
+    is_verified = Col('if verified')
+    category = Col('Category')
 
 
 if __name__ == '__main__':
