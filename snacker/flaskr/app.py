@@ -64,16 +64,6 @@ def hello_world():
     print('This is standard output', file=sys.stdout)
     # Selecting the database we want to work withf
     my_database = mongo[DATABASE]
-    print(mongo.database_names())
-    print(my_database)
-    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
-    # This prints all collections inside the database with name DATABASE
-    print("Documents inside all collections: ", file=sys.stdout)
-    for collec in my_database.list_collection_names():
-        print(f"    {collec}", file=sys.stdout)
-        for doc in my_database[collec].find({}):
-            print(f"        {doc}", file=sys.stdout)
-    print("", file=sys.stdout)
     for obj in User.objects:
         print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
@@ -91,6 +81,7 @@ def hello_world():
         print("Error \n %s" % e, file=sys.stdout)
     # If without error, then both the normal user and company user should display in User collection
     # And only company user should display in CompanyUser collection
+    print(f"afaan\n", file=sys.stdout)
     for obj in User.objects:
         print(f"   After Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
