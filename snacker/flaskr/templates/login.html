@@ -1,4 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>Nothing here yet D:</h1>
+<div class="content-section">
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" action="">
+        <fieldset class="form-group">
+            {{ form.hidden_tag() }}
+            {{render_field(form.email)}}
+            {{render_field(form.password)}}
+            {{render_field(form.remember_me)}}
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+
+{% if error %}
+<p class="error"><strong>Error:</strong>{{error}}</p>
+{% endif %}
+
 {% endblock content %}
