@@ -31,10 +31,6 @@ try:
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
     mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
-<<<<<<< HEAD
-=======
-    #mongo_uri = "mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
->>>>>>> finish basic login_system, with integration to database. This only deals with NORMAL USERS (no company users)
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -204,9 +200,6 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-<<<<<<< HEAD
-
-<<<<<<< HEAD
 @app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
 def find_reviews_for_snack(snack_id):
     """
