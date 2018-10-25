@@ -33,7 +33,7 @@ class User(UserMixin, Document):
 
 # Every CompanyUser will be user as well, we can also directly get all CompanyUsers
 class CompanyUser(User):
-    company_name = StringField(required=True, unique=True)
+    company_name = StringField(required=True, unique=True, sparse=True)
     company_snackbrands = ListField(StringField(max_length=100))
 
 
