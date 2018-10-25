@@ -2,8 +2,8 @@ from mongoengine import *
 
 
 # An user of our app
-# An unique ID should be automatically created, should be able to refer to it as user._id
-# Date of registration is not needed since with automatic _id, it comes with automatic timestamp: getTimestamp()
+# An unique ID should be automatically created, should be able to refer to it as user.id
+# Date of registration is not needed since with automatic id, it comes with automatic timestamp: getTimestamp()
 class User(Document):
     email = EmailField(required=True, unique=True)
     first_name = StringField(required=True)
@@ -23,12 +23,12 @@ class CompanyUser(User):
 
 
 # A snack
-# An unique ID should be automatically created, should be able to refer to it as snack._id
+# An unique ID should be automatically created, should be able to refer to it as snack.id
 class Snack(Document):
     snack_name = StringField(required=True, unique_with='snack_brand')
     # Countries where the snacks have been reviewed
     available_at_locations = ListField(StringField(), required=True)
-    snack_brand = StringField(required=True, unique_with='snack_name')
+    snack_brand = StringField(required=True)
     snack_company_name = StringField()
     # Can mess with img size here
     photo_files = ListField(ImageField())
@@ -38,12 +38,12 @@ class Snack(Document):
 
 
 # A review of a snack
-# An unique ID should be automatically created, should be able to refer to it as review._id
-# Timestamp is not needed since with automatic _id, it comes with automatic timestamp: getTimestamp()
+# An unique ID should be automatically created, should be able to refer to it as review.id
+# Timestamp is not needed since with automatic id, it comes with automatic timestamp: getTimestamp()
 class Review(Document):
     # ID of user who wrote the review
     user_id = ObjectIdField(required=True)
-    # ID of snack that the review is being written about
+    # ID of snack that the review is being written about, unique because users shouldn't review twice
     snack_id = ObjectIdField(required=True)
     description = StringField()
     overall_rating = IntField(required=True)
