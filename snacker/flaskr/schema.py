@@ -11,7 +11,7 @@ class User(UserMixin, Document):
     # Image size can be specified in ImageField().
     avatar_file = ImageField()
 
-    # If the email address has been verified, even for regular users we need to verify email
+    # User has to verify his email address, before he becomes a verified user.
     is_verified = BooleanField(required=True, default=False)
     password = StringField(max_length=255, required=True, db_field='password')
     wish_list = ListField(IntField())
@@ -31,43 +31,44 @@ class User(UserMixin, Document):
         return bcrypt.check_password_hash(self.password, password)
 
 
-# Every CompanyUser is a user as well.
-# We can directly get all CompanyUsers.
+# Every CompanyUser is a User as well.
+# We can directly get all the CompanyUsers.
 class CompanyUser(User):
     company_name = StringField(required=True, unique=True, sparse=True)
     company_snackbrands = ListField(StringField(max_length=100))
 
 
-# An unique ID should be automatically created, should be able to refer to it as snack.id
+# An unique ID is automatically created (snack.id).
 class Snack(Document):
     snack_name = StringField(required=True, unique_with='snack_brand')
-    # Countries where the snacks have been reviewed
+    # Countries where the snacks have been reviewed or is available at.
     available_at_locations = ListField(StringField(), required=True)
     snack_brand = StringField(required=True)
     snack_company_name = StringField()
-    # Can mess with img size here
+
+    # Image size can be specified in ImageField().
     photo_files = ListField(ImageField())
     description = StringField()
     is_verified = BooleanField(required=True, default=False)
     category = StringField()
 
 
-# A review of a snack
-# An unique ID should be automatically created, should be able to refer to it as review.id
-# Timestamp is not needed since with automatic id, it comes with automatic timestamp: getTimestamp()
+# An unique ID is automatically created (review.id).
+# Timestamp comes with the automatic id (getTimestamp()).
 class Review(Document):
-    # ID of user who wrote the review
+    # ID of user who wrote the review.
     user_id = ObjectIdField(required=True)
-    # ID of snack that the review is being written about, unique because users shouldn't review twice
+    # ID of snack that the review is being written for. User can review a snack only once.
     snack_id = ObjectIdField(required=True)
     description = StringField()
     overall_rating = IntField(required=True)
-    # Name of country
+    # Name of the country, where the snack is being reviewed.
     geolocation = StringField(required=True)
     meta = {'allow_inheritance': True}
 
 
-# Every MetricReview will be review as well, we can also directly get all metric reviews
+# Every MetricReview is a Review as well.
+# We can directly get all the MetricReviews.
 class MetricReview(Review):
     sourness = IntField()
     spiciness = IntField()
