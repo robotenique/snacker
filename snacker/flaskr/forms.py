@@ -8,7 +8,7 @@ class RegistrationForm(FlaskForm):
     last_name = StringField("Last Name", [DataRequired(), Length(min=2, max=100)])
     email = StringField("Email Address", [
         Email("Invalid email provided"),
-        Length(min=6, max=50),
+        Length(min=6, max=100),
         DataRequired("Please provide an email")
     ])
     is_company = BooleanField("Are you a company or distributor?")
@@ -31,7 +31,7 @@ class RegistrationForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField("Email Address", [
         Email("Invalid email provided"),
-        Length(min=6, max=50),
+        Length(min=6, max=100),
         DataRequired("Please use your email to login")
     ])
     password = PasswordField("New Password", [DataRequired()])
