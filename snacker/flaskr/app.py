@@ -164,10 +164,26 @@ def find_reviews_for_snack(snack_id):
     """
     Find all reviews for a snack
     """
-    reviews = Review.objects(id=snack_id)
-    print(f"{reviews}", file=sys.stdout)
+    reviews = Review.objects(snack_id=snack_id)
+    print(f"snack_reviews: {reviews}", file=sys.stdout)
     if not reviews:
-        flash("No reviews found!")
+        print(f"No review founds", file=sys.stdout)
+        return redirect("/")
+    else:
+        display = Results(reviews)
+        display.border = True
+        return render_template('reviews_for_snack.html', table=display)
+
+
+@app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
+def find_reviews_for_snack(snack_id):
+    """
+    Find all reviews for a snack
+    """
+    reviews = Review.objects(snack_id=snack_id)
+    print(f"snack_reviews: {reviews}", file=sys.stdout)
+    if not reviews:
+        print(f"No review founds", file=sys.stdout)
         return redirect("/")
     else:
         display = Results(reviews)
