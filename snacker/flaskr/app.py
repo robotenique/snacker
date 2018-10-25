@@ -135,22 +135,23 @@ def hello_world():
 
 @app.route('/register/', methods=["GET", "POST"])
 def register():
-    # IMPORTANT: The user password should always be encripted for increased security
-    encrypt_pw = lambda pw_str: bcrypt.generate_password_hash(pw_str)
+    # IMPORTANT: Encrypt the password for the increased security.
+    encrypted_password = lambda password_as_string: bcrypt.generate_password_hash(password_as_string)
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
     if request.method == "POST" and form.validate_on_submit():
         email = form.email.data
-        # Add user to database
+        # Add user to database.
         try:
             new_user = User(email=form.email.data, first_name=form.first_name.data,
-                            last_name=form.last_name.data, password=encrypt_pw(form.password.data))
+                            last_name=form.last_name.data, password=encrypted_password(form.password.data))
             new_user.save()
         except Exception as e:
             print(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+            # TODO: Why is the exit() here?
             exit()
-        print(f"A new user submited the registration form: {email}", file=sys.stdout)
+        print(f"A new user submitted the registration form: {email}", file=sys.stdout)
         for u in User.objects[:10]:
             print(u)
         print(url_for('index'))
@@ -161,8 +162,8 @@ def register():
 @app.route("/create-snack")
 @login_required
 def create_snack():
-    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation
-    # Gets snacks from database
+    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation.
+    # Get snacks from the database.
     snacks = Snack.objects
     for snk in snacks:
         print(snacks)
@@ -171,7 +172,6 @@ def create_snack():
 
 """ Routes and methods related to user login and authentication """
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.objects(pk=user_id).first()
@@ -179,10 +179,10 @@ def load_user(user_id):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """For GET requests, display the login form.
-    For POSTS, login the current user by processing the form."""
+    # For GET requests, display the login form; for POST, log in the current user by processing the form.
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.objects(email=form.email.data).first()
@@ -214,6 +214,7 @@ def find_reviews_for_snack(snack_id):
         display = ReviewResults(reviews)
         display.border = True
         return render_template('reviews_for_snack.html', table=display)
+
 
 # TODO: remove after implementing the front end.
 class ReviewResults(Table):
@@ -252,7 +253,7 @@ def find_snack_by_filter(filters):
         if filter_name in available_basic_filters:
             filter_query[filter_name] = filter_variable
         elif filter_name == "available_at_locations":
-            filter_query['available_at_locations'] = {"$elemMatch":filter_variable}
+            filter_query['available_at_locations'] = {"$elemMatch": filter_variable}
 
     snacks = Snack.objects.find(filter_query)
     print(f"snack_reviews: {snacks}", file=sys.stdout)
@@ -263,6 +264,7 @@ def find_snack_by_filter(filters):
         display.border = True
         # Return the same template as for the review, since it only needs to display a table.
         return render_template('reviews_for_snack.html', table=display)
+
 
 # TODO: remove after implementing the front end.
 class SnackResults(Table):
