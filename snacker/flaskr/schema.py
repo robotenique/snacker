@@ -1,16 +1,17 @@
 from mongoengine import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-# An user of our app
-# An unique ID should be automatically created, should be able to refer to it as user._id
-# Date of registration is not needed since with automatic _id, it comes with automatic timestamp: getTimestamp()
+# An unique ID (user.id) is automatically created.
+# Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
 class User(UserMixin, Document):
     email = EmailField(required=True, unique=True)
     first_name = StringField(required=True)
     last_name = StringField(required=True)
-    # You can mess with img size here
+
+    # Image size can be specified in ImageField().
     avatar_file = ImageField()
-    # If the email has been verified, even for regular users we need to verify email
+
+    # If the email address has been verified, even for regular users we need to verify email
     is_verified = BooleanField(required=True, default=False)
     password = StringField(max_length=255, required=True, db_field='password')
     wish_list = ListField(IntField())
@@ -30,14 +31,13 @@ class User(UserMixin, Document):
         return bcrypt.check_password_hash(self.password, password)
 
 
-
-# Every CompanyUser will be user as well, we can also directly get all CompanyUsers
+# Every CompanyUser is a user as well.
+# We can directly get all CompanyUsers.
 class CompanyUser(User):
     company_name = StringField(required=True, unique=True, sparse=True)
     company_snackbrands = ListField(StringField(max_length=100))
 
 
-# A snack
 # An unique ID should be automatically created, should be able to refer to it as snack.id
 class Snack(Document):
     snack_name = StringField(required=True, unique_with='snack_brand')
