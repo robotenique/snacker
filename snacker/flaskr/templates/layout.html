@@ -37,10 +37,10 @@
                         <a class="nav-item nav-link" href="/about">About</a>
                     </div>
                     <!-- Navbar Right Side -->
-                    {% if session.username %}
+                    {% if not current_user.is_anonymous %}
                     <div class="navbar-nav">
                         <a class="nav-item nav-link" href="/logout">Logout</a>
-                        <span>{{ session.username }}</span>
+                        <span>{{ current_user.email }}</span>
                     </div>
                     {% else %}
                     <div class="navbar-nav">
@@ -55,6 +55,15 @@
     <main role="main" class="container">
         <div class="row">
             <div class="col-md-12">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
                 {% block content %}{% endblock %}
             </div>
         </div>
