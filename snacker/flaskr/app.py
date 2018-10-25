@@ -5,9 +5,9 @@ import mongoengine as mg
 from flask import Flask, render_template, request, flash, session, redirect, url_for
 from mongoengine import *
 from flask_bcrypt import Bcrypt
-from flask_login import login_manager, current_user
+from flask_login import login_manager, current_user, login_user, logout_user
 from werkzeug.contrib.fixers import ProxyFix
-from forms import RegistrationForm
+from forms import RegistrationForm, LoginForm
 from schema import *
 
 # You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -29,9 +29,8 @@ try:
     username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
-    #mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
     #mongo_uri = "mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
-    mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -77,9 +76,9 @@ def hello_world():
         print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
         print(f"   Before Save CompanyUser: {obj.email} \n", file=sys.stdout)
-    normal_user = User(email="jayde.yue@mail.utoronto.ca",first_name="Jayde", last_name="Yue")
+    normal_user = User(email="jayde.yue@mail.utoronto.ca",first_name="Jayde", last_name="Yue", password="123123")
     company_user = CompanyUser(email="JaydeYue@jaydeyue.com", first_name="Jayde", last_name="Yue",
-                               company_name="The Amazing Jayde Yue Company")
+                               company_name="The Amazing Jayde Yue Company", password="123123")
     try:
         normal_user.save()
     except Exception as e:
@@ -113,32 +112,26 @@ def hello_world():
 
 @app.route('/register/', methods=["GET","POST"])
 def register():
-    # IMPORTANT: The user password should always be encripted for security purposes
-    encrypt_pw = lambda pw_str : bcrypt.generate_password_hash(pw_str).decode("utf-8")
+    # IMPORTANT: The user password should always be encripted for increased security
+    encrypt_pw = lambda pw_str : bcrypt.generate_password_hash(pw_str)
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
-    if request.method == "POST" and form.validate():
+    if request.method == "POST" and form.validate_on_submit():
         email = form.email.data
         # Add user to database
-        # TODO: Add user correctly to database
         try:
             new_user = User(email=form.email.data, first_name=form.first_name.data,
                 last_name=form.last_name.data, password=encrypt_pw(form.password.data))
-            print(new_user)
-            #print(User.objects(email='oi@png.com').first());        
             new_user.save()
         except Exception as e:
-            print(f"Error {e}. \n Couldn't add user with following registration form: {form}")
+            print(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
             exit()
         print(f"A new user submited the registration form: {email}", file=sys.stdout)
-        flash(f"Thanks for registering! {email}")
-        session['logged_in'] = True
-        session['username'] = username
+        for u in User.objects[:10]:
+            print(u)
         print(url_for('index'))
         return redirect(url_for('index'))
-    else:
-        flash("User data is invalid, please fill the form with the correct information")
     return render_template("register.html", title="Register", form=form)
 
 @app.route("/create-snack")
@@ -162,12 +155,22 @@ def load_user(user_id):
 def login():
     """For GET requests, display the login form.
     For POSTS, login the current user by processing the form."""
-    return render_template("login.html")
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.objects(email=form.email.data).first()
+        if user is None or not user.check_password(bcrypt, form.password.data):
+            flash("Invalid username or password")
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
+
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-    session['logged_in'] = False
-    session['username'] = None
+    logout_user()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':

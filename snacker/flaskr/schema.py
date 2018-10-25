@@ -20,14 +20,15 @@ class User(UserMixin, Document):
     def is_authenticated(self):
         return self.authenticated
 
-    def get_id(self):
-        return self._id
-
     def __str__(self):
         return f"[\n\tEmail: {self.email}\n\tfirst_name: {self.first_name}\n\tpw: {self.password}\n]"
 
     def __repr__(self):
         return f"[\n\tEmail: {self.email}\n\tfirst_name: {self.first_name}\n\tpw: {self.password}\n]"
+
+    def check_password(self, bcrypt, password):
+        return bcrypt.check_password_hash(self.password, password)
+
 
 
 # Every CompanyUser will be user as well, we can also directly get all CompanyUsers

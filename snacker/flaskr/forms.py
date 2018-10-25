@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, EqualTo, Email
+from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
 from schema import User
 
 class RegistrationForm(FlaskForm):
@@ -21,9 +21,9 @@ class RegistrationForm(FlaskForm):
     accept_tos = BooleanField("I accept the Terms of Service and Privacy Notice", [DataRequired()])
     submit = SubmitField('Sign Up')
 
-    def validate_email(self, email):
+    def validate_email(self, field):
         """Prevents multiple users with the same email"""
-        user = User.objects(email=email.data).first();
+        user = User.objects(email=field.data).first();
         if user is not None:
             raise ValidationError("This email is already registered, please use another")
 
@@ -34,9 +34,9 @@ class LoginForm(FlaskForm):
         Length(min=6, max=50),
         DataRequired("Please use your email to login")
     ])
-    password = PasswordField("New Password", [
-        DataRequired(),
-        EqualTo("confirm", message="Passwords don't match")
-    ])
+    password = PasswordField("New Password", [DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Login')
+
 
 
