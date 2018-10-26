@@ -1,34 +1,27 @@
-import urllib
 import sys
-import datetime
+import urllib
+
 import mongoengine as mg
-from flask import Flask, render_template, request, flash, session, redirect, url_for
-from mongoengine import *
+from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
-from flask_login import login_manager, current_user, login_user, logout_user
+from flask_table import *
 from werkzeug.contrib.fixers import ProxyFix
-<<<<<<< HEAD
-import mongoengine as mg
-import urllib
-import sys
-from flask_wtf import Form
-from wtforms import StringField, BooleanField
-from wtforms.validators import DataRequired
-=======
+
 from forms import RegistrationForm, LoginForm
 from schema import *
-from flask_table import *
->>>>>>> ff13c0d15d953491c3a2978811857810ffa2e908
 
-# You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
-# Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-# If the above doesn't work try setting mongo_uri directly to:
-# mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
-# If the above works, it should be a parsing problem try updating Python
-# If not ask for troubleshoot help in group chat
+"""
+You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
+Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
+If the above doesn't work try setting mongo_uri directly to:
+mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
+If the above works, it should be a parsing problem try updating Python
+If not ask for troubleshoot help in group chat
+"""
+
 app = Flask(__name__)
 
-# With these constants strings, we can connect to generic databases
+# With these constant strings, we can connect to generic databases
 USERNAME_FILE = "username.txt"
 PASSWORD_FILE = "password.txt"
 DATABASE = "test"
@@ -36,7 +29,7 @@ MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
 
 try:
-    username = open(USERNAME_FILE,  'r').read().strip().replace("\n","")
+    username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
     mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
@@ -45,8 +38,8 @@ try:
     # This is necessary for user tracking
     app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 except Exception as inst:
-    print("Error in database connection:", inst)
-    exit()
+    raise Exception("Error in database connection:", inst)
+
 # TODO: Need to change this to an env variable later
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 app.config['DEBUG'] = True
@@ -55,36 +48,15 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 
-<<<<<<< HEAD
-class LoginForm(Form):
-    openid = StringField('openid', validators=[DataRequired()])
-    remember_me = BooleanField('remember_me', default=False)
 
-@app.route("/",methods=['GET', 'POST'])
-@app.route("/index",methods=['GET', 'POST'])
+@app.route("/index")
 def index():
-    my_database = mongo[DATABASE]
-    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
-    print('This is standard output', file=sys.stdout)
-    # Selecting the database we want to work withf
-    my_database = mongo[DATABASE]
-    print((f"All collections in the database '{DATABASE}':\n\t{my_database.list_collection_names()}"), file=sys.stdout)
-    # This prints all collections inside the database with name DATABASE
-    print("Documents inside all collections: ", file=sys.stdout)
-    for collec in my_database.list_collection_names():
-        print(f"    {collec}", file=sys.stdout)
-        for doc in my_database[collec].find({}):
-            print(f"        {doc}", file=sys.stdout)
-    print("", file=sys.stdout)
-    form = LoginForm()
-
-    return render_template('login.html', form=form)
+    return render_template('index.html')
 
 
 @app.route("/about")
 def about():
     return render_template('about.html', title='About {APP_NAME}')
-=======
 
 
 # Go to the local url and refresh that page to test
@@ -98,7 +70,7 @@ def hello_world():
         print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
         print(f"   Before Save CompanyUser: {obj.email} \n", file=sys.stdout)
-    normal_user = User(email="jayde.yue@mail.utoronto.ca",first_name="Jayde", last_name="Yue", password="123123")
+    normal_user = User(email="jayde.yue@mail.utoronto.ca", first_name="Jayde", last_name="Yue", password="123123")
     company_user = CompanyUser(email="JaydeYue@jaydeyue.com", first_name="Jayde", last_name="Yue",
                                company_name="The Amazing Jayde Yue Company", password="123123")
     try:
@@ -116,7 +88,6 @@ def hello_world():
         print(f"   After Save User: {obj.email} \n", file=sys.stdout)
     for obj in CompanyUser.objects:
         print(f"   After Save CompanyUser: {obj.email} \n", file=sys.stdout)
->>>>>>> ff13c0d15d953491c3a2978811857810ffa2e908
 
     # Test Snack
     for obj in Snack.objects:
@@ -136,7 +107,8 @@ def hello_world():
     for obj in MetricReview.objects:
         print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
     metric_review = MetricReview(user_id="5bd1377387bec222cc6e6025", snack_id="5bd1377387bec222cc6e6027",
-                                description="ok", geolocation="Canada", overall_rating="3", sourness="1", spiciness="1")
+                                 description="ok", geolocation="Canada", overall_rating="3", sourness="1",
+                                 spiciness="1")
     try:
         metric_review.save()
     except Exception as e:
@@ -157,26 +129,26 @@ def hello_world():
         print("Error \n %s" % e, file=sys.stdout)
     for obj in Review.objects:
         print(f"    After Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
+    return 'Hello World!'
 
 
-@app.route('/register/', methods=["GET","POST"])
+@app.route('/register/', methods=["GET", "POST"])
 def register():
-    # IMPORTANT: The user password should always be encripted for increased security
-    encrypt_pw = lambda pw_str : bcrypt.generate_password_hash(pw_str)
+    # IMPORTANT: Encrypt the password for the increased security.
+    encrypted_password = lambda password_as_string: bcrypt.generate_password_hash(password_as_string)
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
     if request.method == "POST" and form.validate_on_submit():
         email = form.email.data
-        # Add user to database
+        # Add user to database.
         try:
             new_user = User(email=form.email.data, first_name=form.first_name.data,
-                last_name=form.last_name.data, password=encrypt_pw(form.password.data))
+                            last_name=form.last_name.data, password=encrypted_password(form.password.data))
             new_user.save()
         except Exception as e:
-            print(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
-            exit()
-        print(f"A new user submited the registration form: {email}", file=sys.stdout)
+            raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+        print(f"A new user submitted the registration form: {email}", file=sys.stdout)
         for u in User.objects[:10]:
             print(u)
         print(url_for('index'))
@@ -187,8 +159,8 @@ def register():
 @app.route("/create-snack")
 @login_required
 def create_snack():
-    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation
-    # Gets snacks from database
+    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation.
+    # Get snacks from the database.
     snacks = Snack.objects
     for snk in snacks:
         print(snacks)
@@ -205,10 +177,10 @@ def load_user(user_id):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """For GET requests, display the login form.
-    For POSTS, login the current user by processing the form."""
+    # For GET requests, display the login form; for POST, log in the current user by processing the form.
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.objects(email=form.email.data).first()
@@ -226,28 +198,28 @@ def logout():
     return redirect(url_for('index'))
 
 
-# Done, tested
 @app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
 def find_reviews_for_snack(snack_id):
     """
-    Find all reviews for a snack
-    You can enter loca/_url/snack_reviews/snack_id in your browser when flask is running and it should display a table
-        of reviews for that snack
+    Find all the reviews for a snack.
+    To display a table of reviews for a snack_id, enter local/_url/snack_reviews/snack_id in your browser.
     """
     reviews = Review.objects(snack_id=snack_id)
     print(f"snack_reviews: {reviews}", file=sys.stdout)
     if not reviews:
-        return "No review founds"
+        return "No reviews found"
     else:
         display = ReviewResults(reviews)
         display.border = True
         return render_template('reviews_for_snack.html', table=display)
 
 
+# TODO: remove after implementing the front end.
 class ReviewResults(Table):
     """
-    Test class that helps displays readable reviews data to front end in the format of table easily so we can test
-    backend and html rendering without having to wait for front end to finish first
+    Test class that helps to display the readable snacks data to the front end in the format of a table.
+    It allows us to test the backend and html rendering, without having to wait for the implementation
+    of the final front end.
     """
     id = Col('Review Id')
     user_id = Col('User ID')
@@ -263,29 +235,24 @@ class ReviewResults(Table):
 
 
 @app.route("/find_snacks?<string:filter>", methods=['GET'])
-def find_snack_by_filter(filter):
+def find_snack_by_filter(filters):
     """
     Find all snacks given a filter
     /find_snacks?snack_name=abc&available_at_locations=a+b+c&...
     """
     filter_query = {}
-    all_filters = filter.split("&")
+    all_filters = filters.split("&")
+    available_basic_filters = ['snack_name', 'snack_brand', 'snack_company_name', 'is_verified', 'category']
+
     for individual_filter in all_filters:
-        this_filter = individual_filter.split("=")
-        if this_filter[0] == "snack_name":
-            filter_query['snack_name'] = this_filter[1]
-        elif this_filter[0] == "available_at_locations":
-            location_query = {}
-            location_query["$elemMatch"] = this_filter[1]
-            filter_query['available_at_locations'] = location_query
-        elif this_filter[0] == "snack_brand":
-            filter_query['snack_brand'] = this_filter[1]
-        elif this_filter[0] == "snack_company_name":
-            filter_query['snack_company_name'] = this_filter[1]
-        elif this_filter[0] == "is_verified":
-            filter_query['is_verified'] = this_filter[1]
-        elif this_filter[0] == "category":
-            filter_query['category'] = this_filter[1]
+        filter = individual_filter.split("=")
+        filter_name = filter[0]
+        filter_variable = filter[1]
+        if filter_name in available_basic_filters:
+            filter_query[filter_name] = filter_variable
+        elif filter_name == "available_at_locations":
+            filter_query['available_at_locations'] = {"$elemMatch": filter_variable}
+
     snacks = Snack.objects.find(filter_query)
     print(f"snack_reviews: {snacks}", file=sys.stdout)
     if not snacks:
@@ -293,14 +260,16 @@ def find_snack_by_filter(filter):
     else:
         display = SnackResults(snacks)
         display.border = True
-        # Use the same template as review since all it needs is to display a table
+        # Return the same template as for the review, since it only needs to display a table.
         return render_template('reviews_for_snack.html', table=display)
 
 
+# TODO: remove after implementing the front end.
 class SnackResults(Table):
     """
-    Test class that helps displays readable snacks data to front end in the format of table easily so we can test
-    backend and html rendering without having to wait for front end to finish first
+    Test class that helps to display the readable snacks data to the front end in the format of a table.
+    It allows us to test the backend and html rendering, without having to wait for the implementation
+    of the final front end.
     """
     id = Col('Snack Id')
     snack_name = Col('snack_name')
@@ -311,6 +280,7 @@ class SnackResults(Table):
     description = Col('Description')
     is_verified = Col('if verified')
     category = Col('Category')
+
 
 if __name__ == '__main__':
     app.run()
