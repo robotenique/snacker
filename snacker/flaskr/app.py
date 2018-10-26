@@ -38,8 +38,7 @@ try:
     # This is necessary for user tracking
     app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 except Exception as inst:
-    print("Error in database connection:", inst)
-    exit()
+    raise Exception("Error in database connection:", inst)
 
 # TODO: Need to change this to an env variable later
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
@@ -148,9 +147,7 @@ def register():
                             last_name=form.last_name.data, password=encrypted_password(form.password.data))
             new_user.save()
         except Exception as e:
-            print(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
-            # TODO: Why is the exit() here?
-            exit()
+            raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
         print(f"A new user submitted the registration form: {email}", file=sys.stdout)
         for u in User.objects[:10]:
             print(u)
@@ -171,6 +168,7 @@ def create_snack():
 
 
 """ Routes and methods related to user login and authentication """
+
 
 @login_manager.user_loader
 def load_user(user_id):
