@@ -245,7 +245,7 @@ def find_reviews_for_snack(filters):
 def find_snack_by_filter(filters):
     """
     Find all snacks given filter
-    Only support searching for one location at a time now
+    Only support searching for one location at a time now (i.e. can't find snacks both in USA and Canada)
     For is verfied, false for false and true for true
     Results currently ordered by snack name
     /find_snacks/snack_name=abc+available_at_locations=a+...
