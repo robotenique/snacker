@@ -264,7 +264,8 @@ def find_snack_by_filter(filters):
                 queryset = queryset.filter(snack_name=this_filter[1])
             elif this_filter[0] == "available_at_locations":
                 # Note for this, say if they enter n, they will still return snacks in Canada because their contains
-                #   is based on string containment
+                #   is based on string containment. If order to solve this, we can let force users to select countries
+                #   instead of typing countries
                 queryset = queryset.filter(available_at_locations__contains=this_filter[1])
             elif this_filter[0] == "snack_brand":
                 queryset = queryset.filter(snack_brand=this_filter[1])
