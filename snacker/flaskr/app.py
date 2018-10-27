@@ -178,12 +178,15 @@ def load_user(user_id):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # For GET requests, display the login form; for POST, log in the current user by processing the form.
+    print("LOGGING IN")
     if current_user.is_authenticated:
+        print("is_authenticated")
         return redirect(url_for('index'))
 
-    form = LoginForm()
+    form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate_on_submit():
+        print("posting")
         user = User.objects(email=form.email.data).first()
         print("user is ", user)
         if user is None or not user.check_password(bcrypt, form.password.data):
