@@ -232,6 +232,7 @@ class ReviewResults(Table):
     saltiness = Col('saltiness')
 
 
+# TODO: test this
 @app.route("/find_snacks?<string:filter>", methods=['GET'])
 def find_snack_by_filter(filter):
     """
