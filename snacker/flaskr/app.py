@@ -32,7 +32,7 @@ try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
-    mongo_uri = f"mongodb+srv://{username}:{pw}@{MONGO_SERVER}/{DATABASE}?retryWrites=true"
+    mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
     mongo = mg.connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -182,8 +182,10 @@ def login():
         return redirect(url_for('index'))
 
     form = LoginForm()
-    if form.validate_on_submit():
+
+    if request.method == 'POST' and form.validate_on_submit():
         user = User.objects(email=form.email.data).first()
+        print("user is ", user)
         if user is None or not user.check_password(bcrypt, form.password.data):
             flash("Invalid username or password")
             return redirect(url_for('login'))

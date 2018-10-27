@@ -36,6 +36,6 @@ class LoginForm(FlaskForm):
         Length(min=6, max=100),
         DataRequired("Please use your email address to login")
     ])
-    password = PasswordField("New Password", [DataRequired()])
+    password = PasswordField("Password", [DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
