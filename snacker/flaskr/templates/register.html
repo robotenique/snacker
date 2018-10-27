@@ -1,26 +1,27 @@
 {% extends "layout.html" %}
-{% block content %}
-<div class="content-section">
+{% block body1 %}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
     {% from "_formhelpers.html" import render_field %}
-    <form method="POST" action="">
-        <fieldset class="form-group">
-            {{ form.hidden_tag() }}
-            {{render_field(form.first_name)}}
-            {{render_field(form.last_name)}}
-            {{render_field(form.email)}}
-            {{render_field(form.is_company)}}
-            {{render_field(form.password)}}
-            {{render_field(form.confirm)}}
-            {{render_field(form.accept_tos)}}
-        </fieldset>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
+    <form action="/login" method="POST" name="login" style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
+        <div class="form-group" style="color:white;">
+            {{ render_field(form.first_name) }}
+            {{ render_field(form.last_name) }}
+            {{ render_field(form.email) }}
+            <label style="color:black;">{{form.is_company.label}}</label>
+            {{form.is_company(value="Are you a company or a distributor?")}}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm) }}
+            <label style="color:black;">{{form.accept_tos.label}}</label>
+            {{form.accept_tos(value="yes")}}
         </div>
+        <input class="btn btn-primary" type="submit" name="submit" value="submit">
     </form>
-</div>
 
 {% if error %}
 <p class="error"><strong>Error:</strong>{{error}}</p>
 {% endif %}
 
-{% endblock content %}
+{% endblock %}

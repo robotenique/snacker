@@ -51,7 +51,16 @@
 
     <section id="body2" class="ftco-section services-section bg-light">
       <div class="container">
-        {% block body2 %}{% endblock %}
+		  {% with messages = get_flashed_messages() %}
+  			{% if messages %}
+    			<ul class=flashes>
+    			{% for message in messages %}
+      				<li>{{ message }}</li>
+    			{% endfor %}
+    			</ul>
+  			{% endif %}
+			{% endwith %}
+           {% block body2 %}{% endblock %}
       </div>
     </section>
 

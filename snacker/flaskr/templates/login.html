@@ -4,14 +4,13 @@
     <br/>
     <br/>
     <br/>
+    {% from "_formhelpers.html" import render_field %}
     <form action="/login" method="POST" name="login" style="margin-left: auto;margin-right:auto;text-align:center;margin-top:200px;">
-        <div class="form-group">
-            <label for="email" style="color:white;">Username</label>:
-            <input class="css_class" id="email" name="email" type="text">
+        <div class="form-group" style="color:white;">
+            {{ render_field(form.email) }}
         </div>
-        <div class="form-group">
-        <label for="password" style="color:white;">Password</label>:
-        <input id="password" name="password" type="password">
+        <div class="form-group" style="color:white;">
+            {{ render_field(form.password) }}
         </div>
         <input class="btn btn-primary" type="submit" name="submit" value="submit">
     </form>
