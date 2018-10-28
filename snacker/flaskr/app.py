@@ -101,6 +101,7 @@ def hello_world():
     snack.avg_sourness = 0
     snack.avg_spiciness = 0
     snack.avg_sweetness = 0
+    snack.review_count = 0
     try:
         snack.save()
     except Exception as e:
@@ -113,12 +114,14 @@ def hello_world():
     # Display existing reviews in the db
     for obj in Review.objects:
         print(f"    Before Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd5ff9887bec2458cec9828", description="too hot",
+    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd6054687bec22d78d12c59", description="too hot",
                     geolocation="Canada", overall_rating="2")
     try:
         review.save()
         avg_overall_rating = Review.objects.filter(snack_id=review.snack_id).average('overall_rating')
         Snack.objects(id=review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
+        review_count = Snack.objects(id=review.snack_id)[0].review_count + 1
+        Snack.objects(id=review.snack_id).update(set__review_count=review_count)
     except Exception as e:
         print("Error \n %s" % e, file=sys.stdout)
     for obj in Review.objects:
@@ -127,7 +130,7 @@ def hello_world():
     # Test MetricReview
     for obj in MetricReview.objects:
         print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd5ff9887bec2458cec9828",
+    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd6054687bec22d78d12c59",
                                  description="love it!", geolocation="Canada", overall_rating="5", sourness="1",
                                  spiciness="4")
     try:
@@ -149,6 +152,8 @@ def hello_world():
         Snack.objects(id=metric_review.snack_id).update(set__avg_bitterness=avg_bitterness)
         Snack.objects(id=metric_review.snack_id).update(set__avg_sweetness=avg_sweetness)
         Snack.objects(id=metric_review.snack_id).update(set__avg_saltiness=avg_saltiness)
+        review_count = Snack.objects(id=metric_review.snack_id)[0].review_count + 1
+        Snack.objects(id=metric_review.snack_id).update(set__review_count=review_count)
     except Exception as e:
         print("Error \n %s" % e, file=sys.stdout)
     for obj in MetricReview.objects:
