@@ -1,4 +1,81 @@
 {% extends "index_layout.html" %}
-{% block content %}
 
-{% endblock content %}
+{% block featured_snacks %}
+{% if featured_snacks %}
+<section class="ftco-section ftco-destination">
+  <div class="container">
+	<div class="row justify-content-start mb-5 pb-3">
+	  <div class="col-md-7 heading-section ftco-animate">
+	    <span class="subheading">Featured</span>
+	    <h2 class="mb-4"><strong>Featured</strong> Snacks</h2>
+	  </div>
+	</div>
+	  <div class="row">
+	    <div class="col-md-12">
+	      <div class="destination-slider owl-carousel ftco-animate">
+	      {% for snack in featured_snacks %}
+	        <div class="item">
+	            <div class="destination">
+	              <!-- TODO: We should a link to the appropriate snack image.
+	                 Search the snack on-click when the searching feature is implemented -->
+	              <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ url_for('static', filename='images/cheeseSticks.jpg') }})">
+	                <div class="icon d-flex justify-content-center align-items-center">
+	                  <span class="icon-search2"></span>
+	                </div>
+	              </a>
+	              <!-- TODO: Add the reference to the snack page -->
+	              <div class="text p-3">
+	                <h3><a href="#">{{ snack.snack_name }}</a></h3>
+	                <p class="rate">
+	                  <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
+	                {% for n in range(5) %}
+	                	{% if n+1 <= snack.avg_overall_rating %}
+	                      <i class="icon-star"></i>
+	                	{% elif n+0.5 <= snack.avg_overall_rating %}
+	                      <i class="icon-star-half-empty"></i>
+	                	{% else %}
+	                      <i class="icon-star-o"></i>
+		                {% endif %}
+	                {% endfor %}
+	                  <span>({{ snack.review_count }})</span>
+	                </p>
+	              </div>
+	            </div>
+	        </div>
+	      {% endfor %}
+	      </div>
+	    </div>
+	  </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block fun_facts %}
+<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
+	<div class="container">
+		<div class="row justify-content-center mb-5 pb-3">
+      <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+        <h2 class="mb-4">Some fun facts</h2>
+        <span class="subheading">This started as a school project!</span>
+      </div>
+    </div>
+		<div class="row justify-content-center">
+			<div class="col-md-10">
+	    		<div class="row">
+	    	  {% for facts in interesting_facts %}
+	          <div class="col-md-{{12//(interesting_facts|length)}} d-flex justify-content-center counter-wrap ftco-animate">
+	            <div class="block-18 text-center">
+	              <div class="text">
+	                <strong class="number" data-number="{{facts[1]}}">0</strong>
+	                <span>{{facts[0]}}</span>
+	              </div>
+	            </div>
+	          </div>
+	          {% endfor %}
+	        </div>
+        </div>
+    </div>
+	</div>
+</section>
+{% endblock %}
