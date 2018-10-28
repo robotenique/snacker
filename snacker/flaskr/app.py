@@ -93,8 +93,14 @@ def hello_world():
     for obj in Snack.objects:
         print(f"    Before Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
     # To test it yourself, create a snack with different name and brand from the exisiting snacks in the db
-    snack = Snack(snack_name="Crunchy Cheese Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
-    snack.description = "Yummy yummy"
+    snack = Snack(snack_name="Crunchy Cheesy Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
+    snack.description = "Yummy yum"
+    snack.avg_overall_rating = 0
+    snack.avg_bitterness = 0
+    snack.avg_saltiness = 0
+    snack.avg_sourness = 0
+    snack.avg_spiciness = 0
+    snack.avg_sweetness = 0
     try:
         snack.save()
     except Exception as e:
@@ -103,32 +109,51 @@ def hello_world():
     for obj in Snack.objects:
         print(f"    After Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
 
-    # Test MetricReview
-    for obj in MetricReview.objects:
-        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    metric_review = MetricReview(user_id="5bd1377387bec222cc6e6025", snack_id="5bd1377387bec222cc6e6027",
-                                 description="ok", geolocation="Canada", overall_rating="3", sourness="1",
-                                 spiciness="1")
-    try:
-        metric_review.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in MetricReview.objects:
-        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-
     # Test Review
     # Display existing reviews in the db
     for obj in Review.objects:
         print(f"    Before Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    review = Review(user_id="5bd1377387bec222cc6e6026", snack_id="5bd1377387bec222cc6e6027", description="like it",
-                    geolocation="Canada", overall_rating="5")
+    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd5ff9887bec2458cec9828", description="too hot",
+                    geolocation="Canada", overall_rating="2")
     try:
         review.save()
+        avg_overall_rating = Review.objects.filter(snack_id=review.snack_id).average('overall_rating')
+        Snack.objects(id=review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
     except Exception as e:
         print("Error \n %s" % e, file=sys.stdout)
     for obj in Review.objects:
         print(f"    After Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    return 'Hello World!'
+
+    # Test MetricReview
+    for obj in MetricReview.objects:
+        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
+    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd5ff9887bec2458cec9828",
+                                 description="love it!", geolocation="Canada", overall_rating="5", sourness="1",
+                                 spiciness="4")
+    try:
+        metric_review.save()
+        avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
+        avg_sourness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
+        avg_spiciness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
+        avg_bitterness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
+        avg_sweetness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
+        avg_saltiness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
+        Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_spiciness=avg_spiciness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_bitterness=avg_bitterness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_sweetness=avg_sweetness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_saltiness=avg_saltiness)
+    except Exception as e:
+        print("Error \n %s" % e, file=sys.stdout)
+    for obj in MetricReview.objects:
+        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
+    return render_template("index.html", title="Index")
 
 
 @app.route('/register/', methods=["GET", "POST"])
