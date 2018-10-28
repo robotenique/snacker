@@ -6,9 +6,11 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm
 from schema import *
 from util import *
+
+from geodata import get_geodata
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -185,6 +187,57 @@ def register():
     return render_template("register.html", title="Register", form=form)
 
 
+@app.route("/create-review", methods=["GET", "POST"])
+@login_required
+def create_review():
+    # Create a review and insert it into database.
+
+    # check authenticated
+    if current_user.is_authenticated:
+        print("is_authenticated")
+
+        review_form = CreateReviewForm(request.form)
+        # post to db
+        if request.method == "POST" and review_form.validate_on_submit():
+            user_id = current_user.id
+            # should probably check if user_id is in db
+
+            # snack name and brand
+            # query for it
+            snacks = Snack.objects
+            snack_id = snacks.filter(snack_name=request.snack_name).filter(snack_brand=request.snack_brand)
+
+            # geolocation stuff
+            # ip_address = request.access_route[0] or request.remote_addr
+            # geodata = get_geodata(ip_address)
+            # location = "{}, {}".format(geodata.get("city"),
+            #                            geodata.get("zipcode"))
+
+            try:
+                # user_id comes from current_user
+                # snack_id should come from request sent by frontend
+                # geolocation is found by request
+                new_review = Review(user_id=user_id, snack_id=snack_id,
+                                    description=review_form.description.data,
+                                    geolocation="Default", overall_rating=review_form.overall_rating.data)
+                new_review.save()
+
+            except Exception as e:
+                raise Exception(
+                    f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
+
+            print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+
+            for u in User.objects[:10]:
+                print(u)
+
+            return redirect(url_for('index'))
+        return render_template("create_review.html", title="Create Review", form=review_form) #frontend stuff
+
+    else:
+        return redirect(url_for('index'))
+
+
 @app.route("/create-snack")
 @login_required
 def create_snack():
@@ -194,7 +247,6 @@ def create_snack():
     for snk in snacks:
         print(snacks)
     return "The front-end of this isn't implemented! D:"
-
 
 """ Routes and methods related to user login and authentication """
 
