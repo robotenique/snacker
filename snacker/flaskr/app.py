@@ -10,7 +10,7 @@ from forms import RegistrationForm, LoginForm, CreateReviewForm
 from schema import *
 from util import *
 
-from geodata import get_geodata
+# from geodata import get_geodata
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -53,7 +53,21 @@ bcrypt = Bcrypt(app)
 
 @app.route("/index")
 def index():
-    return render_template('index.html')
+    snacks = Snack.objects
+    popular_snacks = snacks.order_by("-review_count")[:5]
+    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
+    # TODO: Recommend snacks tailored to user
+    featured_snacks = top_snacks
+
+    # Use JS Queries later
+    # Needs to be a divisor of 12
+    interesting_facts = []
+    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Reviews", Review.objects.count()))
+    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
+        interesting_facts=interesting_facts)
 
 
 @app.route("/about")
@@ -160,7 +174,21 @@ def hello_world():
         print("Error \n %s" % e, file=sys.stdout)
     for obj in MetricReview.objects:
         print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    return render_template("index.html", title="Index")
+    snacks = Snack.objects
+    popular_snacks = snacks.order_by("-review_count")[:5]
+    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
+    # TODO: Recommend snacks tailored to user
+    featured_snacks = top_snacks
+
+    # Use JS Queries later
+    # Needs to be a divisor of 12
+    interesting_facts = []
+    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Reviews", Review.objects.count()))
+    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
+        interesting_facts=interesting_facts)
 
 
 @app.route('/register/', methods=["GET", "POST"])

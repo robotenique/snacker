@@ -34,7 +34,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
-      <a class="navbar-brand" href="../templates/index.html">dirEngine.</a>
+      <a class="navbar-brand" href="../templates/index.html">Snacker</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="oi oi-menu"></span> Menu
       </button>
@@ -54,28 +54,20 @@
   </nav>
     <!-- END nav -->
 
-    <div class="hero-wrap js-fullheight" style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
+    <!-- This is currently a placeholder, can make the highlights dynamics, it should be
+        the most searched terms (I suppose) -->
+    <div class="hero-wrap js-fullheight" style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
       <div class="overlay"></div>
       <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true">
           <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong> your amazing city</h1>
-            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Find great places to stay, eat, shop, or visit from local experts</p>
+            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong> the snacks you need </h1>
+            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend yours to others</p>
             <div class="block-17 my-4">
               <form action="" method="post" class="d-block d-flex">
                 <div class="fields d-block d-flex">
                   <div class="textfield-search one-third">
-                  	<input type="text" class="form-control" placeholder="Ex: food, service, hotel">
-                  </div>
-                  <div class="select-wrap one-third">
-                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                      <option value="">Where</option>
-                      <option value="">San Francisco USA</option>
-                      <option value="">Berlin Germany</option>
-                      <option value="">Lodon United Kingdom</option>
-                      <option value="">Paris Italy</option>
-                    </select>
+                  	<input type="text" class="form-control" placeholder="Ex: cheetos, crips, lays">
                   </div>
                 </div>
                 <input type="submit" class="search-submit btn btn-primary" value="Search">
@@ -83,16 +75,17 @@
             </div>
             <p>Or browse the highlights</p>
             <p class="browse d-md-flex">
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-fork"></i>Restaurant</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-hotel"></i>Hotel</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-meeting-point"></i>Places</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-	center"><a href="#"><i class="flaticon-shopping-bag"></i>Shopping</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-fork"></i>Cookies</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-hotel"></i>Chips</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-	center"><a href="#"><i class="flaticon-shopping-bag"></i>Candies</a></span>
             </p>
           </div>
         </div>
       </div>
     </div>
 
+<!-- Do not find this section useful, nothing to advertise
     <section class="ftco-section services-section bg-light">
       <div class="container">
         <div class="row d-flex">
@@ -135,6 +128,9 @@
         </div>
       </div>
     </section>
+-->
+    {% block featured_snacks %}
+    {% endblock %}
 
     <section class="ftco-section bg-light">
     	<div class="container">
@@ -321,54 +317,8 @@
     	</div>
     </section>
 
-    <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
-    	<div class="container">
-    		<div class="row justify-content-center mb-5 pb-3">
-          <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-            <h2 class="mb-4">Some fun facts</h2>
-            <span class="subheading">More than 100,000 websites hosted</span>
-          </div>
-        </div>
-    		<div class="row justify-content-center">
-    			<div class="col-md-10">
-		    		<div class="row">
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="100000">0</strong>
-		                <span>Happy Customers</span>
-		              </div>
-		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="40000">0</strong>
-		                <span>Destination Places</span>
-		              </div>
-		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="87000">0</strong>
-		                <span>Hotels</span>
-		              </div>
-		            </div>
-		          </div>
-		          <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-		            <div class="block-18 text-center">
-		              <div class="text">
-		                <strong class="number" data-number="56400">0</strong>
-		                <span>Restaurant</span>
-		              </div>
-		            </div>
-		          </div>
-		        </div>
-	        </div>
-        </div>
-    	</div>
-    </section>
+    {% block fun_facts %}
+    {% endblock %}
 
     <section class="ftco-section-parallax">
       <div class="parallax-img d-flex align-items-center">
@@ -395,6 +345,7 @@
 
     <footer class="ftco-footer ftco-bg-dark ftco-section">
       <div class="container">
+        <!--
         <div class="row mb-5">
           <div class="col-md">
             <div class="ftco-footer-widget mb-4">
@@ -445,9 +396,9 @@
             </div>
           </div>
         </div>
+      -->
         <div class="row">
           <div class="col-md-12 text-center">
-
             <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
   Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
