@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateMetricReviewForm, CreateSnackForm
 
 # from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
@@ -231,43 +231,68 @@ def create_review():
     # check authenticated
     if current_user.is_authenticated:
         print("is_authenticated")
-
         review_form = CreateReviewForm(request.form)
         # post to db
         if request.method == "POST" and review_form.validate_on_submit():
             user_id = current_user.id
-            # should probably check if user_id is in db
-
             # snack name and brand
             # query for it
             snacks = Snack.objects
             snack_id = snacks.filter(snack_name=request.snack_name).filter(snack_brand=request.snack_brand)
+
+            # check if metric review
+            if review_form.saltiness != 0 or review_form.sourness != 0 or review_form.spiciness != 0 \
+                or review_form.bitterness != 0 or review_form.sweetness != 0:
+
+                try:
+                    # user_id comes from current_user
+                    # snack_id should come from request sent by frontend
+                    # geolocation is found by request
+                    snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
+                                        description=review_form.description.data,
+                                        geolocation="Default", overall_rating=review_form.overall_rating.data,
+                                        sourness=review_form.sourness.data, spiciness=review_form.spiciness.data,
+                                        saltiness=review_form.saltiness.data, bitterness=review_form.bitterness.data,
+                                        sweetness=review_form.sweetness.data)
+                    snack_metric_review.save()
+
+                except Exception as e:
+                    raise Exception(
+                    f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
+
+                print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+
+                for u in MetricReview.objects[:10]:
+                    print(u)
+
+                return redirect(url_for('index'))
 
             # geolocation stuff
             # ip_address = request.access_route[0] or request.remote_addr
             # geodata = get_geodata(ip_address)
             # location = "{}, {}".format(geodata.get("city"),
             #                            geodata.get("zipcode"))
+            else:
+                try:
+                    # user_id comes from current_user
+                    # snack_id should come from request sent by frontend
+                    # geolocation is found by request
+                    new_review = Review(user_id=user_id, snack_id=snack_id,
+                                        description=review_form.description.data,
+                                        geolocation="Default", overall_rating=review_form.overall_rating.data)
+                    new_review.save()
 
-            try:
-                # user_id comes from current_user
-                # snack_id should come from request sent by frontend
-                # geolocation is found by request
-                new_review = Review(user_id=user_id, snack_id=snack_id,
-                                    description=review_form.description.data,
-                                    geolocation="Default", overall_rating=review_form.overall_rating.data)
-                new_review.save()
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
 
-            except Exception as e:
-                raise Exception(
-                    f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
+                print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
 
-            print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+                for u in Review.objects[:10]:
+                    print(u)
 
-            for u in Review.objects[:10]:
-                print(u)
+                return redirect(url_for('index'))
 
-            return redirect(url_for('index'))
         return render_template("create_review.html", title="Create Review", form=review_form)  # frontend stuff
 
     else:
