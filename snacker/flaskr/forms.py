@@ -51,8 +51,12 @@ class CreateReviewForm(FlaskForm):
 
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    sourness = IntField(NumberRange(min=1, max=5))
+    spiciness = IntField(NumberRange(min=1, max=5))
+    bitterness = IntField(NumberRange(min=1, max=5))
+    sweetness = IntField(NumberRange(min=1, max=5))
+    saltiness = IntField(NumberRange(min=1, max=5))
     submit = SubmitField('Submit Review')
-
 
 class CreateSnackForm(FlaskForm):
 
