@@ -4,13 +4,14 @@ import urllib
 import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm
-from schema import *
-from util import *
 
 # from geodata import get_geodata
+from schema import Snack, Review, CompanyUser, User, MetricReview
+from util import SnackResults, ReviewResults
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -66,8 +67,9 @@ def index():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
-        interesting_facts=interesting_facts)
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
+                           popular_snacks=popular_snacks,
+                           interesting_facts=interesting_facts)
 
 
 @app.route("/about")
@@ -152,15 +154,15 @@ def hello_world():
     try:
         metric_review.save()
         avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
-        avg_sourness = Review.objects.filter\
+        avg_sourness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
-        avg_spiciness = Review.objects.filter\
+        avg_spiciness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
-        avg_bitterness = Review.objects.filter\
+        avg_bitterness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
-        avg_sweetness = Review.objects.filter\
+        avg_sweetness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
-        avg_saltiness = Review.objects.filter\
+        avg_saltiness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
         Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
         Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
@@ -187,8 +189,9 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
-        interesting_facts=interesting_facts)
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
+                           popular_snacks=popular_snacks,
+                           interesting_facts=interesting_facts)
 
 
 @app.route('/register/', methods=["GET", "POST"])
@@ -260,7 +263,7 @@ def create_review():
                 print(u)
 
             return redirect(url_for('index'))
-        return render_template("create_review.html", title="Create Review", form=review_form) #frontend stuff
+        return render_template("create_review.html", title="Create Review", form=review_form)  # frontend stuff
 
     else:
         return redirect(url_for('index'))
@@ -275,6 +278,7 @@ def create_snack():
     for snk in snacks:
         print(snacks)
     return "The front-end of this isn't implemented! D:"
+
 
 """ Routes and methods related to user login and authentication """
 
