@@ -2,10 +2,12 @@ import sys
 import urllib
 
 import mongoengine as mg
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, make_response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
+from mongoengine.queryset.visitor import Q
+import json
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateMetricReviewForm, CreateSnackForm
 
@@ -195,31 +197,37 @@ def hello_world():
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
     return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
-                           popular_snacks=popular_snacks,
-                           interesting_facts=interesting_facts)
+                           popular_snacks=popular_snacks, interesting_facts=interesting_facts)
 
 
-@app.route('/register/', methods=["GET", "POST"])
+@app.route('/register', methods=["GET", "POST"])
 def register():
     # IMPORTANT: Encrypt the password for the increased security.
     encrypted_password = lambda password_as_string: bcrypt.generate_password_hash(password_as_string)
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
-    if request.method == "POST" and form.validate_on_submit():
-        email = form.email.data
+    if request.method == "POST":
+        print(f"dfdsf\n", file=sys.stdout)
+        email = request.form['email']
         # Add user to database.
         try:
-            new_user = User(email=form.email.data, first_name=form.first_name.data,
-                            last_name=form.last_name.data, password=encrypted_password(form.password.data))
+            new_user = User(email=request.form['email'], first_name=request.form['first_name'],
+                            last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
             new_user.save()
         except Exception as e:
             raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
         print(f"A new user submitted the registration form: {email}", file=sys.stdout)
         for u in User.objects[:10]:
             print(u)
-        print(url_for('index'))
-        return redirect(url_for('index'))
+        user = {
+            'email': new_user.email,
+            'first_name': new_user.first_name,
+            'last_name': new_user.last_name
+        }
+        response = make_response(json.dumps(user))
+        response.status_code = 200
+        return response
     return render_template("register.html", title="Register", form=form)
 
 
@@ -356,22 +364,27 @@ def load_user(user_id):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # For GET requests, display the login form; for POST, log in the current user by processing the form.
-    print("LOGGING IN")
+    print(f"LOGGING IN\n", file=sys.stdout)
     if current_user.is_authenticated:
-        print("is_authenticated")
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
     form = LoginForm(request.form)
 
-    if request.method == 'POST' and form.validate_on_submit():
-        print("posting")
-        user = User.objects(email=form.email.data).first()
-        print("user is ", user)
-        if user is None or not user.check_password(bcrypt, form.password.data):
+    if request.method == 'POST':
+        user = User.objects(email=request.form['email']).first()
+        print(f"user is {user}\n", file=sys.stdout)
+        if user is None or not user.check_password(bcrypt, request.form['password']):
             flash("Invalid username or password")
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        login_user(user, remember=True)
+        user = {
+            'email': current_user.email,
+            'first_name': current_user.first_name,
+            'last_name': current_user.last_name
+        }
+        response = make_response(json.dumps(user))
+        response.status_code = 200
+        return response
     return render_template('login.html', title='Sign In', form=form)
 
 
@@ -397,24 +410,26 @@ def find_reviews_for_snack(filters):
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
-            if this_filter[0] == "user_id":
-                queryset = queryset.filter(user_id=this_filter[1])
-            elif this_filter[0] == "snack_id":
-                queryset = queryset.filter(snack_id=this_filter[1])
-            elif this_filter[0] == "overall_rating":
-                queryset = queryset.filter(overall_rating__gte=this_filter[1])
-            elif this_filter[0] == "geolocation":
-                queryset = queryset.filter(geolocation=this_filter[1])
-            elif this_filter[0] == "sourness":
-                queryset = queryset.filter(sourness__gte=this_filter[1])
-            elif this_filter[0] == "spiciness":
-                queryset = queryset.filter(spiciness__gte=this_filter[1])
-            elif this_filter[0] == "bitterness":
-                queryset = queryset.filter(bitterness__gte=this_filter[1])
-            elif this_filter[0] == "sweetness":
-                queryset = queryset.filter(sweetness__gte=this_filter[1])
-            elif this_filter[0] == "saltiness":
-                queryset = queryset.filter(saltiness__gte=this_filter[1])
+            query_index = this_filter[0]
+            query_value = this_filter[1]
+            if query_index == "user_id":
+                queryset = queryset.filter(user_id=query_value)
+            elif query_index == "snack_id":
+                queryset = queryset.filter(snack_id=query_value)
+            elif query_index == "overall_rating":
+                queryset = queryset.filter(overall_rating__gte=query_value)
+            elif query_index == "geolocation":
+                queryset = queryset.filter(geolocation=query_value)
+            elif query_index == "sourness":
+                queryset = queryset.filter(sourness__gte=query_value)
+            elif query_index == "spiciness":
+                queryset = queryset.filter(spiciness__gte=query_value)
+            elif query_index == "bitterness":
+                queryset = queryset.filter(bitterness__gte=query_value)
+            elif query_index == "sweetness":
+                queryset = queryset.filter(sweetness__gte=query_value)
+            elif query_index == "saltiness":
+                queryset = queryset.filter(saltiness__gte=query_value)
     queryset = queryset.order_by("-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     display = ReviewResults(queryset)
@@ -432,6 +447,8 @@ def find_snack_by_filter(filters):
     Only support searching for one location at a time now (i.e. can't find snacks both in USA and Canada)
     For is verfied, false for false and true for true
     Results currently ordered by snack name
+    For snack name, it will return all snacks that contain the string given by snack_name instead of only returning the
+        snacks with exactly the same name
     /find_snacks/snack_name=abc+available_at_locations=a+...
     /find_snacks/all if we want to get all snacks
     """
@@ -444,24 +461,30 @@ def find_snack_by_filter(filters):
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
-            if this_filter[0] == "snack_name":
-                queryset = queryset.filter(snack_name=this_filter[1])
-            elif this_filter[0] == "available_at_locations":
+            query_index = this_filter[0]
+            query_value = this_filter[1]
+            if query_index == "snack_name":
+                # Change to contain so that snacks with similar name to inputted name will be returned too
+                if query_value != "":
+                    queryset = queryset.filter(snack_name__contains=query_value)
+            elif query_index == "available_at_locations":
                 # Note for this, say if they enter n, they will still return snacks in Canada because their contains
                 #   is based on string containment. If order to solve this, we can let force users to select countries
                 #   instead of typing countries
-                queryset = queryset.filter(available_at_locations__contains=this_filter[1])
-            elif this_filter[0] == "snack_brand":
-                queryset = queryset.filter(snack_brand=this_filter[1])
-            elif this_filter[0] == "snack_company_name":
-                queryset = queryset.filter(snack_company_name=this_filter[1])
-            elif this_filter[0] == "is_verified":
-                if this_filter[1] == "false":
+                if query_value != "all":
+                    queryset = queryset.filter(available_at_locations__contains=query_value)
+            elif query_index == "snack_brand":
+                if query_value != "":
+                    queryset = queryset.filter(snack_brand=query_value)
+            elif query_index == "snack_company_name":
+                queryset = queryset.filter(snack_company_name=query_value)
+            elif query_index == "is_verified":
+                if query_value == "false":
                     queryset = queryset.filter(is_verified=False)
                 else:
                     queryset = queryset.filter(is_verified=True)
-            elif this_filter[0] == "category":
-                queryset = queryset.filter(category=this_filter[1])
+            elif query_index == "category":
+                queryset = queryset.filter(category=query_value)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     display = SnackResults(queryset)

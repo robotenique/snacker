@@ -1,12 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField
-
 from mongoengine import IntField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField, DecimalField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
 from schema import User
-
 import pycountry
 
 
@@ -16,7 +13,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email Address", [
         Email("Invalid email address provided"),
         Length(min=6, max=100),
-        DataRequired("Please provide an email address")
+        DataRequired("Please provide an email address"),
     ])
     is_company = BooleanField("Are you a company or a distributor?")
     password = PasswordField("New Password (maximum length is 50)", [
@@ -60,13 +57,6 @@ class CreateReviewForm(FlaskForm):
     sweetness = IntField(NumberRange(min=1, max=5))
     saltiness = IntField(NumberRange(min=1, max=5))
     submit = SubmitField('Submit Review')
-
-class CreateMetricReviewForm(CreateReviewForm):
-    # user_id = ObjectIdField("User Id", [DataRequired(), ])
-    # snack_id = ObjectIdField("Snack Id", [DataRequired(), ])
-    # geolocation = ("First Name", [DataRequired(), Length(min=2, max=100)])
-    # above comes from backend
-
 
 class CreateSnackForm(FlaskForm):
 
