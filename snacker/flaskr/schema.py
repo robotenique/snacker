@@ -5,9 +5,12 @@ from flask_login import UserMixin
 from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
     ObjectIdField
 
-
 # An unique ID (user.id) is automatically created.
 # Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
+from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
+    ObjectIdField
+
+
 class User(UserMixin, Document):
     email = EmailField(required=True, unique=True)
     first_name = StringField(required=True)
