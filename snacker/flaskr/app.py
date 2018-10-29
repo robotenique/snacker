@@ -30,6 +30,11 @@ DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
 
+#For snack images
+UPLOAD_FOLDER = ""
+ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
@@ -266,7 +271,7 @@ def create_review():
         return redirect(url_for('index'))
 
 
-@app.route("/create-snack", methods=["POST"])
+@app.route("/create-snack", methods=["GET", "POST"])
 @login_required
 def create_snack():
     # Get snacks from the database.
@@ -285,7 +290,6 @@ def create_snack():
                 new_snack = Snack(snack_name=create_snack_form.snack_name.data,
                                   available_at_locations=create_snack_form.available_at_locations.data,
                                   snack_brand=create_snack_form.snack_brand.data,
-                                  photo_files="Default",
                                   description=create_snack_form.description.data,
                                   avg_overall_rating=create_snack_form.avg_overall_rating.data,
                                   avg_sourness=create_snack_form.avg_sourness.data,
