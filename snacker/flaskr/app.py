@@ -4,11 +4,13 @@ import urllib
 import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
-from flask_table import *
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm
 from schema import *
+from util import *
+
+# from geodata import get_geodata
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -51,7 +53,21 @@ bcrypt = Bcrypt(app)
 
 @app.route("/index")
 def index():
-    return render_template('index.html')
+    snacks = Snack.objects
+    popular_snacks = snacks.order_by("-review_count")[:5]
+    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
+    # TODO: Recommend snacks tailored to user
+    featured_snacks = top_snacks
+
+    # Use JS Queries later
+    # Needs to be a divisor of 12
+    interesting_facts = []
+    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Reviews", Review.objects.count()))
+    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
+        interesting_facts=interesting_facts)
 
 
 @app.route("/about")
@@ -93,8 +109,15 @@ def hello_world():
     for obj in Snack.objects:
         print(f"    Before Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
     # To test it yourself, create a snack with different name and brand from the exisiting snacks in the db
-    snack = Snack(snack_name="Crunchy Cheese Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
-    snack.description = "Yummy yummy"
+    snack = Snack(snack_name="Crunchy Cheesy Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
+    snack.description = "Yummy yum"
+    snack.avg_overall_rating = 0
+    snack.avg_bitterness = 0
+    snack.avg_saltiness = 0
+    snack.avg_sourness = 0
+    snack.avg_spiciness = 0
+    snack.avg_sweetness = 0
+    snack.review_count = 0
     try:
         snack.save()
     except Exception as e:
@@ -103,33 +126,69 @@ def hello_world():
     for obj in Snack.objects:
         print(f"    After Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
 
-    # Test MetricReview
-    for obj in MetricReview.objects:
-        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    metric_review = MetricReview(user_id="5bd1377387bec222cc6e6025", snack_id="5bd1377387bec222cc6e6027",
-                                 description="ok", geolocation="Canada", overall_rating="3", sourness="1",
-                                 spiciness="1")
-    try:
-        metric_review.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in MetricReview.objects:
-        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-
     # Test Review
     # Display existing reviews in the db
-    print(f"a\n", file=sys.stdout)
     for obj in Review.objects:
         print(f"    Before Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    review = Review(user_id="5bd1377387bec222cc6e6026", snack_id="5bd1377387bec222cc6e6027", description="like it",
-                    geolocation="Canada", overall_rating="5")
+    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd6054687bec22d78d12c59", description="too hot",
+                    geolocation="Canada", overall_rating="2")
     try:
         review.save()
+        avg_overall_rating = Review.objects.filter(snack_id=review.snack_id).average('overall_rating')
+        Snack.objects(id=review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
+        review_count = Snack.objects(id=review.snack_id)[0].review_count + 1
+        Snack.objects(id=review.snack_id).update(set__review_count=review_count)
     except Exception as e:
         print("Error \n %s" % e, file=sys.stdout)
     for obj in Review.objects:
         print(f"    After Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    return 'Hello World!'
+
+    # Test MetricReview
+    for obj in MetricReview.objects:
+        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
+    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd6054687bec22d78d12c59",
+                                 description="love it!", geolocation="Canada", overall_rating="5", sourness="1",
+                                 spiciness="4")
+    try:
+        metric_review.save()
+        avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
+        avg_sourness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
+        avg_spiciness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
+        avg_bitterness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
+        avg_sweetness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
+        avg_saltiness = Review.objects.filter\
+            (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
+        Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_spiciness=avg_spiciness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_bitterness=avg_bitterness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_sweetness=avg_sweetness)
+        Snack.objects(id=metric_review.snack_id).update(set__avg_saltiness=avg_saltiness)
+        review_count = Snack.objects(id=metric_review.snack_id)[0].review_count + 1
+        Snack.objects(id=metric_review.snack_id).update(set__review_count=review_count)
+    except Exception as e:
+        print("Error \n %s" % e, file=sys.stdout)
+    for obj in MetricReview.objects:
+        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
+    snacks = Snack.objects
+    popular_snacks = snacks.order_by("-review_count")[:5]
+    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
+    # TODO: Recommend snacks tailored to user
+    featured_snacks = top_snacks
+
+    # Use JS Queries later
+    # Needs to be a divisor of 12
+    interesting_facts = []
+    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Reviews", Review.objects.count()))
+    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
+        interesting_facts=interesting_facts)
 
 
 @app.route('/register/', methods=["GET", "POST"])
@@ -156,6 +215,57 @@ def register():
     return render_template("register.html", title="Register", form=form)
 
 
+@app.route("/create-review", methods=["GET", "POST"])
+@login_required
+def create_review():
+    # Create a review and insert it into database.
+
+    # check authenticated
+    if current_user.is_authenticated:
+        print("is_authenticated")
+
+        review_form = CreateReviewForm(request.form)
+        # post to db
+        if request.method == "POST" and review_form.validate_on_submit():
+            user_id = current_user.id
+            # should probably check if user_id is in db
+
+            # snack name and brand
+            # query for it
+            snacks = Snack.objects
+            snack_id = snacks.filter(snack_name=request.snack_name).filter(snack_brand=request.snack_brand)
+
+            # geolocation stuff
+            # ip_address = request.access_route[0] or request.remote_addr
+            # geodata = get_geodata(ip_address)
+            # location = "{}, {}".format(geodata.get("city"),
+            #                            geodata.get("zipcode"))
+
+            try:
+                # user_id comes from current_user
+                # snack_id should come from request sent by frontend
+                # geolocation is found by request
+                new_review = Review(user_id=user_id, snack_id=snack_id,
+                                    description=review_form.description.data,
+                                    geolocation="Default", overall_rating=review_form.overall_rating.data)
+                new_review.save()
+
+            except Exception as e:
+                raise Exception(
+                    f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
+
+            print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+
+            for u in User.objects[:10]:
+                print(u)
+
+            return redirect(url_for('index'))
+        return render_template("create_review.html", title="Create Review", form=review_form) #frontend stuff
+
+    else:
+        return redirect(url_for('index'))
+
+
 @app.route("/create-snack")
 @login_required
 def create_snack():
@@ -165,7 +275,6 @@ def create_snack():
     for snk in snacks:
         print(snacks)
     return "The front-end of this isn't implemented! D:"
-
 
 """ Routes and methods related to user login and authentication """
 
@@ -203,88 +312,93 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/snack_reviews/<string:snack_id>", methods=['GET'])
-def find_reviews_for_snack(snack_id):
+# Finished and tested
+@app.route("/snack_reviews/<string:filters>", methods=['GET'])
+def find_reviews_for_snack(filters):
     """
-    Find all the reviews for a snack.
-    To display a table of reviews for a snack_id, enter local/_url/snack_reviews/snack_id in your browser.
+    Find all reviews given filter
+    For overall rating, and the metrics, all reviews with greater or equal to the given value will be returned
+    Results currently ordered by descending overall rating
+    /snack_reviews/snack_id=abc+overall_rating=3...
     """
-    reviews = Review.objects(snack_id=snack_id)
-    print(f"snack_reviews: {reviews}", file=sys.stdout)
-    if not reviews:
-        return "No reviews found"
-    else:
-        display = ReviewResults(reviews)
-        display.border = True
-        return render_template('reviews_for_snack.html', table=display)
+    all_filters = filters.split("+")
+    print(f"{all_filters}\n", file=sys.stdout)
+    queryset = Review.objects
+    # all reviews will be returned if nothing specified
+    if "=" in filters:
+        for individual_filter in all_filters:
+            this_filter = individual_filter.split("=")
+            if this_filter[0] == "user_id":
+                queryset = queryset.filter(user_id=this_filter[1])
+            elif this_filter[0] == "snack_id":
+                queryset = queryset.filter(snack_id=this_filter[1])
+            elif this_filter[0] == "overall_rating":
+                queryset = queryset.filter(overall_rating__gte=this_filter[1])
+            elif this_filter[0] == "geolocation":
+                queryset = queryset.filter(geolocation=this_filter[1])
+            elif this_filter[0] == "sourness":
+                queryset = queryset.filter(sourness__gte=this_filter[1])
+            elif this_filter[0] == "spiciness":
+                queryset = queryset.filter(spiciness__gte=this_filter[1])
+            elif this_filter[0] == "bitterness":
+                queryset = queryset.filter(bitterness__gte=this_filter[1])
+            elif this_filter[0] == "sweetness":
+                queryset = queryset.filter(sweetness__gte=this_filter[1])
+            elif this_filter[0] == "saltiness":
+                queryset = queryset.filter(saltiness__gte=this_filter[1])
+    queryset = queryset.order_by("-overall_rating")
+    print(f"snack_reviews: {queryset}", file=sys.stdout)
+    display = ReviewResults(queryset)
+    display.border = True
+    # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
+    #   the current simple front end table an error, but it is there for use
+    return render_template('reviews_for_snack.html', table=display)
 
 
-# TODO: remove after implementing the front end.
-class ReviewResults(Table):
-    """
-    Test class that helps to display the readable snacks data to the front end in the format of a table.
-    It allows us to test the backend and html rendering, without having to wait for the implementation
-    of the final front end.
-    """
-    id = Col('Review Id')
-    user_id = Col('User ID')
-    snack_id = Col('Snack ID')
-    description = Col('Description')
-    overall_rating = Col('Overall Rating')
-    geolocation = Col('Geolocation')
-    sourness = Col('sourness')
-    spiciness = Col('spiciness')
-    bitterness = Col('bitterness')
-    sweetness = Col('sweetness')
-    saltiness = Col('saltiness')
-
-
-@app.route("/find_snacks?<string:filter>", methods=['GET'])
+# Finished and tested
+@app.route("/find_snacks/<string:filters>", methods=['GET'])
 def find_snack_by_filter(filters):
     """
-    Find all snacks given a filter
-    /find_snacks?snack_name=abc&available_at_locations=a+b+c&...
+    Find all snacks given filter
+    Only support searching for one location at a time now (i.e. can't find snacks both in USA and Canada)
+    For is verfied, false for false and true for true
+    Results currently ordered by snack name
+    /find_snacks/snack_name=abc+available_at_locations=a+...
+    /find_snacks/all if we want to get all snacks
     """
-    filter_query = {}
-    all_filters = filters.split("&")
-    available_basic_filters = ['snack_name', 'snack_brand', 'snack_company_name', 'is_verified', 'category']
+    all_filters = filters.split("+")
+    print(f"{all_filters}\n", file=sys.stdout)
+    queryset = Snack.objects
 
-    for individual_filter in all_filters:
-        filter = individual_filter.split("=")
-        filter_name = filter[0]
-        filter_variable = filter[1]
-        if filter_name in available_basic_filters:
-            filter_query[filter_name] = filter_variable
-        elif filter_name == "available_at_locations":
-            filter_query['available_at_locations'] = {"$elemMatch": filter_variable}
-
-    snacks = Snack.objects.find(filter_query)
-    print(f"snack_reviews: {snacks}", file=sys.stdout)
-    if not snacks:
-        return "No snacks founds"
-    else:
-        display = SnackResults(snacks)
-        display.border = True
-        # Return the same template as for the review, since it only needs to display a table.
-        return render_template('reviews_for_snack.html', table=display)
-
-
-# TODO: remove after implementing the front end.
-class SnackResults(Table):
-    """
-    Test class that helps to display the readable snacks data to the front end in the format of a table.
-    It allows us to test the backend and html rendering, without having to wait for the implementation
-    of the final front end.
-    """
-    id = Col('Snack Id')
-    snack_name = Col('snack_name')
-    available_at_locations = Col('Location')
-    snack_brand = Col('Brand')
-    snack_company_name = Col('Company Name')
-    photo_files = Col('Photo')
-    description = Col('Description')
-    is_verified = Col('if verified')
-    category = Col('Category')
+    # the search string should be all if we want to get all snacks, but we can type anything that doesn't include = to
+    #   get the same results
+    if "=" in filters:
+        for individual_filter in all_filters:
+            this_filter = individual_filter.split("=")
+            if this_filter[0] == "snack_name":
+                queryset = queryset.filter(snack_name=this_filter[1])
+            elif this_filter[0] == "available_at_locations":
+                # Note for this, say if they enter n, they will still return snacks in Canada because their contains
+                #   is based on string containment. If order to solve this, we can let force users to select countries
+                #   instead of typing countries
+                queryset = queryset.filter(available_at_locations__contains=this_filter[1])
+            elif this_filter[0] == "snack_brand":
+                queryset = queryset.filter(snack_brand=this_filter[1])
+            elif this_filter[0] == "snack_company_name":
+                queryset = queryset.filter(snack_company_name=this_filter[1])
+            elif this_filter[0] == "is_verified":
+                if this_filter[1] == "false":
+                    queryset = queryset.filter(is_verified=False)
+                else:
+                    queryset = queryset.filter(is_verified=True)
+            elif this_filter[0] == "category":
+                queryset = queryset.filter(category=this_filter[1])
+    queryset = queryset.order_by("snack_name")
+    print(f"snack_reviews: {queryset}", file=sys.stdout)
+    display = SnackResults(queryset)
+    display.border = True
+    # Return the same template as for the review, since it only needs to display a table.
+    return render_template('reviews_for_snack.html', table=display)
 
 
 if __name__ == '__main__':

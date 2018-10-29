@@ -1,6 +1,7 @@
 from mongoengine import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+
 # An unique ID (user.id) is automatically created.
 # Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
 class User(UserMixin, Document):
@@ -9,7 +10,7 @@ class User(UserMixin, Document):
     last_name = StringField(required=True)
 
     # Image size can be specified in ImageField().
-    avatar_file = ImageField()
+    avatar_file = ImageField(upload_to='avatars')
 
     # User has to verify his email address, before he becomes a verified user.
     is_verified = BooleanField(required=True, default=False)
@@ -40,17 +41,24 @@ class CompanyUser(User):
 
 # An unique ID is automatically created (snack.id).
 class Snack(Document):
-    snack_name = StringField(required=True, unique_with='snack_brand')
+    snack_name = StringField(required=True)
     # Countries where the snacks have been reviewed or is available at.
     available_at_locations = ListField(StringField(), required=True)
-    snack_brand = StringField(required=True)
+    snack_brand = StringField(required=True, unique_with="snack_name")
     snack_company_name = StringField()
 
     # Image size can be specified in ImageField().
-    photo_files = ListField(ImageField())
+    photo_files = ListField(ImageField(upload_to='snack_photos'))
     description = StringField()
     is_verified = BooleanField(required=True, default=False)
     category = StringField()
+    review_count = IntField()
+    avg_overall_rating = DecimalField()
+    avg_sourness = DecimalField()
+    avg_spiciness = DecimalField()
+    avg_bitterness = DecimalField()
+    avg_sweetness = DecimalField()
+    avg_saltiness = DecimalField()
 
 
 # An unique ID is automatically created (review.id).
