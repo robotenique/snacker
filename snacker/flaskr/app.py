@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
+from mongoengine import *
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm
 
