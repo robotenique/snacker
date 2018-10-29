@@ -10,7 +10,7 @@
         <div class="form-group" style="color:white;">
             {{ render_field(form.first_name) }}
             {{ render_field(form.last_name) }}
-            {{ render_field(form.email) }}
+            {{ render_field(form.email, id="register_email") }}
             <label style="color:black;">{{form.is_company.label}}</label>
             {{form.is_company(value="Are you a company or a distributor?")}}
             {{ render_field(form.password) }}

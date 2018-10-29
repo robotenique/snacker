@@ -4,11 +4,14 @@ import urllib
 import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm
-from schema import *
-from util import *
+
+# from geodata import get_geodata
+from schema import Snack, Review, CompanyUser, User, MetricReview
+from util import SnackResults, ReviewResults
 
 # from geodata import get_geodata
 

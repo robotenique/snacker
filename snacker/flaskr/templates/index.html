@@ -34,7 +34,8 @@
           <li class="nav-item"><a href="hotel.html" class="nav-link">Hotels</a></li>
           <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
           <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-          <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Add listing</span></a></li>
+{#            Need to check if user is logined in here, if so here should say Account#}
+          <li class="nav-item cta"><a href="login" class="nav-link"><span>Login</span></a></li>
         </ul>
       </div>
     </div>
@@ -218,9 +219,9 @@
               <p>Register to get the most of our app!:)</p>
               <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-8">
-                  <form action="#" class="subscribe-form">
+                  <form class="subscribe-form" onsubmit="indexRegister(); return false;">
                     <div class="form-group d-flex">
-                      <input type="text" class="form-control" placeholder="Enter email address">
+                      <input id="index_email" type="text" class="form-control" placeholder="Enter email address">
                       <input type="submit" value="Register" class="submit px-3">
                     </div>
                   </form>
@@ -304,7 +305,7 @@
   <script src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/scrollax.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/snacker.js') }}"></script>
 
   </body>
 </html>

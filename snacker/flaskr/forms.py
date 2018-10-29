@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from mongoengine import IntField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
+
 from schema import User
-from mongoengine import *
 
 
 class RegistrationForm(FlaskForm):
@@ -11,7 +12,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email Address", [
         Email("Invalid email address provided"),
         Length(min=6, max=100),
-        DataRequired("Please provide an email address")
+        DataRequired("Please provide an email address"),
     ])
     is_company = BooleanField("Are you a company or a distributor?")
     password = PasswordField("New Password (maximum length is 50)", [
@@ -40,14 +41,13 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-class CreateReviewForm(FlaskForm):
 
+class CreateReviewForm(FlaskForm):
     # user_id = ObjectIdField("User Id", [DataRequired(), ])
     # snack_id = ObjectIdField("Snack Id", [DataRequired(), ])
     # geolocation = ("First Name", [DataRequired(), Length(min=2, max=100)])
-    #above comes from backend
+    # above comes from backend
 
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Submit Review')
-
