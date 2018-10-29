@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
-from schema import User
+from schema import User, Snack
 from mongoengine import *
 import pycountry
 
@@ -72,4 +72,11 @@ class CreateSnackForm(FlaskForm):
     avg_saltiness = DecimalField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Create Snack')
 
+    def validate_snack(self, field):
 
+        """Prevent multiple snacks from having the same name and brand"""
+        snack_name = Snack.objects(snack_name=field.data).first()
+
+        if snack is not None:
+            raise ValidationError(
+                "This snack has been already created, please use name another name")
