@@ -256,7 +256,7 @@ def create_review():
 
             print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
 
-            for u in User.objects[:10]:
+            for u in Review.objects[:10]:
                 print(u)
 
             return redirect(url_for('index'))
