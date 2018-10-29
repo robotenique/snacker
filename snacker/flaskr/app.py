@@ -2,13 +2,14 @@ import sys
 import urllib
 
 import mongoengine as mg
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, make_response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 from mongoengine import *
+import json
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
 
 # from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
@@ -199,27 +200,34 @@ def hello_world():
                            popular_snacks=popular_snacks, interesting_facts=interesting_facts)
 
 
-@app.route('/register/', methods=["GET", "POST"])
+@app.route('/register', methods=["GET", "POST"])
 def register():
     # IMPORTANT: Encrypt the password for the increased security.
     encrypted_password = lambda password_as_string: bcrypt.generate_password_hash(password_as_string)
     if current_user.is_authenticated:
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
-    if request.method == "POST" and form.validate_on_submit():
-        email = form.email.data
+    if request.method == "POST":
+        print(f"dfdsf\n", file=sys.stdout)
+        email = request.form['email']
         # Add user to database.
         try:
-            new_user = User(email=form.email.data, first_name=form.first_name.data,
-                            last_name=form.last_name.data, password=encrypted_password(form.password.data))
+            new_user = User(email=request.form['email'], first_name=request.form['first_name'],
+                            last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
             new_user.save()
         except Exception as e:
             raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
         print(f"A new user submitted the registration form: {email}", file=sys.stdout)
         for u in User.objects[:10]:
             print(u)
-        print(url_for('index'))
-        return redirect(url_for('index'))
+        user = {
+            'email': new_user.email,
+            'first_name': new_user.first_name,
+            'last_name': new_user.last_name
+        }
+        response = make_response(json.dumps(user))
+        response.status_code = 200
+        return response
     return render_template("register.html", title="Register", form=form)
 
 
@@ -331,22 +339,27 @@ def load_user(user_id):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # For GET requests, display the login form; for POST, log in the current user by processing the form.
-    print("LOGGING IN")
+    print(f"LOGGING IN\n", file=sys.stdout)
     if current_user.is_authenticated:
-        print("is_authenticated")
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
     form = LoginForm(request.form)
 
-    if request.method == 'POST' and form.validate_on_submit():
-        print("posting")
-        user = User.objects(email=form.email.data).first()
-        print("user is ", user)
-        if user is None or not user.check_password(bcrypt, form.password.data):
+    if request.method == 'POST':
+        user = User.objects(email=request.form['email']).first()
+        print(f"user is {user}\n", file=sys.stdout)
+        if user is None or not user.check_password(bcrypt, request.form['password']):
             flash("Invalid username or password")
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        login_user(user, remember=True)
+        user = {
+            'email': current_user.email,
+            'first_name': current_user.first_name,
+            'last_name': current_user.last_name
+        }
+        response = make_response(json.dumps(user))
+        response.status_code = 200
+        return response
     return render_template('login.html', title='Sign In', form=form)
 
 

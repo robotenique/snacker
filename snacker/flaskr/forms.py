@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from mongoengine import IntField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField, DecimalField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
 from schema import User
@@ -52,6 +52,7 @@ class CreateReviewForm(FlaskForm):
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Submit Review')
+
 
 class CreateSnackForm(FlaskForm):
 
