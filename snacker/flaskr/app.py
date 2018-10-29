@@ -266,15 +266,51 @@ def create_review():
         return redirect(url_for('index'))
 
 
-@app.route("/create-snack")
+@app.route("/create-snack", methods=["POST"])
 @login_required
 def create_snack():
-    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation.
     # Get snacks from the database.
-    snacks = Snack.objects
-    for snk in snacks:
-        print(snacks)
-    return "The front-end of this isn't implemented! D:"
+
+    if current_user.is_authenticated:
+        print("User is authenticated")
+
+        create_snack_form = CreateSnackForm(request.form)
+
+        if request.method == "POST" and create_snack_form.validate_on_submit():
+            snack_brand = create_snack_form.snack_brand.data
+            snack_name = create_snack_form.snack_name.data
+
+            #Add snack to db
+            try:
+                new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                  available_at_locations=create_snack_form.available_at_locations.data,
+                                  snack_brand=create_snack_form.snack_brand.data,
+                                  photo_files="Default",
+                                  description=create_snack_form.description.data,
+                                  avg_overall_rating=create_snack_form.avg_overall_rating.data,
+                                  avg_sourness=create_snack_form.avg_sourness.data,
+                                  avg_spiciness=create_snack_form.avg_spiciness.data,
+                                  avg_bitterness=create_snack_form.avg_bitterness.data,
+                                  avg_sweetness=create_snack_form.avg_sweetness.data,
+                                  avg_saltiness=create_snack_form.avg_saltiness.data)
+                new_snack.save()
+            except Exception as e:
+                raise Exception(f"Error {e}. \n Couldn't add snack {new_snack},\n with following creation form: "
+                                f"{create_snack_form}")
+            print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+
+            for snack in Snack.objects[:10]:
+                print(snack)
+
+            return redirect(url_for('index'))
+
+        #For frontend purposes
+        return render_template("create_snack.html", title="Create Snack", form=create_snack_form)
+    else:
+        #Go back to index if not authenticated
+        return redirect(url_for('index'))
+
+
 
 """ Routes and methods related to user login and authentication """
 

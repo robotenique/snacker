@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 from schema import User
 from mongoengine import *
+import pycountry
 
 
 class RegistrationForm(FlaskForm):
@@ -50,4 +51,27 @@ class CreateReviewForm(FlaskForm):
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Submit Review')
+
+class CreateSnackForm(FlaskForm):
+
+    snack_name = StringField("Snack Name", [DataRequired(), Length(min=2, max=50)])
+
+    #SelectField for a selection of as many countries
+    def __init__(self, *args, **kwargs):
+        super(CountrySelectField, self).__init__(*args, **kwargs)
+        self.choices = ["No Country Selected"]
+        for country in pycountry.countries:
+            self.choices.append(country.name)
+
+    snack_brand = StringField("Snack Brand", [DataRequired(), Length(min=2, max=50)])
+    # photo_file = FileField("Upload Photo", [FileAllowed(photo_file, u'Image only!'), FileRequired(u'File was empty!')])
+    description = StringField("Snack Description", [Length(min=2, max=255)])
+    avg_overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_sourness = IntField("Sourness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_spiciness = IntField("Spiciness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_bitterness = IntField("Bitterness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_sweetness = IntField("Sweetness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_saltiness = IntField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    submit = SubmitField('Submit Snack')
+
 
