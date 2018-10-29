@@ -187,8 +187,8 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
-        interesting_facts=interesting_facts)
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
+                           popular_snacks=popular_snacks, interesting_facts=interesting_facts)
 
 
 @app.route('/register/', methods=["GET", "POST"])
