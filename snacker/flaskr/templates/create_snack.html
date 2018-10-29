@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block body1 %}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" name="create_snack" style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
+        {{ form.hidden_tag() }}
+        <div class="form-group" style="color:white;">
+            {{ render_field(form.snack_name) }}
+            {{ render_field(form.snack_brand) }}
+            {{ render_field(form.category) }}
+            {{ render_field(form.available_at_location) }}
+            {{ render_field(form.description) }}
+        </div>
+        <input class="btn btn-primary" type="submit" name="submit" value="submit">
+    </form>
+
+{% if error %}
+<p class="error"><strong>Error:</strong>{{error}}</p>
+{% endif %}
+
+{% endblock %}
