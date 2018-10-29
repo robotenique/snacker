@@ -79,12 +79,4 @@ class CreateSnackForm(FlaskForm):
 
     category = SelectField('Snack Category', choices=categories)
     description = StringField("Snack Description", [Length(min=2, max=255)])
-
-    # avg_overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # avg_sourness = DecimalField("Sourness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # avg_spiciness = DecimalField("Spiciness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # avg_bitterness = DecimalField("Bitterness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # avg_sweetness = DecimalField("Sweetness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # avg_saltiness = DecimalField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-
     submit = SubmitField('Create Snack')
