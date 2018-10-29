@@ -1,8 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField
+
+from mongoengine import IntField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
+
 from schema import User
-from mongoengine import *
+
+import pycountry
 
 
 class RegistrationForm(FlaskForm):
@@ -40,14 +45,34 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-class CreateReviewForm(FlaskForm):
 
+class CreateReviewForm(FlaskForm):
     # user_id = ObjectIdField("User Id", [DataRequired(), ])
     # snack_id = ObjectIdField("Snack Id", [DataRequired(), ])
     # geolocation = ("First Name", [DataRequired(), Length(min=2, max=100)])
-    #above comes from backend
+    # above comes from backend
 
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Submit Review')
+
+class CreateSnackForm(FlaskForm):
+
+    snack_name = StringField("Snack Name", [DataRequired(), Length(min=2, max=50)])
+
+    country_choices = ["No Country Selected"]
+    for country in pycountry.countries:
+        country_choices.append(country.name)
+
+    available_at_location = SelectMultipleField("Available at Locations", country_choices)
+
+    snack_brand = StringField("Snack Brand", [DataRequired(), Length(min=2, max=50)])
+    description = StringField("Snack Description", [Length(min=2, max=255)])
+    avg_overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_sourness = DecimalField("Sourness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_spiciness = DecimalField("Spiciness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_bitterness = DecimalField("Bitterness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_sweetness = DecimalField("Sweetness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    avg_saltiness = DecimalField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    submit = SubmitField('Create Snack')
 

@@ -4,13 +4,14 @@ import urllib
 import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm
-from schema import *
-from util import *
 
 # from geodata import get_geodata
+from schema import Snack, Review, CompanyUser, User, MetricReview
+from util import SnackResults, ReviewResults
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -29,6 +30,11 @@ PASSWORD_FILE = "password.txt"
 DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
+
+#For snack images
+UPLOAD_FOLDER = ""
+ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
 
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
@@ -66,8 +72,9 @@ def index():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
-        interesting_facts=interesting_facts)
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
+                           popular_snacks=popular_snacks,
+                           interesting_facts=interesting_facts)
 
 
 @app.route("/about")
@@ -152,15 +159,15 @@ def hello_world():
     try:
         metric_review.save()
         avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
-        avg_sourness = Review.objects.filter\
+        avg_sourness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
-        avg_spiciness = Review.objects.filter\
+        avg_spiciness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
-        avg_bitterness = Review.objects.filter\
+        avg_bitterness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
-        avg_sweetness = Review.objects.filter\
+        avg_sweetness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
-        avg_saltiness = Review.objects.filter\
+        avg_saltiness = Review.objects.filter \
             (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
         Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
         Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
@@ -187,8 +194,9 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks, popular_snacks=popular_snacks,
-        interesting_facts=interesting_facts)
+    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
+                           popular_snacks=popular_snacks,
+                           interesting_facts=interesting_facts)
 
 
 @app.route('/register/', methods=["GET", "POST"])
@@ -256,25 +264,61 @@ def create_review():
 
             print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
 
-            for u in User.objects[:10]:
+            for u in Review.objects[:10]:
                 print(u)
 
             return redirect(url_for('index'))
-        return render_template("create_review.html", title="Create Review", form=review_form) #frontend stuff
+        return render_template("create_review.html", title="Create Review", form=review_form)  # frontend stuff
 
     else:
         return redirect(url_for('index'))
 
 
-@app.route("/create-snack")
+@app.route("/create-snack", methods=["GET", "POST"])
 @login_required
 def create_snack():
-    # TODO: This is an example of a route which requires the user to authenticate, not a complete implementation.
     # Get snacks from the database.
-    snacks = Snack.objects
-    for snk in snacks:
-        print(snacks)
-    return "The front-end of this isn't implemented! D:"
+
+    if current_user.is_authenticated:
+        print("User is authenticated")
+
+        create_snack_form = CreateSnackForm(request.form)
+
+        if request.method == "POST" and create_snack_form.validate_on_submit():
+            snack_brand = create_snack_form.snack_brand.data
+            snack_name = create_snack_form.snack_name.data
+
+            #Add snack to db
+            try:
+                new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                  available_at_locations=create_snack_form.available_at_locations.data,
+                                  snack_brand=create_snack_form.snack_brand.data,
+                                  description=create_snack_form.description.data,
+                                  avg_overall_rating=create_snack_form.avg_overall_rating.data,
+                                  avg_sourness=create_snack_form.avg_sourness.data,
+                                  avg_spiciness=create_snack_form.avg_spiciness.data,
+                                  avg_bitterness=create_snack_form.avg_bitterness.data,
+                                  avg_sweetness=create_snack_form.avg_sweetness.data,
+                                  avg_saltiness=create_snack_form.avg_saltiness.data)
+                new_snack.save()
+            except Exception as e:
+                raise Exception(f"Error {e}. \n Couldn't add snack {new_snack},\n with following creation form: "
+                                f"{create_snack_form}")
+            print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+
+            for snack in Snack.objects[:10]:
+                print(snack)
+
+            return redirect(url_for('index'))
+
+        #For frontend purposes
+        return render_template("create_snack.html", title="Create Snack", form=create_snack_form)
+    else:
+        #Go back to index if not authenticated
+        return redirect(url_for('index'))
+
+
+
 
 """ Routes and methods related to user login and authentication """
 
