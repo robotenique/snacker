@@ -385,24 +385,26 @@ def find_reviews_for_snack(filters):
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
-            if this_filter[0] == "user_id":
-                queryset = queryset.filter(user_id=this_filter[1])
-            elif this_filter[0] == "snack_id":
-                queryset = queryset.filter(snack_id=this_filter[1])
-            elif this_filter[0] == "overall_rating":
-                queryset = queryset.filter(overall_rating__gte=this_filter[1])
-            elif this_filter[0] == "geolocation":
-                queryset = queryset.filter(geolocation=this_filter[1])
-            elif this_filter[0] == "sourness":
-                queryset = queryset.filter(sourness__gte=this_filter[1])
-            elif this_filter[0] == "spiciness":
-                queryset = queryset.filter(spiciness__gte=this_filter[1])
-            elif this_filter[0] == "bitterness":
-                queryset = queryset.filter(bitterness__gte=this_filter[1])
-            elif this_filter[0] == "sweetness":
-                queryset = queryset.filter(sweetness__gte=this_filter[1])
-            elif this_filter[0] == "saltiness":
-                queryset = queryset.filter(saltiness__gte=this_filter[1])
+            query_index = this_filter[0]
+            query_value = this_filter[1]
+            if query_index == "user_id":
+                queryset = queryset.filter(user_id=query_value)
+            elif query_index == "snack_id":
+                queryset = queryset.filter(snack_id=query_value)
+            elif query_index == "overall_rating":
+                queryset = queryset.filter(overall_rating__gte=query_value)
+            elif query_index == "geolocation":
+                queryset = queryset.filter(geolocation=query_value)
+            elif query_index == "sourness":
+                queryset = queryset.filter(sourness__gte=query_value)
+            elif query_index == "spiciness":
+                queryset = queryset.filter(spiciness__gte=query_value)
+            elif query_index == "bitterness":
+                queryset = queryset.filter(bitterness__gte=query_value)
+            elif query_index == "sweetness":
+                queryset = queryset.filter(sweetness__gte=query_value)
+            elif query_index == "saltiness":
+                queryset = queryset.filter(saltiness__gte=query_value)
     queryset = queryset.order_by("-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     display = ReviewResults(queryset)
@@ -434,28 +436,30 @@ def find_snack_by_filter(filters):
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
-            if this_filter[0] == "snack_name":
+            query_index = this_filter[0]
+            query_value = this_filter[1]
+            if query_index == "snack_name":
                 # Change to contain so that snacks with similar name to inputted name will be returned too
-                if this_filter[1] != "":
-                    queryset = queryset.filter(snack_name__contains=this_filter[1])
-            elif this_filter[0] == "available_at_locations":
+                if query_value != "":
+                    queryset = queryset.filter(snack_name__contains=query_value)
+            elif query_index == "available_at_locations":
                 # Note for this, say if they enter n, they will still return snacks in Canada because their contains
                 #   is based on string containment. If order to solve this, we can let force users to select countries
                 #   instead of typing countries
-                if this_filter[1] != "all":
-                    queryset = queryset.filter(available_at_locations__contains=this_filter[1])
-            elif this_filter[0] == "snack_brand":
-                if this_filter[1] != "":
-                    queryset = queryset.filter(snack_brand=this_filter[1])
-            elif this_filter[0] == "snack_company_name":
-                queryset = queryset.filter(snack_company_name=this_filter[1])
-            elif this_filter[0] == "is_verified":
-                if this_filter[1] == "false":
+                if query_value != "all":
+                    queryset = queryset.filter(available_at_locations__contains=query_value)
+            elif query_index == "snack_brand":
+                if query_value != "":
+                    queryset = queryset.filter(snack_brand=query_value)
+            elif query_index == "snack_company_name":
+                queryset = queryset.filter(snack_company_name=query_value)
+            elif query_index == "is_verified":
+                if query_value == "false":
                     queryset = queryset.filter(is_verified=False)
                 else:
                     queryset = queryset.filter(is_verified=True)
-            elif this_filter[0] == "category":
-                queryset = queryset.filter(category=this_filter[1])
+            elif query_index == "category":
+                queryset = queryset.filter(category=query_value)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     display = SnackResults(queryset)
