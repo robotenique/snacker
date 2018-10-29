@@ -15,7 +15,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email Address", [
         Email("Invalid email address provided"),
         Length(min=6, max=100),
-        DataRequired("Please provide an email address")
+        DataRequired("Please provide an email address"),
     ])
     is_company = BooleanField("Are you a company or a distributor?")
     password = PasswordField("New Password (maximum length is 50)", [
@@ -53,6 +53,11 @@ class CreateReviewForm(FlaskForm):
 
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    sourness = IntField(NumberRange(min=1, max=5))
+    spiciness = IntField(NumberRange(min=1, max=5))
+    bitterness = IntField(NumberRange(min=1, max=5))
+    sweetness = IntField(NumberRange(min=1, max=5))
+    saltiness = IntField(NumberRange(min=1, max=5))
     submit = SubmitField('Submit Review')
 
 class CreateSnackForm(FlaskForm):
