@@ -363,6 +363,8 @@ def find_snack_by_filter(filters):
     Only support searching for one location at a time now (i.e. can't find snacks both in USA and Canada)
     For is verfied, false for false and true for true
     Results currently ordered by snack name
+    For snack name, it will return all snacks that contain the string given by snack_name instead of only returning the
+        snacks with exactly the same name
     /find_snacks/snack_name=abc+available_at_locations=a+...
     /find_snacks/all if we want to get all snacks
     """
@@ -376,14 +378,18 @@ def find_snack_by_filter(filters):
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
             if this_filter[0] == "snack_name":
-                queryset = queryset.filter(snack_name=this_filter[1])
+                # Change to contain so that snacks with similar name to inputted name will be returned too
+                if this_filter[1] != "":
+                    queryset = queryset.filter(snack_name__contains=this_filter[1])
             elif this_filter[0] == "available_at_locations":
                 # Note for this, say if they enter n, they will still return snacks in Canada because their contains
                 #   is based on string containment. If order to solve this, we can let force users to select countries
                 #   instead of typing countries
-                queryset = queryset.filter(available_at_locations__contains=this_filter[1])
+                if this_filter[1] != "all":
+                    queryset = queryset.filter(available_at_locations__contains=this_filter[1])
             elif this_filter[0] == "snack_brand":
-                queryset = queryset.filter(snack_brand=this_filter[1])
+                if this_filter[1] != "":
+                    queryset = queryset.filter(snack_brand=this_filter[1])
             elif this_filter[0] == "snack_company_name":
                 queryset = queryset.filter(snack_company_name=this_filter[1])
             elif this_filter[0] == "is_verified":

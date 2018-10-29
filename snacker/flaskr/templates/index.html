@@ -4,8 +4,6 @@
     <title>Snacker</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Alex+Brush" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/open-iconic-bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
@@ -50,18 +48,18 @@
             <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong> the snacks you need </h1>
             <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend yours to others</p>
             <div class="block-17 my-4">
-              <form action="" method="post" class="d-block d-flex">
+              <form class="d-block d-flex" onsubmit="searchSnacks(); return false;">
                 <div class="fields d-block d-flex">
                   <div class="textfield-search one-third">
-                  	<input type="text" class="form-control" placeholder="Brand: Cheetos etc.">
+                  	<input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
                   </div>
                   <div class="textfield-search one-third">
-                  	<input type="text" class="form-control" placeholder="Name: Flaming Flavored etc.">
+                  	<input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc.">
                   </div>
                   <div class="select-wrap one-third">
                     <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                      <option value="all">All</option>
+                    <select name="" id="index_search_location" class="form-control" placeholder="Keyword search">
+                      <option value="all">Where</option>
                       <option value="USA">USA</option>
                       <option value="Canada">Canada</option>
                       <option value="UK">UK</option>
@@ -72,12 +70,16 @@
                 <input type="submit" class="search-submit btn btn-primary" value="Search">
               </form>
             </div>
-            <p>Or browse the highlights</p>
+            <p>Or browse by categories</p>
             <p class="browse d-md-flex">
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-fork"></i>Cookies</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-hotel"></i>Chips</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
-            	<span class="d-flex justify-content-md-center align-items-md-	center"><a href="#"><i class="flaticon-shopping-bag"></i>Candies</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Cookies"><i class="flaticon-fork"></i>Cookies</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Chips"><i class="flaticon-hotel"></i>Chips</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Chocolate"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Candies"><i class="flaticon-shopping-bag"></i>Candies</a></span>
             </p>
           </div>
         </div>
@@ -219,7 +221,7 @@
                   <form action="#" class="subscribe-form">
                     <div class="form-group d-flex">
                       <input type="text" class="form-control" placeholder="Enter email address">
-                      <input type="submit" value="Subscribe" class="submit px-3">
+                      <input type="submit" value="Register" class="submit px-3">
                     </div>
                   </form>
                 </div>
@@ -236,7 +238,8 @@
           <div class="col-md">
             <div class="ftco-footer-widget mb-4">
               <h2 class="ftco-heading-2">Snacker</h2>
-              <p>Your best snacking buddy</p>
+              <p>Your best snacking buddy. Your place to go for all snack related information. Browse and review
+                any snacks and get personalized recommendations!</p>
               <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
                 <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
                 <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
@@ -300,9 +303,8 @@
   <script src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/scrollax.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false')}}"></script>
-  <script src="{{ url_for('static', filename='js/google-map.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
   </body>
 </html>
