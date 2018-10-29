@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectMultipleField
 
-from mongoengine import IntField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from mongoengine import IntField, ImageField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
 from schema import User, Snack
@@ -60,27 +59,27 @@ class CreateSnackForm(FlaskForm):
 
     snack_name = StringField("Snack Name", [DataRequired(), Length(min=2, max=50)])
 
-    country_choices = ["No Country Selected"]
+    default = [("Nothing Selected", "Nothing Selected")]
+    countries = []
     for country in pycountry.countries:
-        country_choices.append(country.name)
+        countries.append((country.name, country.name))
 
-    available_at_location = SelectMultipleField("Available at Locations", country_choices)
+    countries.sort()
+    country_choices = default + countries
 
+    available_at_location = SelectField('Available at Locations', choices=country_choices)
     snack_brand = StringField("Snack Brand", [DataRequired(), Length(min=2, max=50)])
+
+    categories = [("Cookies", "Cookies"), ("Chocolate", "Chocolate"), ("Candy", "Candy"), ("Chips", "Chips")]
+
+    category = SelectField('Snack Category', choices=categories)
     description = StringField("Snack Description", [Length(min=2, max=255)])
-    avg_overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    avg_sourness = DecimalField("Sourness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    avg_spiciness = DecimalField("Spiciness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    avg_bitterness = DecimalField("Bitterness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    avg_sweetness = DecimalField("Sweetness Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    avg_saltiness = DecimalField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+
+    # avg_overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    # avg_sourness = DecimalField("Sourness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    # avg_spiciness = DecimalField("Spiciness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    # avg_bitterness = DecimalField("Bitterness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    # avg_sweetness = DecimalField("Sweetness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+    # avg_saltiness = DecimalField("Saltiness Rating", [DataRequired(), NumberRange(min=1, max=5)])
+
     submit = SubmitField('Create Snack')
-
-    def validate_snack(self, field):
-
-        """Prevent multiple snacks from having the same name and brand"""
-        snack_name = Snack.objects(snack_name=field.data).first()
-
-        if snack is not None:
-            raise ValidationError(
-                "This snack has been already created, please use name another name")
