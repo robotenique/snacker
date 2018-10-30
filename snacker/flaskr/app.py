@@ -2,25 +2,16 @@ import json
 import sys
 import urllib
 
-import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
+from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 from util import SnackResults, ReviewResults
-
-"""
-You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
-Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-If the above doesn't work try setting mongo_uri directly to:
-mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
-If the above works, it should be a parsing problem try updating Python
-If not ask for troubleshoot help in group chat
-"""
 
 app = Flask(__name__)
 
@@ -41,7 +32,7 @@ try:
     print("hello")
     mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
     app.config["MONGO_URI"] = mongo_uri
-    mongo = mg.connect(host=mongo_uri)
+    mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
     app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 except Exception as inst:
@@ -56,29 +47,34 @@ login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 app.url_map.strict_slashes = False
 
+
 @app.route("/index")
 def index():
+    if current_user.is_authenticated:
+        print("ok")
     snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:5]
-    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
     # TODO: Recommend snacks tailored to user
-    featured_snacks = top_snacks
 
     # Use JS Queries later
     # Needs to be a divisor of 12
     interesting_facts = []
-    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Snacks", snacks.count()))
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
-                           popular_snacks=popular_snacks,
-                           interesting_facts=interesting_facts)
+    context_dict = {"featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "interesting_facts": interesting_facts,
+                    "user": current_user}
+    return render_template('index.html', **context_dict)
 
 
 @app.route("/about")
 def about():
-    return render_template('about.html', title='About {APP_NAME}')
+    context_dict = {"title": 'About {APP_NAME}',
+                    "user": current_user}
+    return render_template('about.html', **context_dict)
 
 
 # Go to the local url and refresh that page to test
@@ -225,7 +221,10 @@ def register():
         response = make_response(json.dumps(user))
         response.status_code = 200
         return response
-    return render_template("register.html", title="Register", form=form)
+    context_dict = {"title": "Register",
+                    "form": form,
+                    "user": current_user}
+    return render_template("register.html", **context_dict)
 
 
 @app.route("/create-review", methods=["GET", "POST"])
@@ -300,8 +299,10 @@ def create_review():
                     print(u)
 
                 return redirect(url_for('index'))
-
-        return render_template("create_review.html", title="Create Review", form=review_form)  # frontend stuff
+        context_dict = {"title": "Create Review",
+                        "form": review_form,
+                        "user": current_user}
+        return render_template("create_review.html", **context_dict)  # frontend stuff
 
     else:
         return redirect(url_for('index'))
@@ -354,7 +355,10 @@ def create_snack():
             return redirect(url_for('index'))
 
         # For frontend purposes
-        return render_template("create_snack.html", title="Create Snack", form=create_snack_form)
+        context_dict = {"title": "Create Snack",
+                        "form": create_snack_form,
+                        "user": current_user}
+        return render_template("create_snack.html", **context_dict)
     else:
         # Go back to index if not authenticated
         return redirect(url_for('index'))
@@ -392,7 +396,10 @@ def login():
         response = make_response(json.dumps(user))
         response.status_code = 200
         return response
-    return render_template('login.html', title='Sign In', form=form)
+    context_dict = {"title": "Sign In",
+                    "form": form,
+                    "user": current_user}
+    return render_template('login.html', **context_dict)
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -443,7 +450,10 @@ def find_reviews_for_snack(filters):
     display.border = True
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
-    return render_template('reviews_for_snack.html', table=display)
+
+    context_dict = {"table": display,
+                    "user": current_user}
+    return render_template('reviews_for_snack.html', **context_dict)
 
 
 # Finished and tested
@@ -496,8 +506,11 @@ def find_snack_by_filter(filters):
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     display = SnackResults(queryset)
     display.border = True
+
+    context_dict = {"table": display,
+                    "user": current_user}
     # Return the same template as for the review, since it only needs to display a table.
-    return render_template('reviews_for_snack.html', table=display)
+    return render_template('reviews_for_snack.html', **context_dict)
 
 
 if __name__ == '__main__':
