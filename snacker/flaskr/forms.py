@@ -1,12 +1,10 @@
+import pycountry
 from flask_wtf import FlaskForm
-
-from mongoengine import IntField, ImageField
+from mongoengine import IntField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
-from schema import User, Snack
-
-import pycountry
+from schema import User
 
 
 class RegistrationForm(FlaskForm):
@@ -60,8 +58,8 @@ class CreateReviewForm(FlaskForm):
     saltiness = IntField(NumberRange(min=1, max=5))
     submit = SubmitField('Submit Review')
 
-class CreateSnackForm(FlaskForm):
 
+class CreateSnackForm(FlaskForm):
     snack_name = StringField("Snack Name", [DataRequired(), Length(min=2, max=50)])
 
     default = [("Nothing Selected", "Nothing Selected")]

@@ -1,29 +1,33 @@
 {% extends "layout.html" %}
-{% block body1 %}
+{% block title_block %}Register{% endblock %}
+{% block body_raw %}
+  <div class="hero-wrap js-fullheight"
+       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
     <br/>
     <br/>
     <br/>
     <br/>
     {% from "_formhelpers.html" import render_field %}
     {#  Don't change the funciton name back to register, then js can't find the function  #}
-    <form onsubmit="register_user();return false;" name="register" style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
-        {{ form.hidden_tag() }}
-        <div class="form-group" style="color:white;">
-            {{ render_field(form.first_name, id="register_first") }}
-            {{ render_field(form.last_name, id="register_last") }}
-            {{ render_field(form.email, id="register_email") }}
-            <label style="color:black;">{{form.is_company.label}}</label>
-            {{form.is_company(value="Are you a company or a distributor?")}}
-            {{ render_field(form.password, id="register_password") }}
-            {{ render_field(form.confirm) }}
-            <label style="color:black;">{{form.accept_tos.label}}</label>
-            {{form.accept_tos(value="yes")}}
-        </div>
-        <input class="btn btn-primary" type="submit" name="submit" value="submit">
+    <form onsubmit="register_user();return false;" name="register"
+          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
+      {{ form.hidden_tag() }}
+      <div class="form-group" style="color:white;">
+        {{ render_field(form.first_name, id="register_first") }}
+        {{ render_field(form.last_name, id="register_last") }}
+        {{ render_field(form.email, id="register_email") }}
+        <label style="color:black;">{{ form.is_company.label }}</label>
+        {{ form.is_company(value="Are you a company or a distributor?") }}
+        {{ render_field(form.password, id="register_password") }}
+        {{ render_field(form.confirm) }}
+        <label style="color:black;">{{ form.accept_tos.label }}</label>
+        {{ form.accept_tos(value="yes") }}
+      </div>
+      <input class="btn btn-primary" type="submit" name="submit" value="submit">
     </form>
 
-{% if error %}
-<p class="error"><strong>Error:</strong>{{error}}</p>
-{% endif %}
-
+    {% if error %}
+      <p class="error"><strong>Error:</strong>{{ error }}</p>
+    {% endif %}
+  </div>
 {% endblock %}
