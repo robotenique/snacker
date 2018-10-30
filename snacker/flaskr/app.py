@@ -10,7 +10,6 @@ from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
-# from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
 from util import SnackResults, ReviewResults
 
@@ -55,7 +54,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
-
+app.url_map.strict_slashes = False
 
 @app.route("/index")
 def index():
