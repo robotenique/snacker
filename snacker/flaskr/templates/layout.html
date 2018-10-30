@@ -35,10 +35,16 @@
           {#            Need to check if user is logined in here, if so here should say Account#}
           {% if not user.is_authenticated %}
             <li class="nav-item cta"><a id="account_link" href="login" class="nav-link">
-              <span id="if_account">Log in</span></a></li>
+              <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="register" class="nav-link">
-              <span id="if_account">Register</span></a></li>
+              <span>Register</span></a></li>
+            {% else %}
+            <li class="nav-item cta"><a id="account" href="account" class="nav-link">
+              <span id="if_account">Account</span></a></li>
+            <li class="nav-item cta"><a id="logout" href="logout" class="nav-link">
+              <span id="if_account">Log out</span></a></li>
           {% endif %}
+
         </ul>
       </div>
     </div>
