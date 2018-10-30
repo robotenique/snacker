@@ -2,53 +2,49 @@
 {% block title_block %}Index{% endblock %}
 
 {% block body_raw %}
-
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start"
-           data-scrollax-parent="true">
-        <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-          <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong>
-            the snacks you need </h1>
-          <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend
-            yours to others</p>
-          <div class="block-17 my-4">
-            <form class="d-block d-flex" onsubmit="searchSnacks(); return false;">
-              <div class="fields d-block d-flex">
-                <div class="textfield-search one-third">
-                  <input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
-                </div>
-                <div class="textfield-search one-third">
-                  <input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc.">
-                </div>
-                <div class="select-wrap one-third">
-                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                  <select name="" id="index_search_location" class="form-control" placeholder="Keyword search">
-                    <option value="all">Where</option>
-                    <option value="USA">USA</option>
-                    <option value="Canada">Canada</option>
-                    <option value="UK">UK</option>
-                    <option value="Mexico">Mexico</option>
-                  </select>
-                </div>
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start"
+         data-scrollax-parent="true">
+      <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+        <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong>
+          the snacks you need </h1>
+        <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend
+          yours to others</p>
+        <div class="block-17 my-4">
+          <form class="d-block d-flex" onsubmit="searchSnacks(); return false;">
+            <div class="fields d-block d-flex">
+              <div class="textfield-search one-third">
+                <input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
               </div>
-              <input type="submit" class="search-submit btn btn-primary" value="Search">
-            </form>
-          </div>
-          <p>Or browse by categories</p>
-          <p class="browse d-md-flex">
+              <div class="textfield-search one-third">
+                <input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc.">
+              </div>
+              <div class="select-wrap one-third">
+                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                <select name="" id="index_search_location" class="form-control" placeholder="Keyword search">
+                  <option value="all">Where</option>
+                  <option value="USA">USA</option>
+                  <option value="Canada">Canada</option>
+                  <option value="UK">UK</option>
+                  <option value="Mexico">Mexico</option>
+                </select>
+              </div>
+            </div>
+            <input type="submit" class="search-submit btn btn-primary" value="Search">
+          </form>
+        </div>
+        <p>Or browse by categories</p>
+        <p class="browse d-md-flex">
             	<span class="d-flex justify-content-md-center align-items-md-center">
                     <a href="/find_snacks/category=Cookies"><i class="flaticon-fork"></i>Cookies</a></span>
-            <span class="d-flex justify-content-md-center align-items-md-center">
+          <span class="d-flex justify-content-md-center align-items-md-center">
                     <a href="/find_snacks/category=Chips"><i class="flaticon-hotel"></i>Chips</a></span>
-            <span class="d-flex justify-content-md-center align-items-md-center">
+          <span class="d-flex justify-content-md-center align-items-md-center">
                     <a href="/find_snacks/category=Chocolate"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
-            <span class="d-flex justify-content-md-center align-items-md-center">
+          <span class="d-flex justify-content-md-center align-items-md-center">
                     <a href="/find_snacks/category=Candies"><i class="flaticon-shopping-bag"></i>Candies</a></span>
-          </p>
-        </div>
+        </p>
       </div>
     </div>
   </div>

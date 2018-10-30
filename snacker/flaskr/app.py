@@ -177,10 +177,7 @@ def hello_world():
     for obj in MetricReview.objects:
         print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
     snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:5]
-    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
     # TODO: Recommend snacks tailored to user
-    featured_snacks = top_snacks
 
     # Use JS Queries later
     # Needs to be a divisor of 12
@@ -189,8 +186,12 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
-                           popular_snacks=popular_snacks, interesting_facts=interesting_facts)
+    context_dict = {"featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "interesting_facts": interesting_facts,
+                    "user": current_user}
+    return render_template('index.html', **context_dict)
 
 
 @app.route('/register', methods=["GET", "POST"])

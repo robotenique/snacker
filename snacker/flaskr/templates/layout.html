@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title_block %}{% endblock %}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/open-iconic-bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/aos.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/ionicons.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>{% block title_block %}{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/open-iconic-bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/aos.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ionicons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -31,22 +31,22 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active"><a href="/index" class="nav-link">Home</a></li>
           <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+          <li class="nav-item"><a href="contact" class="nav-link">Contact</a></li>
           {#            Need to check if user is logined in here, if so here should say Account#}
-           {% if not user.is_authenticated %}
-          <li class="nav-item cta"><a id="account_link" href="login" class="nav-link">
-            <span id="if_account">Login</span></a></li>
+          {% if not user.is_authenticated %}
+            <li class="nav-item cta"><a id="account_link" href="login" class="nav-link">
+              <span id="if_account">Log in</span></a></li>
+            <li class="nav-item cta"><a id="account_link" href="register" class="nav-link">
+              <span id="if_account">Register</span></a></li>
           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
-  {% block body_raw%}{% endblock %}
-
-  <div id="body1" class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
-    {% block body1 %}{% endblock %}
-  </div>
+<div class="hero-wrap js-fullheight"
+       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
+  {% block body_raw %}{% endblock %}
+</div>
 
   <footer class="ftco-footer ftco-bg-dark ftco-section">
     <div class="container">
@@ -131,7 +131,7 @@
   <script src="{{ url_for('static', filename='js/scrollax.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   <script src="{{ url_for('static', filename='js/snacker.js') }}"></script>
-{% block extra_js %}{% endblock extra_js %}
+  {% block extra_js %}{% endblock extra_js %}
 
 </body>
 </html>
