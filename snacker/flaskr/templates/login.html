@@ -1,24 +1,28 @@
 {% extends "layout.html" %}
-{% block body1 %}
+{% block title_block %}Log in{% endblock %}
+{% block body_raw %}
+  <div class="hero-wrap js-fullheight"
+       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
     <br/>
     <br/>
     <br/>
     <br/>
     {% from "_formhelpers.html" import render_field %}
     {#  Don't change the function name back to login, that won't work  #}
-    <form onsubmit="authenticate();return false;" id="login_form" name="login" style="margin-left: auto;margin-right:auto;text-align:center;margin-top:200px;">
-        {{ form.hidden_tag() }}
-        <div class="form-group" style="color:white;">
-            {{ render_field(form.email, id="login_email") }}
-        </div>
-        <div class="form-group" style="color:white;">
-            {{ render_field(form.password, id="login_password") }}
-        </div>
-        <input class="btn btn-primary" type="submit" name="submit" value="submit">
+    <form onsubmit="authenticate();return false;" id="login_form" name="login"
+          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:200px;">
+      {{ form.hidden_tag() }}
+      <div class="form-group" style="color:white;">
+        {{ render_field(form.email, id="login_email") }}
+      </div>
+      <div class="form-group" style="color:white;">
+        {{ render_field(form.password, id="login_password") }}
+      </div>
+      <input class="btn btn-primary" type="submit" name="submit" value="submit">
     </form>
 
-{% if error %}
-<p class="error"><strong>Error:</strong>{{error}}</p>
-{% endif %}
-
+    {% if error %}
+      <p class="error"><strong>Error:</strong>{{ error }}</p>
+    {% endif %}
+  </div>
 {% endblock %}

@@ -1,4 +1,5 @@
-from flask_table import *
+from flask_table import Col, Table
+
 
 # TODO: remove after implementing the front end.
 class SnackResults(Table):
