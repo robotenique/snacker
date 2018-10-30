@@ -9,7 +9,7 @@ from werkzeug.contrib.fixers import ProxyFix
 from mongoengine.queryset.visitor import Q
 import json
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateMetricReviewForm, CreateSnackForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
 
 # from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
