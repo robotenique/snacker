@@ -42,6 +42,7 @@
       </div>
     </div>
   </nav>
+  {% block body_raw%}{% endblock %}
 
   <div id="body1" class="hero-wrap js-fullheight"
        style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
@@ -131,6 +132,7 @@
   <script src="{{ url_for('static', filename='js/scrollax.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   <script src="{{ url_for('static', filename='js/snacker.js') }}"></script>
+{% block extra_js %}{% endblock extra_js %}
 
 </body>
 </html>
