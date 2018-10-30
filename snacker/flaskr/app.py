@@ -1,6 +1,7 @@
 import sys
 import urllib
 
+import mongoengine as mg
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
@@ -8,7 +9,7 @@ from werkzeug.contrib.fixers import ProxyFix
 from mongoengine.queryset.visitor import Q
 import json
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateMetricReviewForm, CreateSnackForm
 
 # from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
@@ -306,6 +307,8 @@ def create_review():
         return redirect(url_for('index'))
 
 
+#Tested
+#Note: Need to still add image element
 @app.route("/create-snack", methods=["GET", "POST"])
 @login_required
 def create_snack():
@@ -316,26 +319,33 @@ def create_snack():
 
         create_snack_form = CreateSnackForm(request.form)
 
+        new_snack = None
+
         if request.method == "POST" and create_snack_form.validate_on_submit():
             snack_brand = create_snack_form.snack_brand.data
             snack_name = create_snack_form.snack_name.data
 
+            print(snack_name)
+
             #Add snack to db
             try:
                 new_snack = Snack(snack_name=create_snack_form.snack_name.data,
-                                  available_at_locations=create_snack_form.available_at_locations.data,
+                                  available_at_locations=[create_snack_form.available_at_location.data],
                                   snack_brand=create_snack_form.snack_brand.data,
+                                  category=create_snack_form.category.data,
                                   description=create_snack_form.description.data,
-                                  avg_overall_rating=create_snack_form.avg_overall_rating.data,
-                                  avg_sourness=create_snack_form.avg_sourness.data,
-                                  avg_spiciness=create_snack_form.avg_spiciness.data,
-                                  avg_bitterness=create_snack_form.avg_bitterness.data,
-                                  avg_sweetness=create_snack_form.avg_sweetness.data,
-                                  avg_saltiness=create_snack_form.avg_saltiness.data)
+                                  avg_overall_rating=0,
+                                  avg_sourness=0,
+                                  avg_spiciness=0,
+                                  avg_bitterness=0,
+                                  avg_sweetness=0,
+                                  avg_saltiness=0,
+                                  review_count=0
+                                  )
                 new_snack.save()
             except Exception as e:
-                raise Exception(f"Error {e}. \n Couldn't add snack {new_snack},\n with following creation form: "
-                                f"{create_snack_form}")
+                raise Exception(
+                    f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             for snack in Snack.objects[:10]:

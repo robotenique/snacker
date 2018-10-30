@@ -1,81 +1,312 @@
-{% extends "index_layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Snacker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/open-iconic-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.theme.default.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ionicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
 
-{% block featured_snacks %}
-{% if featured_snacks %}
-<section class="ftco-section ftco-destination">
-  <div class="container">
-	<div class="row justify-content-start mb-5 pb-3">
-	  <div class="col-md-7 heading-section ftco-animate">
-	    <span class="subheading">Featured</span>
-	    <h2 class="mb-4"><strong>Featured</strong> Snacks</h2>
-	  </div>
-	</div>
-	  <div class="row">
-	    <div class="col-md-12">
-	      <div class="destination-slider owl-carousel ftco-animate">
-	      {% for snack in featured_snacks %}
-	        <div class="item">
-	            <div class="destination">
-	              <!-- TODO: We should a link to the appropriate snack image.
-	                 Search the snack on-click when the searching feature is implemented -->
-	              <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ url_for('static', filename='images/cheeseSticks.jpg') }})">
-	                <div class="icon d-flex justify-content-center align-items-center">
-	                  <span class="icon-search2"></span>
-	                </div>
-	              </a>
-	              <!-- TODO: Add the reference to the snack page -->
-	              <div class="text p-3">
-	                <h3><a href="#">{{ snack.snack_name }}</a></h3>
-	                <p class="rate">
-	                  <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
-	                {% for n in range(5) %}
-	                	{% if n+1 <= snack.avg_overall_rating %}
-	                      <i class="icon-star"></i>
-	                	{% elif n+0.5 <= snack.avg_overall_rating %}
-	                      <i class="icon-star-half-empty"></i>
-	                	{% else %}
-	                      <i class="icon-star-o"></i>
-		                {% endif %}
-	                {% endfor %}
-	                  <span>({{ snack.review_count }})</span>
-	                </p>
-	              </div>
-	            </div>
-	        </div>
-	      {% endfor %}
-	      </div>
-	    </div>
-	  </div>
-  </div>
-</section>
-{% endif %}
-{% endblock %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../templates/index.html">Snacker</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="oi oi-menu"></span> Menu
+      </button>
 
-{% block fun_facts %}
-<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
-	<div class="container">
-		<div class="row justify-content-center mb-5 pb-3">
-      <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-        <h2 class="mb-4">Some fun facts</h2>
-        <span class="subheading">This started as a school project!</span>
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active"><a href="../templates/index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="../templates/about.html" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="tour.html" class="nav-link">Tour</a></li>
+          <li class="nav-item"><a href="hotel.html" class="nav-link">Hotels</a></li>
+          <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+{#            Need to check if user is logined in here, if so here should say Account#}
+          <li class="nav-item cta"><a id="account_link" href="login" class="nav-link">
+              <span id="if_account">Login</span></a></li>
+        </ul>
       </div>
     </div>
-		<div class="row justify-content-center">
-			<div class="col-md-10">
-	    		<div class="row">
-	    	  {% for facts in interesting_facts %}
-	          <div class="col-md-{{12//(interesting_facts|length)}} d-flex justify-content-center counter-wrap ftco-animate">
-	            <div class="block-18 text-center">
-	              <div class="text">
-	                <strong class="number" data-number="{{facts[1]}}">0</strong>
-	                <span>{{facts[0]}}</span>
-	              </div>
-	            </div>
-	          </div>
-	          {% endfor %}
-	        </div>
+    </nav>
+
+    <div class="hero-wrap js-fullheight" style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true">
+          <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><strong>Explore <br></strong> the snacks you need </h1>
+            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend yours to others</p>
+            <div class="block-17 my-4">
+              <form class="d-block d-flex" onsubmit="searchSnacks(); return false;">
+                <div class="fields d-block d-flex">
+                  <div class="textfield-search one-third">
+                  	<input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
+                  </div>
+                  <div class="textfield-search one-third">
+                  	<input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc.">
+                  </div>
+                  <div class="select-wrap one-third">
+                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                    <select name="" id="index_search_location" class="form-control" placeholder="Keyword search">
+                      <option value="all">Where</option>
+                      <option value="USA">USA</option>
+                      <option value="Canada">Canada</option>
+                      <option value="UK">UK</option>
+                      <option value="Mexico">Mexico</option>
+                    </select>
+                  </div>
+                </div>
+                <input type="submit" class="search-submit btn btn-primary" value="Search">
+              </form>
+            </div>
+            <p>Or browse by categories</p>
+            <p class="browse d-md-flex">
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Cookies"><i class="flaticon-fork"></i>Cookies</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Chips"><i class="flaticon-hotel"></i>Chips</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Chocolate"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
+            	<span class="d-flex justify-content-md-center align-items-md-center">
+                    <a href="/find_snacks/category=Candies"><i class="flaticon-shopping-bag"></i>Candies</a></span>
+            </p>
+          </div>
         </div>
+      </div>
     </div>
-	</div>
-</section>
-{% endblock %}
+
+    <section class="ftco-section services-section bg-light">
+      <div class="container">
+        <div class="row d-flex">
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-guarantee"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Personalized Recommendor</h3>
+                <p>Recommend snacks to you based on your personal taste</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-like"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Travellers Love Us</h3>
+                <p>Discover local snacks in a foreign country</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-detective"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Snack Expert</h3>
+                <p>Browse and review any snacks you want</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-support"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Business Welcome</h3>
+                <p>Discover how customers think of your snacks and advertise with us</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% block featured_snacks %}
+    {% if featured_snacks %}
+    <section class="ftco-section ftco-destination">
+      <div class="container">
+        <div class="row justify-content-start mb-5 pb-3">
+          <div class="col-md-7 heading-section ftco-animate">
+            <span class="subheading">Featured</span>
+            <h2 class="mb-4"><strong>Featured</strong> Snacks</h2>
+          </div>
+        </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="destination-slider owl-carousel ftco-animate">
+              {% for snack in featured_snacks %}
+                <div class="item">
+                    <div class="destination">
+                      <!-- TODO: We should a link to the appropriate snack image.
+                         Search the snack on-click when the searching feature is implemented -->
+                      <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ url_for('static', filename='images/cheeseSticks.jpg') }})">
+                        <div class="icon d-flex justify-content-center align-items-center">
+                          <span class="icon-search2"></span>
+                        </div>
+                      </a>
+                      <!-- TODO: Add the reference to the snack page -->
+                      <div class="text p-3">
+                        <h3><a href="#">{{ snack.snack_name }}</a></h3>
+                        <p class="rate">
+                          <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
+                        {% for n in range(5) %}
+                            {% if n+1 <= snack.avg_overall_rating %}
+                              <i class="icon-star"></i>
+                            {% elif n+0.5 <= snack.avg_overall_rating %}
+                              <i class="icon-star-half-empty"></i>
+                            {% else %}
+                              <i class="icon-star-o"></i>
+                            {% endif %}
+                        {% endfor %}
+                          <span>({{ snack.review_count }})</span>
+                        </p>
+                      </div>
+                    </div>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+      </div>
+    </section>
+    {% endif %}
+    {% endblock %}
+
+    {% block fun_facts %}
+    <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ url_for('static', filename='images/bg_1.jpg') }});">
+        <div class="container">
+            <div class="row justify-content-center mb-5 pb-3">
+          <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+            <h2 class="mb-4">Some fun facts</h2>
+            <span class="subheading">This started as a school project!</span>
+          </div>
+        </div>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="row">
+                  {% for facts in interesting_facts %}
+                  <div class="col-md-{{12//(interesting_facts|length)}} d-flex justify-content-center counter-wrap ftco-animate">
+                    <div class="block-18 text-center">
+                      <div class="text">
+                        <strong class="number" data-number="{{facts[1]}}">0</strong>
+                        <span>{{facts[0]}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <section class="ftco-section-parallax" id="join_us">
+      <div class="parallax-img d-flex align-items-center">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+              <h2>Join Us</h2>
+              <p>Register to get the most of our app!:)</p>
+              <div class="row d-flex justify-content-center mt-5">
+                <div class="col-md-8">
+                  <form class="subscribe-form" onsubmit="indexRegister(); return false;">
+                    <div class="form-group d-flex">
+                      <input id="index_email" type="text" class="form-control" placeholder="Enter email address">
+                      <input type="submit" value="Register" class="submit px-3">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="ftco-footer ftco-bg-dark ftco-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md">
+            <div class="ftco-footer-widget mb-4">
+              <h2 class="ftco-heading-2">Snacker</h2>
+              <p>Your best snacking buddy. Your place to go for all snack related information. Browse and review
+                any snacks and get personalized recommendations!</p>
+              <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="ftco-footer-widget mb-4 ml-md-5">
+              <h2 class="ftco-heading-2">Information</h2>
+              <ul class="list-unstyled">
+                <li><a href="#" class="py-2 d-block">About</a></li>
+                <li><a href="#" class="py-2 d-block">Service</a></li>
+                <li><a href="#" class="py-2 d-block">Terms and Conditions</a></li>
+                <li><a href="#" class="py-2 d-block">Privacy and Policy</a></li>
+                <li><a href="#" class="py-2 d-block">Advertise with Us</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="ftco-footer-widget mb-4">
+            	<h2 class="ftco-heading-2">Our Team</h2>
+            	<div class="block-23 mb-3">
+	              <ul>
+	                <li><a href="#"><span class="text">Juliano Garcia</span></a></li>
+	                <li><a href="http://www.jaydeyue.com"><span class="text">Jayde Yue</span></a></li>
+	                <li><a href="#"><span class="text">Adam Czyzewski</span></a></li>
+                    <li><a href="#"><span class="text">Harry Chen</span></a></li>
+                    <li><a href="#"><span class="text">Flora Shi</span></a></li>
+                    <li><a href="#"><span class="text">Alex Chum</span></a></li>
+                    <li><a href="#"><span class="text">Guiliano Celani</span></a></li>
+	              </ul>
+	            </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery-migrate-3.0.1.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.easing.1.3.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.waypoints.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.stellar.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.animateNumber.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/scrollax.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/snacker.js') }}"></script>
+
+  </body>
+</html>
