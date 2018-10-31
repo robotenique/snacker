@@ -3,13 +3,14 @@ from flask_login import UserMixin
 # An unique ID (user.id) is automatically created.
 # Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
 from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
-    ObjectIdField
+    ObjectIdField, EmbeddedDocument
 
 # An unique ID (user.id) is automatically created.
 # Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
 from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
     ObjectIdField
 
+""" Model classes for the User """
 
 class User(UserMixin, Document):
     email = EmailField(required=True, unique=True)
@@ -45,6 +46,11 @@ class CompanyUser(User):
     company_name = StringField(required=True, unique=True, sparse=True)
     company_snackbrands = ListField(StringField(max_length=100))
 
+""" Model classes for the Snacks """
+
+class SnackImage(EmbeddedDocument):
+    # Image size can be specified in ImageField().
+    img = ImageField()
 
 # An unique ID is automatically created (snack.id).
 class Snack(Document):
@@ -53,9 +59,8 @@ class Snack(Document):
     available_at_locations = ListField(StringField(), required=True)
     snack_brand = StringField(required=True, unique_with="snack_name")
     snack_company_name = StringField()
-
-    # Image size can be specified in ImageField().
-    photo_files = ListField(ImageField(upload_to='snack_photos'))
+    # We should use EmbeddedDocumentListField, check https://bit.ly/2RnQupu
+    photo_files = EmbeddedDocumentListField(SnackImage)
     description = StringField()
     is_verified = BooleanField(required=True, default=False)
     category = StringField()
@@ -66,6 +71,8 @@ class Snack(Document):
     avg_bitterness = DecimalField()
     avg_sweetness = DecimalField()
     avg_saltiness = DecimalField()
+
+
 
 
 # An unique ID is automatically created (review.id).
