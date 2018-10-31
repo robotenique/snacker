@@ -3,12 +3,7 @@ from flask_login import UserMixin
 # An unique ID (user.id) is automatically created.
 # Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
 from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
-    ObjectIdField, EmbeddedDocument
-
-# An unique ID (user.id) is automatically created.
-# Date of registration comes with automatic _id (automatic timestamp: getTimestamp()).
-from mongoengine import Document, EmailField, StringField, ImageField, BooleanField, ListField, IntField, DecimalField, \
-    ObjectIdField
+    ObjectIdField, EmbeddedDocument, EmbeddedDocumentListField
 
 """ Model classes for the User """
 
@@ -50,7 +45,7 @@ class CompanyUser(User):
 
 class SnackImage(EmbeddedDocument):
     # Image size can be specified in ImageField().
-    img = ImageField()
+    img = ImageField(thumbnail_size=(260, 300, True), upload_to='snack_photos')
 
 # An unique ID is automatically created (snack.id).
 class Snack(Document):
