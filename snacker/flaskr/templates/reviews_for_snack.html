@@ -1,4 +1,27 @@
-<doctype html>
-<title>Search Results - Flask Music Database</title>
-    <body>{{ table }}</body>
-</doctype>
+{% extends "search_query.html" %}
+{% block title_block %}Snacker{% endblock %}
+
+{% block reviews %}
+{% for review in reviews %}
+  <div class="review">
+    <div class="review-user">
+      <span>User: {{ review.user_id }}</span>
+    </div>
+    <div class="review-overall-rating">
+      {% for n in range(5) %}
+        {% if n+1 <= review.overall_rating %}
+        <i class="icon-star"></i>
+        {% elif n+0.5 <= review.overall_rating %}
+        <i class="icon-star-half-empty"></i>
+        {% else %}
+        <i class="icon-star-o"></i>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="review-description">
+      <p>{{ review.description }}</p>
+    </div>
+  </div>
+  <hr>
+{% endfor %}
+{% endblock %}
