@@ -20,7 +20,7 @@
             src={{ url_for('serve_img', snack_id=snack.id) }}
             style="width: 210px; height: 210px; float: left; padding: 1em;">
             <div class="snack-query-title">
-              <a href="/snack_reviews/snack_id={{snack.id}}">{{snack.snack_name + " " + snack.snack_brand}}</a>
+              <a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name|truncate(60) }}</a>
               {% if snack.is_verified %}<i class="fas fa-check-square" style:"color:green;"></i>{% endif %}
             </div>
             <div class="query-ratings">
@@ -101,8 +101,16 @@
               <span style="padding-left: 1em;">{{ snack.review_count }} reviews</span>
             </div>
             <div class="query-description">
-              <p class="locations">Found in: {{ snack.location }}</p>
-              <p>{{ snack.description }}</p>
+              <p class="locations">Found in:
+                {% for loc in snack.available_at_locations%}
+                  <span>{{ loc }}</span>
+                {% endfor %}
+               
+
+              </p>
+              {% if snack.description %}
+              <p>{{ snack.description|truncate(320) }}</p>
+              {% endif %}
             </div>
           </div>
           <hr>
