@@ -1,0 +1,58 @@
+.snack-query-title {
+  font-size: 1.5em;
+  float: left;
+  width: 80%;
+}
+.snack-query-brand {
+  font-size: 1em;
+  float: left;
+}
+
+.query-description {
+  width: 50%;
+  float: left;
+}
+
+.query-overall-rating {
+  float: left;
+  font-size: 1.2em;
+  width: 30%;
+}
+
+.query-overall-rating i {
+  color: red;
+}
+
+.review-overall-rating i {
+  color: red;
+}
+
+.query .item {
+  height: 220px;
+}
+
+.query-ratings {
+  float: right;
+  width: 30%;
+  font-size: 1.2em;
+}
+
+.sourness i {
+  color: Gold;
+}
+
+.spiciness i {
+  color: OrangeRed;
+}
+
+.bitterness i {
+  color: LimeGreen;
+}
+
+.sweetness i {
+  color: Blue;
+}
+
+.saltiness i {
+  color: LightSlateGrey;
+}
