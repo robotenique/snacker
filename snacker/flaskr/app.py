@@ -64,48 +64,73 @@ login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 
 @app.route("/display-snack")
+@login_required
 def display_snack():
     my_database = mongo[DATABASE]
     my_file = open("snacks/snacks.json", "rb")
     parsed = json.loads(my_file.read().decode('unicode-escape'))
     snacks = parsed
-    s = snacks[1]
-    # Always delete a document before inserting it again
-    Snack.objects(snack_name=s["title"], snack_brand=s["company"]).delete()
-    new_snack = Snack(snack_name=s["title"], available_at_locations=[s["country"]], snack_brand=s["company"])
-    new_snack.description = s["description"]
-    new_snack.avg_overall_rating = 0
-    new_snack.avg_bitterness = 0
-    new_snack.avg_saltiness = 0
-    new_snack.avg_sourness = 0
-    new_snack.avg_spiciness = 0
-    new_snack.avg_sweetness = 0
-    new_snack.review_count = 0
-    if s.get("folder_name"):
-        i = SnackImage()
-        for entry in os.scandir("snacks/image/"+s.get("folder_name")):
-            with open(entry.path, "rb") as image_file:
-                img_name = os.path.basename(image_file.name)
-                i.img.put(image_file, filename=img_name)
+    s = snacks
+    Snack.objects.delete()
+    for s in snacks:
+        # Always delete a document before inserting it again
+        new_snack = Snack(snack_name=s["title"], available_at_locations=[s["country"]])
+        if s.get("description"):
+            new_snack.description = s["description"]
+        if s.get("company"):
+            new_snack.snack_brand = s["company"]
+        else:
+            continue
+        new_snack.avg_overall_rating = 0
+        new_snack.avg_bitterness = 0
+        new_snack.avg_saltiness = 0
+        new_snack.avg_sourness = 0
+        new_snack.avg_spiciness = 0
+        new_snack.avg_sweetness = 0
+        new_snack.review_count = 0
+        if s.get("folder_name"):
+            i = SnackImage()
+            for entry in os.scandir("snacks/image/"+s.get("folder_name")):
+                with open(entry.path, "rb") as image_file:
+                    img_name = os.path.basename(image_file.name)
+                    i.img.put(image_file, filename=img_name)
 
-            new_snack.photo_files.append(i)
-    try:
-        new_snack.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for s in Snack.objects:
+                new_snack.photo_files.append(i)
+        try:
+            new_snack.save()
+        except Exception as e:
+            print("Error \n %s" % e, file=sys.stdout)
+    max_show = 100 # Maximum number of snacks to send to view
+    sl = []
+    for s in Snack.objects[:max_show]:
         if s.photo_files:
+            sl.append(s)
             for file in s.photo_files:
                 photo = file.img
                 # Guess the type of the mimetype to send a good response
-                mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
-                return render_template('display_snack.html', snack=s, resp=Response(photo.read(), mimetype='image/jpeg'))
-
+                # mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
+                # resp=Response(photo.read(), mimetype=mimetype)
                 # photo.read() # This is image itself
                 # photo.filename # This is the name of the image
                 # photo.format # This is the format of the image (png, jpg, etc)
-                # photo.thumbnail.read() # This is the thumbnail of the image
-    return "testing..."
+                # photo.thumbnail.read() # This is the thumbnail of the image """
+    print("Finished.")
+    print(f"{len(sl)}")
+    return render_template('display_snack.html', snack_list=sl)
+
+@app.route('/render-img/<string:snack_id>')
+def serve_img(snack_id):
+    """ Given a snack id, get the image and render it"""
+    sample_snack = Snack.objects(id=snack_id)[0]
+    if sample_snack.photo_files == []:
+        pass # TODO: what to show if we don't have any image?
+    photo = sample_snack.photo_files[0].img
+    mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
+    #resp=Response(photo.read(), mimetype=mimetype)
+    # Returning the thumbnail for now
+    resp=Response(photo.thumbnail.read(), mimetype=mimetype)
+    return resp
+
 
 @app.route("/index")
 def index():
