@@ -33,7 +33,7 @@
           <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
           <li class="nav-item"><a href="contact" class="nav-link">Contact</a></li>
           {#            Need to check if user is logined in here, if so here should say Account#}
-          {% if not user.is_authenticated %}
+          {% if not current_user.is_authenticated %}
             <li class="nav-item cta"><a id="account_link" href="login" class="nav-link">
               <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="register" class="nav-link">
