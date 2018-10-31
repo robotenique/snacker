@@ -16,7 +16,9 @@
         {% for snack in query %}
           <div class="item">
             <!-- set image size with css style for different media devices -->
-            <img class="query-img" src="{{ url_for('static', filename='images/{}.jpg'.format(snack.snack_name.replace(" ", "")+snack.snack_brand)) }}" style="width: 210px; height: 210px; float: left; padding: 1em;">
+            <img class="query-img" 
+            src={{ url_for('serve_img', snack_id=snack.id) }}
+            style="width: 210px; height: 210px; float: left; padding: 1em;">
             <div class="snack-query-title">
               <a href="/snack_reviews/snack_id={{snack.id}}">{{snack.snack_name + " " + snack.snack_brand}}</a>
               {% if snack.is_verified %}<i class="fas fa-check-square" style:"color:green;"></i>{% endif %}
