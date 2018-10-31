@@ -120,7 +120,8 @@ def display_snack():
 
 @app.route('/render-img/<string:snack_id>')
 def serve_img(snack_id):
-    """ Given a snack id, get the image and render it"""
+    """ Given a snack id, get the image and render it
+        Example in file display_snack.html"""
     sample_snack = Snack.objects(id=snack_id)[0]
     if sample_snack.photo_files == []:
         pass # TODO: what to show if we don't have any image?
@@ -488,6 +489,7 @@ def find_reviews_for_snack(filters):
     all_filters = filters.split("+")
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Review.objects
+    snack_query = None
     # all reviews will be returned if nothing specified
     if "=" in filters:
         for individual_filter in all_filters:
@@ -498,6 +500,7 @@ def find_reviews_for_snack(filters):
                 queryset = queryset.filter(user_id=query_value)
             elif query_index == "snack_id":
                 queryset = queryset.filter(snack_id=query_value)
+                snack_query = Snack.objects(id=query_value)
             elif query_index == "overall_rating":
                 queryset = queryset.filter(overall_rating__gte=query_value)
             elif query_index == "geolocation":
@@ -514,11 +517,15 @@ def find_reviews_for_snack(filters):
                 queryset = queryset.filter(saltiness__gte=query_value)
     queryset = queryset.order_by("-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
-    display = ReviewResults(queryset)
-    display.border = True
+    print(f"snack_reviews: {snack_query}", file=sys.stdout)
+
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
-    return render_template('reviews_for_snack.html', table=display)
+
+    context_dict = {"query": snack_query,
+                    "reviews": queryset,
+                    "user": current_user}
+    return render_template('reviews_for_snack.html', **context_dict)
 
 
 # Finished and tested
@@ -569,10 +576,13 @@ def find_snack_by_filter(filters):
                 queryset = queryset.filter(category=query_value)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
-    display = SnackResults(queryset)
-    display.border = True
+    # display = SnackResults(queryset)
+    # display.border = True
+
+    context_dict = {"query": queryset,
+                    "user": current_user}
     # Return the same template as for the review, since it only needs to display a table.
-    return render_template('reviews_for_snack.html', table=display)
+    return render_template('search_query.html', **context_dict)
 
 
 if __name__ == '__main__':
