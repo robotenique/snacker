@@ -1,20 +1,15 @@
 import sys
 import urllib
 import mimetypes
-import mongoengine as mg
+from mongoengine import connect
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from werkzeug.contrib.fixers import ProxyFix
 from schema import SnackImage
 from mongoengine.queryset.visitor import Q
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
-
-# TODO: remove this if not needed
 import json
-import os
-
-
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
 # from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
 from util import SnackResults, ReviewResults
@@ -49,7 +44,7 @@ try:
     mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
     #mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
-    mongo = mg.connect(host=mongo_uri)
+    mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
     app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 except Exception as inst:
@@ -62,24 +57,29 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
+app.url_map.strict_slashes = False
+
 
 @app.route('/render-img/<string:snack_id>')
 def serve_img(snack_id):
     """ Given a snack id, get the image and render it
         Example in file display_snack.html"""
+    placeholder = "static/images/CrunchyCheesyFlavouredCheetos.jpg"
+    get_mimetype = lambda filename: mimetypes.MimeTypes().guess_type(filename)[0]
     sample_snack = Snack.objects(id=snack_id)[0]
     if sample_snack.photo_files == []:
-        return "" # TODO: what to show if we don't have any image? A placeholder?
+        return Response(open(placeholder, "rb").read(), mimetype=get_mimetype(placeholder))
     photo = sample_snack.photo_files[0].img
-    mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
     #resp=Response(photo.read(), mimetype=mimetype)
     # Returning the thumbnail for now
-    resp=Response(photo.thumbnail.read(), mimetype=mimetype)
+    resp=Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
 
 
 @app.route("/index")
 def index():
+    if current_user.is_authenticated:
+        print("ok")
     max_show = 5 # Maximum of snacks to show
     snacks = Snack.objects
     popular_snacks = snacks.order_by("-review_count")[:max_show]
@@ -97,18 +97,23 @@ def index():
     # Use JS Queries later
     # Needs to be a divisor of 12
     interesting_facts = []
-    interesting_facts.append(("Snacks", Snack.objects.count()))
+    interesting_facts.append(("Snacks", snacks.count()))
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
-                           popular_snacks=popular_snacks,
-                           interesting_facts=interesting_facts)
+    context_dict = {"featured_snacks": featured_snacks,
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "interesting_facts": interesting_facts,
+                    "user": current_user}
+    return render_template('index.html', **context_dict)
 
 
 @app.route("/about")
 def about():
-    return render_template('about.html', title='About {APP_NAME}')
+    context_dict = {"title": 'About {APP_NAME}',
+                    "user": current_user}
+    return render_template('about.html', **context_dict)
 
 
 # Go to the local url and refresh that page to test
@@ -223,8 +228,12 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    return render_template('index.html', featured_snacks=featured_snacks, top_snacks=top_snacks,
-                           popular_snacks=popular_snacks, interesting_facts=interesting_facts)
+    context_dict = {"featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
+                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "interesting_facts": interesting_facts,
+                    "user": current_user}
+    return render_template('index.html', **context_dict)
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -255,7 +264,11 @@ def register():
         response = make_response(json.dumps(user))
         response.status_code = 200
         return response
-    return render_template("register.html", title="Register", form=form)
+
+    context_dict = {"title": "Register",
+                    "form": form,
+                    "user": current_user}
+    return render_template("register.html", **context_dict)
 
 
 @app.route("/create-review", methods=["GET", "POST"])
@@ -310,11 +323,14 @@ def create_review():
                     # snack_id should come from request sent by frontend
                     # geolocation is found by request
                     snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
-                                        description=review_form.description.data,
-                                        geolocation="Default", overall_rating=review_form.overall_rating.data,
-                                        sourness=review_form.sourness.data, spiciness=review_form.spiciness.data,
-                                        saltiness=review_form.saltiness.data, bitterness=review_form.bitterness.data,
-                                        sweetness=review_form.sweetness.data)
+                                    description=review_form.description.data,
+                                    geolocation="Default",
+                                    overall_rating=review_form.overall_rating.data,
+                                    sourness=review_form.sourness.data,
+                                    spiciness=review_form.spiciness.data,
+                                    saltiness=review_form.saltiness.data,
+                                    bitterness=review_form.bitterness.data,
+                                    sweetness=review_form.sweetness.data)
                     snack_metric_review.save()
 
                 except Exception as e:
@@ -328,7 +344,12 @@ def create_review():
 
                 return redirect(url_for('index'))
 
-        return render_template("create_review.html", title="Create Review", form=review_form)  # frontend stuff
+        context_dict = {"title": "Create Review",
+                        "form": review_form,
+                        "user": current_user}
+        # frontend stuff
+        return render_template("create_review.html", **context_dict)
+
 
     else:
         return redirect(url_for('index'))
@@ -381,10 +402,15 @@ def create_snack():
             return redirect(url_for('index'))
 
         #For frontend purposes
-        return render_template("create_snack.html", title="Create Snack", form=create_snack_form)
+        context_dict = {"title": "Create Snack",
+                        "form": create_snack_form,
+                        "user": current_user}
+ 
+        return render_template("create_snack.html", **context_dict)
     else:
-        #Go back to index if not authenticated
+        # Go back to index if not authenticated
         return redirect(url_for('index'))
+
 
 
 
@@ -421,7 +447,13 @@ def login():
         response = make_response(json.dumps(user))
         response.status_code = 200
         return response
-    return render_template('login.html', title='Sign In', form=form)
+
+    context_dict = {"title": "Sign In",
+                    "form": form,
+                    "user": current_user}
+ 
+    return render_template('login.html', **context_dict)
+
 
 
 @app.route("/logout", methods=["GET", "POST"])
