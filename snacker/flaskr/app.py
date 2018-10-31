@@ -120,7 +120,8 @@ def display_snack():
 
 @app.route('/render-img/<string:snack_id>')
 def serve_img(snack_id):
-    """ Given a snack id, get the image and render it"""
+    """ Given a snack id, get the image and render it
+        Example in file display_snack.html"""
     sample_snack = Snack.objects(id=snack_id)[0]
     if sample_snack.photo_files == []:
         pass # TODO: what to show if we don't have any image?
