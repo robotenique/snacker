@@ -124,7 +124,7 @@ def serve_img(snack_id):
         Example in file display_snack.html"""
     sample_snack = Snack.objects(id=snack_id)[0]
     if sample_snack.photo_files == []:
-        pass # TODO: what to show if we don't have any image?
+        return "" # TODO: what to show if we don't have any image? A placeholder?
     photo = sample_snack.photo_files[0].img
     mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
     #resp=Response(photo.read(), mimetype=mimetype)
@@ -135,11 +135,19 @@ def serve_img(snack_id):
 
 @app.route("/index")
 def index():
+    max_show = 5 # Maximum of snacks to show
     snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:5]
-    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
+    popular_snacks = snacks.order_by("-review_count")[:max_show]
+    top_snacks = snacks.order_by("-avg_overall_rating")
+    featured_snacks = []
+    # Getting snacks that have some image to display
+    for snack in top_snacks:
+        if snack.photo_files:
+            featured_snacks.append(snack)
+            if len(featured_snacks) == max_show:
+                break;
     # TODO: Recommend snacks tailored to user
-    featured_snacks = top_snacks
+    #featured_snacks = top_snacks
 
     # Use JS Queries later
     # Needs to be a divisor of 12

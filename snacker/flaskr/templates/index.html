@@ -121,8 +121,7 @@
                     <div class="destination">
                       <!-- TODO: We should a link to the appropriate snack image.
                          Search the snack on-click when the searching feature is implemented -->
-                      <a href="#" class="img d-flex justify-content-center align-items-center"
-                         style="background-image: url({{ url_for('static', filename='images/cheeseSticks.jpg') }})">
+                      <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
                         <div class="icon d-flex justify-content-center align-items-center">
                           <span class="icon-search2"></span>
                         </div>
