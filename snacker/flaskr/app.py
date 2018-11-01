@@ -115,6 +115,12 @@ def about():
                     "user": current_user}
     return render_template('about.html', **context_dict)
 
+@app.route("/contact")
+def contact():
+    context_dict = {"title": 'Contact Us',
+                    "user": current_user}
+    return render_template('contact.html', **context_dict)
+
 
 # Go to the local url and refresh that page to test
 # See below for use cases of different schema objects
