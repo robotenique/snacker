@@ -26,7 +26,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_email(self, field):
-        """Prevent multiple users from having the same email address"""
+        # Prevent multiple users from having the same email address.
         user = User.objects(email=field.data).first()
         if user is not None:
             raise ValidationError("This email is already registered, please use another email address")
@@ -44,11 +44,6 @@ class LoginForm(FlaskForm):
 
 
 class CreateReviewForm(FlaskForm):
-    # user_id = ObjectIdField("User Id", [DataRequired(), ])
-    # snack_id = ObjectIdField("Snack Id", [DataRequired(), ])
-    # geolocation = ("First Name", [DataRequired(), Length(min=2, max=100)])
-    # above comes from backend
-
     description = StringField("Review Description", [Length(min=2, max=255)])
     overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
     sourness = IntField(NumberRange(min=1, max=5))

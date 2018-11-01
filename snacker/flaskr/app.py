@@ -1,18 +1,17 @@
+import json
+import mimetypes
 import sys
 import urllib
-import mimetypes
-from mongoengine import connect
+
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
-from werkzeug.contrib.fixers import ProxyFix
-from schema import SnackImage
+from mongoengine import connect
 from mongoengine.queryset.visitor import Q
-import json
+from werkzeug.contrib.fixers import ProxyFix
+
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
-# from geodata import get_geodata
 from schema import Snack, Review, CompanyUser, User, MetricReview
-from util import SnackResults, ReviewResults
 
 """
 You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
@@ -32,17 +31,16 @@ DATABASE = "test"
 MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
 
-#For snack images
+# For snack images
 UPLOAD_FOLDER = ""
 ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
-
 
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     print("hello")
     mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
-    #mongo_uri = "mongodb://localhost:27017/"
+    # mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -70,9 +68,9 @@ def serve_img(snack_id):
     if sample_snack.photo_files == []:
         return Response(open(placeholder, "rb").read(), mimetype=get_mimetype(placeholder))
     photo = sample_snack.photo_files[0].img
-    #resp=Response(photo.read(), mimetype=mimetype)
+    # resp=Response(photo.read(), mimetype=mimetype)
     # Returning the thumbnail for now
-    resp=Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
+    resp = Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
 
 
@@ -80,7 +78,7 @@ def serve_img(snack_id):
 def index():
     if current_user.is_authenticated:
         print("ok")
-    max_show = 5 # Maximum of snacks to show
+    max_show = 5  # Maximum of snacks to show
     snacks = Snack.objects
     popular_snacks = snacks.order_by("-review_count")[:max_show]
     top_snacks = snacks.order_by("-avg_overall_rating")
@@ -90,9 +88,9 @@ def index():
         if snack.photo_files:
             featured_snacks.append(snack)
             if len(featured_snacks) == max_show:
-                break;
+                break
     # TODO: Recommend snacks tailored to user
-    #featured_snacks = top_snacks
+    # featured_snacks = top_snacks
 
     # Use JS Queries later
     # Needs to be a divisor of 12
@@ -114,6 +112,7 @@ def about():
     context_dict = {"title": 'About {APP_NAME}',
                     "user": current_user}
     return render_template('about.html', **context_dict)
+
 
 @app.route("/contact")
 def contact():
@@ -329,19 +328,19 @@ def create_review():
                     # snack_id should come from request sent by frontend
                     # geolocation is found by request
                     snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
-                                    description=review_form.description.data,
-                                    geolocation="Default",
-                                    overall_rating=review_form.overall_rating.data,
-                                    sourness=review_form.sourness.data,
-                                    spiciness=review_form.spiciness.data,
-                                    saltiness=review_form.saltiness.data,
-                                    bitterness=review_form.bitterness.data,
-                                    sweetness=review_form.sweetness.data)
+                                                       description=review_form.description.data,
+                                                       geolocation="Default",
+                                                       overall_rating=review_form.overall_rating.data,
+                                                       sourness=review_form.sourness.data,
+                                                       spiciness=review_form.spiciness.data,
+                                                       saltiness=review_form.saltiness.data,
+                                                       bitterness=review_form.bitterness.data,
+                                                       sweetness=review_form.sweetness.data)
                     snack_metric_review.save()
 
                 except Exception as e:
                     raise Exception(
-                    f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
+                        f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
 
                 print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
 
@@ -361,8 +360,8 @@ def create_review():
         return redirect(url_for('index'))
 
 
-#Tested
-#TODO: Need to still add image element
+# Tested
+# TODO: Need to still add image element
 @app.route("/create-snack", methods=["GET", "POST"])
 @login_required
 def create_snack():
@@ -381,7 +380,7 @@ def create_snack():
 
             print(snack_name)
 
-            #Add snack to db
+            # Add snack to db
             try:
                 new_snack = Snack(snack_name=create_snack_form.snack_name.data,
                                   available_at_locations=[create_snack_form.available_at_location.data],
@@ -407,18 +406,15 @@ def create_snack():
 
             return redirect(url_for('index'))
 
-        #For frontend purposes
+        # For frontend purposes
         context_dict = {"title": "Create Snack",
                         "form": create_snack_form,
                         "user": current_user}
- 
+
         return render_template("create_snack.html", **context_dict)
     else:
         # Go back to index if not authenticated
         return redirect(url_for('index'))
-
-
-
 
 
 """ Routes and methods related to user login and authentication """
@@ -457,9 +453,8 @@ def login():
     context_dict = {"title": "Sign In",
                     "form": form,
                     "user": current_user}
- 
-    return render_template('login.html', **context_dict)
 
+    return render_template('login.html', **context_dict)
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -536,8 +531,8 @@ def find_snack_by_filter(filters):
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Snack.objects
 
-    # the search string should be all if we want to get all snacks, but we can type anything that doesn't include = to
-    #   get the same results
+    # the search string should be all if we want to get all snacks, but we can type anything that doesn't include '='
+    # to get the same results
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
@@ -567,6 +562,7 @@ def find_snack_by_filter(filters):
                 queryset = queryset.filter(category=query_value)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
+    # TODO: What are the comments below?!
     # display = SnackResults(queryset)
     # display.border = True
 
