@@ -531,8 +531,8 @@ def find_snack_by_filter(filters):
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Snack.objects
 
-    # the search string should be all if we want to get all snacks, but we can type anything that doesn't include = to
-    #   get the same results
+    # the search string should be all if we want to get all snacks, but we can type anything that doesn't include '='
+    # to get the same results
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
@@ -562,6 +562,7 @@ def find_snack_by_filter(filters):
                 queryset = queryset.filter(category=query_value)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
+    # TODO: What are the comments below?!
     # display = SnackResults(queryset)
     # display.border = True
 
