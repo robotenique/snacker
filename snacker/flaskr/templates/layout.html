@@ -39,7 +39,7 @@
               <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="/register" class="nav-link">
               <span>Register</span></a></li>
-            {% else %}
+          {% else %}
             <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
               <span id="if_account">Account</span></a></li>
             <li class="nav-item cta"><a id="logout" href="/logout" class="nav-link">
@@ -51,8 +51,7 @@
     </div>
   </nav>
 
-    {% block body_raw %}{% endblock %}
-  </div>
+  {% block body_raw %}{% endblock %}
 
   <footer class="ftco-footer ftco-bg-dark ftco-section">
     <div class="container">

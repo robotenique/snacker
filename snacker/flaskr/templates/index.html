@@ -125,7 +125,8 @@
                     <div class="destination">
                       <!-- TODO: We should a link to the appropriate snack image.
                          Search the snack on-click when the searching feature is implemented -->
-                      <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
+                      <a href="#" class="img d-flex justify-content-center align-items-center"
+                         style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
                         <div class="icon d-flex justify-content-center align-items-center">
                           <span class="icon-search2"></span>
                         </div>
@@ -189,26 +190,28 @@
     </section>
   {% endblock %}
 
-  <section class="ftco-section-parallax" id="join_us">
-    <div class="parallax-img d-flex align-items-center">
-      <div class="container">
-        <div class="row d-flex justify-content-center">
-          <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-            <h2>Join Us</h2>
-            <p>Register to get the most of our app!  :)</p>
-            <div class="row d-flex justify-content-center mt-5">
-              <div class="col-md-8">
-                <form class="subscribe-form" onsubmit="indexRegister(); return false;">
-                  <div class="form-group d-flex">
-                    <input id="index_email" type="text" class="form-control" placeholder="Enter email address">
-                    <input type="submit" value="Register" class="submit px-3">
-                  </div>
-                </form>
+  {% if not current_user.is_authenticated %}
+    <section class="ftco-section-parallax" id="join_us">
+      <div class="parallax-img d-flex align-items-center">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+              <h2>Join Us</h2>
+              <p>Register to get the most of our app! :)</p>
+              <div class="row d-flex justify-content-center mt-5">
+                <div class="col-md-8">
+                  <form class="subscribe-form" onsubmit="indexRegister(); return false;">
+                    <div class="form-group d-flex">
+                      <input id="index_email" type="text" class="form-control" placeholder="Enter email address">
+                      <input type="submit" value="Register" class="submit px-3">
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {% endif %}
 {% endblock %}
