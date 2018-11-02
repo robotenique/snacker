@@ -278,9 +278,9 @@ def register():
     return render_template("register.html", **context_dict)
 
 
-@app.route("/create-review", methods=["GET", "POST"])
+@app.route("/create-review/<string:snack>", methods=["GET", "POST"])
 @login_required
-def create_review():
+def create_review(snack):
     # Create a review and insert it into database.
 
     # check authenticated
@@ -288,14 +288,13 @@ def create_review():
         return redirect(url_for('index'))
 
     print("is_authenticated")
+
     review_form = CreateReviewForm(request.form)
+
     # post to db
     if request.method == "POST" and review_form.validate_on_submit():
         user_id = current_user.id
-        # snack name and brand
-        # query for it
-        snacks = Snack.objects
-        snack_id = snacks.filter(snack_name=request.snack_name).filter(snack_brand=request.snack_brand)
+        snack_id = snack.split('=')[1]
 
         # check if metric review
         if review_form.saltiness == 0 and review_form.sourness == 0 and review_form.spiciness == 0 \
@@ -307,8 +306,13 @@ def create_review():
                 # geolocation is found by request
                 new_review = Review(user_id=user_id, snack_id=snack_id,
                                     description=review_form.description.data,
-                                    geolocation="Default", overall_rating=review_form.overall_rating.data)
+                                    geolocation="Default",
+                                    overall_rating=review_form.overall_rating.data
+                                    )
                 new_review.save()
+
+                review_count = Snack.objects(id=snack_id)[0].review_count + 1
+                Snack.objects(id=snack_id).update(set__review_count=review_count)
 
             except Exception as e:
                 raise Exception(
@@ -319,7 +323,7 @@ def create_review():
             for u in Review.objects[:10]:
                 print(u)
 
-            return redirect(url_for('index'))
+            return redirect(url_for('find_reviews_for_snack', filters=snack))
 
         # geolocation stuff
         # ip_address = request.access_route[0] or request.remote_addr
@@ -342,6 +346,9 @@ def create_review():
                                                    sweetness=review_form.sweetness.data)
                 snack_metric_review.save()
 
+                review_count = Snack.objects(id=snack_id)[0].review_count + 1
+                Snack.objects(id=snack_id).update(set__review_count=review_count)
+
             except Exception as e:
                 raise Exception(
                     f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
@@ -351,7 +358,7 @@ def create_review():
             for u in MetricReview.objects[:10]:
                 print(u)
 
-            return redirect(url_for('index'))
+            return redirect(url_for('find_reviews_for_snack', filters=snack))
 
     context_dict = {"title": "Create Review",
                     "form": review_form,
