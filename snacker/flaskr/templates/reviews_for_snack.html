@@ -24,11 +24,12 @@
   </div>
   <hr>
 {% endfor %}
-
-<section class="ftco-section-parallax" id="review">
-    <div class="container">
-        <a href="/create-review/snack_id={{ query[0].id }}">Write Review</a>
-    </div>
-</section>
+{% if current_user.is_authenticated %}
+    <section class="ftco-section-parallax" id="review">
+        <div class="container">
+            <a href="/create-review/snack_id={{ query[0].id }}">Write Review</a>
+        </div>
+    </section>
+{% endif %}
 
 {% endblock %}
