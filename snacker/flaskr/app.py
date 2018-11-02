@@ -291,14 +291,23 @@ def create_review(snack):
 
     review_form = CreateReviewForm(request.form)
 
+    saltiness_review = review_form.saltiness.data
+    sweetness_review = review_form.sweetness.data
+    spiciness_review = review_form.spiciness.data
+    bitterness_review = review_form.saltiness.data
+    sourness_review = review_form.sourness.data
+    overall_rating_review = review_form.overall_rating.data
+
+
     # post to db
     if request.method == "POST" and review_form.validate_on_submit():
         user_id = current_user.id
         snack_id = snack.split('=')[1]
+        snackObject = Snack.objects(id=snack_id)
 
         # check if metric review
-        if review_form.saltiness == 0 and review_form.sourness == 0 and review_form.spiciness == 0 \
-            and review_form.bitterness == 0 and review_form.sweetness == 0:
+        if saltiness_review == 0 and sourness_review == 0 and spiciness_review == 0 \
+            and bitterness_review == 0 and sweetness_review == 0:
 
             try:
                 # user_id comes from current_user
@@ -307,12 +316,17 @@ def create_review(snack):
                 new_review = Review(user_id=user_id, snack_id=snack_id,
                                     description=review_form.description.data,
                                     geolocation="Default",
-                                    overall_rating=review_form.overall_rating.data
+                                    overall_rating=overall_rating_review
                                     )
                 new_review.save()
 
-                review_count = Snack.objects(id=snack_id)[0].review_count + 1
-                Snack.objects(id=snack_id).update(set__review_count=review_count)
+                avg_overall_rating = Review.objects.filter(snack_id=snack_id).average(
+                    'overall_rating')
+
+                snackObject.update(set__avg_overall_rating=avg_overall_rating)
+
+                review_count = snackObject[0].review_count + 1
+                snackObject.update(set__review_count=review_count)
 
             except Exception as e:
                 raise Exception(
@@ -338,16 +352,35 @@ def create_review(snack):
                 snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
                                                    description=review_form.description.data,
                                                    geolocation="Default",
-                                                   overall_rating=review_form.overall_rating.data,
-                                                   sourness=review_form.sourness.data,
-                                                   spiciness=review_form.spiciness.data,
-                                                   saltiness=review_form.saltiness.data,
-                                                   bitterness=review_form.bitterness.data,
-                                                   sweetness=review_form.sweetness.data)
+                                                   overall_rating=overall_rating_review,
+                                                   sourness=sourness_review,
+                                                   spiciness=spiciness_review,
+                                                   saltiness=saltiness_review,
+                                                   bitterness=bitterness_review,
+                                                   sweetness=sweetness_review)
                 snack_metric_review.save()
 
-                review_count = Snack.objects(id=snack_id)[0].review_count + 1
-                Snack.objects(id=snack_id).update(set__review_count=review_count)
+                avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
+                avg_sourness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
+                avg_spiciness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
+                avg_bitterness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
+                avg_sweetness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
+                avg_saltiness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
+
+                snackObject.update(set__avg_overall_rating=avg_overall_rating)
+                snackObject.update(set__avg_sourness=avg_sourness)
+                snackObject.update(set__avg_spiciness=avg_spiciness)
+                snackObject.update(set__avg_bitterness=avg_bitterness)
+                snackObject.update(set__avg_sweetness=avg_sweetness)
+                snackObject.update(set__avg_saltiness=avg_saltiness)
+
+                review_count = snackObject[0].review_count + 1
+                snackObject.update(set__review_count=review_count)
 
             except Exception as e:
                 raise Exception(

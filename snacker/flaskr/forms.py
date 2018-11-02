@@ -48,13 +48,6 @@ class CreateReviewForm(FlaskForm):
 
     range = [(0, ' '), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
 
-    # overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    # sourness = IntField(NumberRange(min=1, max=5))
-    # spiciness = IntField(NumberRange(min=1, max=5))
-    # bitterness = IntField(NumberRange(min=1, max=5))
-    # sweetness = IntField(NumberRange(min=1, max=5))
-    # saltiness = IntField(NumberRange(min=1, max=5))
-
     overall_rating = SelectField(coerce=int, choices=range, validators=[DataRequired(), NumberRange(min=1, max=5)])
     sourness = SelectField(coerce=int, choices=range)
     spiciness = SelectField(coerce=int, choices=range)
