@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title_block %}{{ title }}{% endblock %}
+{% block body_raw %}
+  <div class="hero-wrap js-fullheight"
+       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
+    <br/>
+    {% from "_formhelpers.html" import render_field %}
+    <form method="POST" name="review_snack"
+          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
+      {{ form.hidden_tag() }}
+      <div class="form-group" style="color:white;">
+        {{ render_field(form.description) }}
+        {{ render_field(form.overall_rating) }}
+        {{ render_field(form.sourness) }}
+        {{ render_field(form.spiciness) }}
+        {{ render_field(form.saltiness) }}
+        {{ render_field(form.bitterness) }}
+        {{ render_field(form.sweetness) }}
+      </div>
+      <input class="btn btn-primary" type="submit" name="submit" value="submit">
+    </form>
+
+    {% if error %}
+      <p class="error"><strong>Error:</strong>{{ error }}</p>
+    {% endif %}
+  </div>
+{% endblock %}

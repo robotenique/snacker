@@ -39,11 +39,11 @@
               <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="/register" class="nav-link">
               <span>Register</span></a></li>
-            {% else %}
-            <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
-              <span id="if_account">Account</span></a></li>
+          {% else %}
+            <li class="nav-item cta"><a id="account" href="/create-snack" class="nav-link">
+              <span>Add Snack</span></a></li>
             <li class="nav-item cta"><a id="logout" href="/logout" class="nav-link">
-              <span id="if_account">Log out</span></a></li>
+              <span>Log out</span></a></li>
           {% endif %}
 
         </ul>
@@ -51,8 +51,7 @@
     </div>
   </nav>
 
-    {% block body_raw %}{% endblock %}
-  </div>
+  {% block body_raw %}{% endblock %}
 
   <footer class="ftco-footer ftco-bg-dark ftco-section">
     <div class="container">
@@ -93,7 +92,7 @@
                 <li><a href="#"><span class="text">Harry Chen</span></a></li>
                 <li><a href="#"><span class="text">Flora Shi</span></a></li>
                 <li><a href="#"><span class="text">Alex Chum</span></a></li>
-                <li><a href="#"><span class="text">Guiliano Celani</span></a></li>
+                <li><a href="#"><span class="text">Giuliano Celani</span></a></li>
               </ul>
             </div>
           </div>

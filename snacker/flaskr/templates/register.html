@@ -5,8 +5,6 @@
        style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
     <br/>
     <br/>
-    <br/>
-    <br/>
     {% from "_formhelpers.html" import render_field %}
     {#  Don't change the funciton name back to register, then js can't find the function  #}
     <form onsubmit="register_user();return false;" name="register"
