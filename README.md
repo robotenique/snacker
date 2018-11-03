@@ -1,5 +1,6 @@
 # project-team-16
 CSC301, Fall 2018, team project.
+[Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
 
 # Setup (Backend)
 
