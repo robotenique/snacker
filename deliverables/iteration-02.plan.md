@@ -57,24 +57,24 @@ Each member should open their own branch off master when working on their tasks 
 #### Goals and tasks
 
 List of task in order of priority:
-1.Decide on the stack/framework/database
-2.Setup everyone’s dev environment
-3.Decide on the frontend look/choose a frontend template
-4.Setup basic frontend
-5.Decide on and set up database schema
-6.Create an account
-7.Login
-8.Populate database with some snacks
-9.Index page
-10.Search a snack
-11.About/contact page
-12.User create a snack
-13.Read a snack
-14.Review a snack
-15.Verify a snack
-16.Snack recommendation
-17.Wishlist
-18.Polish everything
+1. Decide on the stack/framework/database
+2. Setup everyone’s dev environment
+3. Decide on the frontend look/choose a frontend template
+4. Setup basic frontend
+5. Decide on and set up database schema
+6. Create an account
+7. Login
+8. Populate database with some snacks
+9. Index page
+10. Search a snack
+11. About/contact page
+12. User create a snack
+13. Read a snack
+14. Review a snack
+15. Verify a snack
+16. Snack recommendation
+17. Wishlist
+18. Polish everything
 
 Our goals for this iteration are to finish tasks up to and including “12: user create a snack” in the above priority list. By the end of the second iteration, we should have at least a locally running website that support users to create acn account/login/search a snack/create a snack.
 
