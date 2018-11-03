@@ -35,7 +35,7 @@
 
 #### Goals and/or tasks that were met/completed:
 
- * The 12 tasks we planned to finish by deliverable 2
+The 12 tasks we planned to finish by deliverable 2
  1. Decide on the stack/framework/database
  2. Setup everyone’s dev environment
  3. Decide on the frontend look/choose a frontend template
