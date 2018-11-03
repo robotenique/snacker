@@ -48,6 +48,7 @@
  10. Search a snack
  11. About/contact page
  12. User create a snack
+ 
 We finished all of them! In addition, we also implemented displaying all the reviews for a specific snack and creating a new review for a snack. And our web app can be run locally with flask as planned. We also finished the data relationship diagram and the video in time as planned.
 
 #### Goals and/or tasks that were planned but not met/completed:
