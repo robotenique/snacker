@@ -14,7 +14,6 @@
 
 #### Decisions that turned out well
 
-
  * Trello task management: We decided to use the Trello board, and it was a very important decision, because it’s a very easy and convenient way to keep track of what tasks need to be done, and in which ‘area’ of development (backend, frontend, administrative, testing, etc.). By looking at the board itself, we have an overview of which part of our project one should focus on, which is very important for our planning.
 
  * Sunday online meetings: There should be two of such meetings, but at the end only one of them was held (Oct 28). That meeting was successful because the team used the time to resolve technical confusions and pull request miscommunication, and also to lay out timeline expectation of tasks. Even though not every member of the team attended the meeting, we kept each other updated and that made development easier.
@@ -22,7 +21,6 @@
  * Using Readme: We decided to have a readme document detailing how to set up the dev environment, how to use flask, our agreed coding style and naming convention. This was great since we were able to ask members to refer to Readme for lots of common questions instead of having to explain every time.
 
 #### Decisions that did not turn out as well as we hoped
-
 
  * Pull request reviews: Initially, we didn’t communicate the pull request expectation well which allowed poor implementations and bugs to be merged to master branch since code was pushed without having been reviewed. Then we clarified the pull request procedure that only the commits reviewed and approved by a few members of the team can be merged. However, then we encountered the problem that pull request stayed open for too long since members were not actively reviewing the pull request fast enough, this is especially problematic to other members who might need the code in the open pull request. So then we made the decision that only 2 reviewers’ opinions are needed before a pull request can be merged, and in the case of emergent bug fixes just let other members know through facebook group chat and push to master.
  * Our original timeline for the tasks was not followed so well: Due to midterm exams, many people can not do their tasks until the weekend before the due date. Even though it was against our initial agreement, everybody started working on the project as soon as they could, which is highly appreciated.
@@ -50,7 +48,7 @@
  10. Search a snack
  11. About/contact page
  12. User create a snack
- * We finished all of them! In addition, we also implemented displaying all the reviews for a specific snack and creating a new review for a snack. And our web app can be run locally with flask as planned. We also finished the data relationship diagram and the video in time as planned.
+We finished all of them! In addition, we also implemented displaying all the reviews for a specific snack and creating a new review for a snack. And our web app can be run locally with flask as planned. We also finished the data relationship diagram and the video in time as planned.
 
 #### Goals and/or tasks that were planned but not met/completed:
 
