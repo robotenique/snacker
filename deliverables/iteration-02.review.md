@@ -8,7 +8,7 @@
 
  * We hit some last minute snags with some of our implementations as our TA said our original implementation was lacking some features. We were already working on the features but they were not fully working until the last minute.
 
- * Our timeline were not followed well: we planned originally to finish our entire work on Tuesday before the Friday when Deliverable 2 is due, however that did not happen. We also didn’t meet any one of our set weekly development goal. Some members were quite unresponsive until the weekend before the due date.
+ * Our timeline were not followed well: we planned originally to finish our entire work on Tuesday before the Friday when Deliverable 2 is due, however that did not happen. We also didn’t meet any one of our set weekly development goals. Some members were quite unresponsive until the weekend before the due date.
 
  * To account for members’ work outside of code commits (for participation marks): Juliano and Jayde worked on creating the database and connecting to it via flask; Juliano and Giuliano populated the database with a script Juliano wrote that get snack data from another website; Juliano, Jayde, and Flora created the database relationship diagram; Jayde, Adam and Alex wrote/edited the video script; Jayde and Alex created the video; Juliano fulfilled the duties of a scrum master dutifully and organized things to discuss during each meeting before the meetings so that we were able to utilize our meeting time well
 
