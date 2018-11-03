@@ -19,6 +19,8 @@
 
  * Sunday online meetings: There should be two of such meetings, but at the end only one of them was held (Oct 28). That meeting was successful because the team used the time to resolve technical confusions and pull request miscommunication, and also to lay out timeline expectation of tasks. Even though not every member of the team attended the meeting, we kept each other updated and that made development easier.
 
+ * Using Readme: We decided to have a readme document detailing how to set up the dev environment, how to use flask, our agreed coding style and naming convention. This was great since we were able to ask members to refer to Readme for lots of common questions instead of having to explain every time.
+
 #### Decisions that did not turn out as well as we hoped
 
 
@@ -36,18 +38,18 @@
 #### Goals and/or tasks that were met/completed:
 
  * The 12 tasks we planned to finish by deliverable 2
-Decide on the stack/framework/database
-Setup everyone’s dev environment
-Decide on the frontend look/choose a frontend template
-Setup basic frontend
-Decide on and set up database schema
-Create an account
-Login
-Populate database with some snacks
-Index page
-Search a snack
-About/contact page
-User create a snack
+ 1.Decide on the stack/framework/database
+ 2.Setup everyone’s dev environment
+ 3.Decide on the frontend look/choose a frontend template
+ 4.Setup basic frontend
+ 5.Decide on and set up database schema
+ 6.Create an account
+ 7.Login
+ 8.Populate database with some snacks
+ 9.Index page
+ 10.Search a snack
+ 11.About/contact page
+ 12.User create a snack
  * We finished all of them! In addition, we also implemented displaying all the reviews for a specific snack and creating a new review for a snack. And our web app can be run locally with flask as planned. We also finished the data relationship diagram and the video in time as planned.
 
 #### Goals and/or tasks that were planned but not met/completed:
