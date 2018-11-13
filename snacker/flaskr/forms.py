@@ -1,7 +1,7 @@
 import pycountry
 from flask_wtf import FlaskForm
 from mongoengine import IntField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
 from schema import User, Review
@@ -44,7 +44,7 @@ class LoginForm(FlaskForm):
 
 
 class CreateReviewForm(FlaskForm):
-    description = StringField("Review Description", [Length(min=2, max=255)])
+    description = TextAreaField("Review Description", [Length(min=2, max=255)])
 
     range = [(0, ' '), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
 
@@ -74,5 +74,5 @@ class CreateSnackForm(FlaskForm):
     categories = [("Cookies", "Cookies"), ("Chocolate", "Chocolate"), ("Candies", "Candies"), ("Chips", "Chips")]
 
     category = SelectField('Snack Category', choices=categories)
-    description = StringField("Snack Description", [Length(min=2, max=255)])
+    description = TextAreaField("Snack Description", [Length(min=2, max=255)])
     submit = SubmitField('Create Snack')
