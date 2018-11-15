@@ -1,11 +1,3 @@
-$(document).ready(function () {
-    if (window.sessionStorage.getItem("email")) {
-        document.getElementById("if_account").innerText = "Account";
-        document.getElementById('account_link').setAttribute('href', 'account');
-        document.getElementById("join_us").style.display = "none";
-    }
-});
-
 /* Search snack given index's form */
 function searchSnacks() {
     let snack_brand = document.getElementById("index_search_brand").value;
@@ -20,7 +12,6 @@ function indexRegister() {
     window.location.href = "register?email=" + email
 }
 
-
 /*Login the user*/
 function authenticate() {
     console.log(document.getElementById("login_email").value);
@@ -34,9 +25,6 @@ function authenticate() {
         dataType: "json",
         success: function (result) {
             console.log(result);
-            window.sessionStorage.setItem("email", result.email);
-            window.sessionStorage.setItem("first_name", result.first_name);
-            window.sessionStorage.setItem("last_name", result.last_name);
             window.location.href = "index";
         },
         error: function (result) {
@@ -47,22 +35,20 @@ function authenticate() {
 
 /*Login the user*/
 function register_user() {
-    console.log(document.getElementById("register_email").value);
+    console.log(document.getElementById("register_company").value);
     $.ajax({
         type: "POST",
         url: "/register",
         data: {
             "email": document.getElementById("register_email").value,
             "password": document.getElementById("register_password").value,
+            "company_name": document.getElementById("register_company").value,
             "first_name": document.getElementById("register_first").value,
             "last_name": document.getElementById("register_last").value,
         },
         dataType: "json",
         success: function (result) {
             console.log(result);
-            window.sessionStorage.setItem("email", result.email);
-            window.sessionStorage.setItem("first_name", result.first_name);
-            window.sessionStorage.setItem("last_name", result.last_name);
             window.location.href = "index";
         },
         error: function (result) {

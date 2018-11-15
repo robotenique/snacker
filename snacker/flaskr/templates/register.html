@@ -14,8 +14,8 @@
         {{ render_field(form.first_name, id="register_first") }}
         {{ render_field(form.last_name, id="register_last") }}
         {{ render_field(form.email, id="register_email") }}
-        <label style="color:black;">{{ form.is_company.label }}</label>
-        {{ form.is_company(value="Are you a company or a distributor?") }}
+        <label style="color:black;">If you are a rep from a snack company, please fill your company's name below</label>
+        {{ render_field(form.company_name, id="register_company") }}
         {{ render_field(form.password, id="register_password") }}
         {{ render_field(form.confirm) }}
         <label style="color:black;">{{ form.accept_tos.label }}</label>
