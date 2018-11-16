@@ -4,6 +4,7 @@ from mongoengine.queryset.visitor import Q
 import schema
 import numpy as np
 from scipy.sparse import csr_matrix
+from sklearn.decomposition import NMF
 """
 The purpose of this file is to be used for experiments for the recommendation
 algorithm of our application.
@@ -16,6 +17,7 @@ def recsys():
     my_db = mongo[DATABASE]
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     training_data = generate_training_data(my_db)
+    training_dataset(training_data)
 
 def generate_training_data(my_db):
     """Given a database, generate training data from that specific database
@@ -91,6 +93,27 @@ def generate_training_data(my_db):
         "user_ratings" : user_ratings
     }
 
+def training_dataset(training_data):
+    # Supress scientific notation
+    np.set_printoptions(suppress=True, linewidth=300)
+    # TODO: Things to check: Normalization, adding bias, regularization
+    # TODO: Probably should be optimized using GridSearchCV, but mathematically, should be less than num_rows AND num_cols
+    num_latent_features = 3
+    #X_sparse = training_data["X_sparse"]
+    X_sparse = np.array([   [5, 3, 0, 1],
+                            [4, 0, 0, 1],
+                            [1, 1, 0, 5],
+                            [1, 0, 0, 4],
+                            [0, 1, 5, 4],
+                         ])
+    # TODO: Need to check how to optimize using ONLY the non zero values!
+    model = NMF(n_components=num_latent_features, init='random', random_state=0)
+    W = model.fit(X_sparse)
+    result = model.inverse_transform(model.transform(X_sparse))
+    print("\n========= Original User x movie matrix =========")
+    print(X_sparse)
+    print("\n========= Reconstructed matrix after regularization =========")
+    print(result)
 
 if __name__ == '__main__':
     try:
