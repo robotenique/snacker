@@ -4,7 +4,7 @@ from mongoengine.queryset.visitor import Q
 import schema
 import numpy as np
 from scipy.sparse import csr_matrix
-from sklearn.decomposition import NMF
+from scipy.sparse.linalg import svds
 """
 The purpose of this file is to be used for experiments for the recommendation
 algorithm of our application.
@@ -15,6 +15,7 @@ Important: Check the docs in deliverable/doc/recommender.md
 def recsys():
     DATABASE = "test"
     my_db = mongo[DATABASE]
+    print(f"Connected to mongodb '{DATABASE}' database.")
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     training_data = generate_training_data(my_db)
     training_dataset(training_data)
@@ -98,28 +99,28 @@ def training_dataset(training_data):
     np.set_printoptions(suppress=True, linewidth=300)
     # TODO: Things to check: Normalization, adding bias, regularization
     # TODO: Probably should be optimized using GridSearchCV, but mathematically, should be less than num_rows AND num_cols
-    num_latent_features = 3
+    num_latent_features = 2
     #X_sparse = training_data["X_sparse"]
     X_sparse = np.array([   [5, 3, 0, 1],
                             [4, 0, 0, 1],
                             [1, 1, 0, 5],
                             [1, 0, 0, 4],
                             [0, 1, 5, 4],
-                         ])
-    # TODO: Need to check how to optimize using ONLY the non zero values!
-    model = NMF(n_components=num_latent_features, init='random', random_state=0)
-    W = model.fit(X_sparse)
-    result = model.inverse_transform(model.transform(X_sparse))
+                         ]).astype(float)
+    user_ratings_mean = np.mean(X_sparse, axis = 1)
+    dem = X_sparse - user_ratings_mean.reshape(-1, 1)
+    U, sigma, Vt = svds(dem, k = num_latent_features)
+    sigma = np.diag(sigma)
+    all_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
     print("\n========= Original User x movie matrix =========")
     print(X_sparse)
     print("\n========= Reconstructed matrix after regularization =========")
-    print(result)
+    print(np.around(all_user_predicted_ratings, decimals=2))
 
 if __name__ == '__main__':
     try:
         mongo_uri = "mongodb://localhost:27017/"
         mongo = connect(host=mongo_uri)
-        print("Connected to mongo db...\n")
     except Exception as inst:
         raise Exception("Error in database connection:", inst)
     recsys()
