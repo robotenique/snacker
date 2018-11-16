@@ -13,25 +13,11 @@ Flask: http://flask.pocoo.org/
 
 Pycharm IDE: https://www.jetbrains.com/pycharm/ (Download community version)
 
-Install Flask:
+Install Required libraries:
 
-pip install Flask
-
-pip install flask-bcrypt
-
-pip install dnspython
-
-pip install mongoengine
-
-pip install Flask-WTF
-
-pip install Pillow
-
-pip install Flask-Table
-
-pip install flask_login
-
-pip install pycountry
+```bash
+$ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Table flask_login pycountry numpy scipy scikit-surprise
+```
 
 ### Run the application
 
