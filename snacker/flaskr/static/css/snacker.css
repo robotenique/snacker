@@ -1,3 +1,16 @@
+/*Account page*/
+.account_basics {
+  padding-top: 10px !important;
+  margin: auto;
+  border: 3px solid green;
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/*Search results*/
 .snack-query-title {
   font-size: 1.5em;
   float: left;

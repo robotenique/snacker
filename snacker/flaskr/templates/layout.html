@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {#Our own css#}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/snacker.css') }}">
 </head>
 
@@ -43,7 +45,7 @@
               {% if not current_user.company_name %}
                 <span>Add Snack/Wishlist</span></a></li>
               {% else %}
-                <span>Add Snack/Watchlist</span></a></li>
+                <span>Watchlist</span></a></li>
               {% endif %}
             <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
               <span>Account</span></a></li>

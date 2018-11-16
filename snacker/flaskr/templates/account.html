@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
 {% block title_block %}Account{% endblock %}
 {% block body_raw %}
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
-           data-scrollax-parent="true">
-        <div class="col-md-9 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-          <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a
-              href="/index">Home</a></span> <span>Contact</span></p>
-          <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Contact Us</h1>
-        </div>
-      </div>
+    <section class="ftco-section bg-dark" style="padding: 3.2em 0">
+    <!-- Placeholder to have a width to display the navbar
+      Can later be changed for a static navbar but currently too many unknown js factors.
+      Space should be used to add other elements to the header of the page-->
+    </section>
+    <div class="account_basics">
+        {% if current_user.company_name %}
+            <p class="text-center">Company name: {{ current_user.company_name }}</p>
+        {% endif %}
+        <p class="text-center">Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p class="text-center">email: {{ current_user.email }}</p>
+        <button type="button" class="align-content-center"><a href="/logout" class="nav-link">Logout</a></button>
+        {% if current_user.company_name %}
+            <button type="button" class="align-content-center"><a href="/create-brand" class="nav-link">Add Brand</a></button>
+            <button type="button" class="align-content-center"><a href="/create-snack" class="nav-link">Add Snack</a></button>
+        {% endif %}
     </div>
-  </div>
-
 
 {% endblock %}
