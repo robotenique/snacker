@@ -19,9 +19,26 @@ def generate_training_data(my_db):
     """Given a database, generate training data from that specific database
        and return the data generated"""
     collection_names = my_db.collection_names()
+    # Check that we have the collections that we need
     assert "snack" in collection_names
     assert "review" in collection_names
     assert "user" in collection_names
+    snackID_to_index = {}
+    cursor = schema.User.objects.aggregate(*[
+         {
+          '$lookup': {
+              'from': schema.Review._get_collection_name(),
+              'localField': '_id',
+              'foreignField': 'user_id',
+              'as': 'review'}
+         }])
+    for c in cursor:
+        # If this user has made a review
+        if c['review']:
+            print(str(c['_id']))
+            print(c['first_name'])
+    print(type(cursor))
+
 
 if __name__ == '__main__':
     try:
