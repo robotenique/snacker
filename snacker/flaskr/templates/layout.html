@@ -33,17 +33,20 @@
           <li class="nav-item active"><a href="/index" class="nav-link">Home</a></li>
           <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
           <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
-          {#            Need to check if user is logined in here, if so here should say Account#}
           {% if not current_user.is_authenticated %}
             <li class="nav-item cta"><a id="account_link" href="/login" class="nav-link">
               <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="/register" class="nav-link">
               <span>Register</span></a></li>
           {% else %}
-            <li class="nav-item cta"><a id="account" href="/create-snack" class="nav-link">
-              <span>Add Snack</span></a></li>
-            <li class="nav-item cta"><a id="logout" href="/logout" class="nav-link">
-              <span>Log out</span></a></li>
+            <li class="nav-item cta"><a id="wishlist" href="/create-snack" class="nav-link">
+              {% if not current_user.company_name %}
+                <span>Add Snack/Wishlist</span></a></li>
+              {% else %}
+                <span>Add Snack/Watchlist</span></a></li>
+              {% endif %}
+            <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
+              <span>Account</span></a></li>
           {% endif %}
 
         </ul>
