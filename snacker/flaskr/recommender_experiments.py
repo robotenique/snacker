@@ -3,6 +3,7 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 import schema
 import numpy as np
+import pandas as pd
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
 """
@@ -97,8 +98,7 @@ def generate_training_data(my_db):
 def training_dataset(training_data):
     # Supress scientific notation
     np.set_printoptions(suppress=True, linewidth=300)
-    # TODO: Things to check: Normalization, adding bias, regularization
-    # TODO: Probably should be optimized using GridSearchCV, but mathematically, should be less than num_rows AND num_cols
+    # IMPORTANT: Should be less than num rows and num cols!
     num_latent_features = 2
     #X_sparse = training_data["X_sparse"]
     X_sparse = np.array([   [5, 3, 0, 1],
@@ -108,15 +108,21 @@ def training_dataset(training_data):
                             [0, 1, 5, 4],
                          ]).astype(float)
     user_ratings_mean = np.mean(X_sparse, axis = 1)
-    dem = X_sparse - user_ratings_mean.reshape(-1, 1)
-    U, sigma, Vt = svds(dem, k = num_latent_features)
+    R_demeaned = X_sparse - user_ratings_mean.reshape(-1, 1)
+    U, sigma, Vt = svds(R_demeaned, k = num_latent_features)
     sigma = np.diag(sigma)
     all_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
-    print("\n========= Original User x movie matrix =========")
-    print(X_sparse)
-    print("\n========= Reconstructed matrix after regularization =========")
-    print(np.around(all_user_predicted_ratings, decimals=2))
-
+    #preds_df = pd.DataFrame(all_user_predicted_ratings, columns = R_df.columns)
+    preds_df = pd.DataFrame(all_user_predicted_ratings)
+    print(preds_df.head())
+    # Testing for user 0
+    num_recommendations = 4
+    ratings = np.array(preds_df.iloc[0])
+    # Negative because we want the max
+    ind = np.argpartition(ratings, -num_recommendations)[-num_recommendations:]
+    print(f"Recommendations for user [0]:")
+    print(f"Indexes: {ind}")
+    print(f"Ratings: {ratings[ind]}")
 if __name__ == '__main__':
     try:
         mongo_uri = "mongodb://localhost:27017/"
