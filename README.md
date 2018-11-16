@@ -16,7 +16,7 @@ Pycharm IDE: https://www.jetbrains.com/pycharm/ (Download community version)
 Install Required libraries:
 
 ```bash
-$ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Table flask_login pycountry numpy scipy scikit-surprise
+$ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Table flask_login pycountry numpy scipy
 ```
 
 ### Run the application
