@@ -102,9 +102,18 @@ class MF(object):
         """
         return self.b + self.b_u[:,np.newaxis] + self.b_i[np.newaxis:,] + self.P.dot(self.Q.T)
 
-def recsys():
-    DATABASE = "test"
-    my_db = mongo[DATABASE]
+def prepare_mongodb(mongo_uri="mongodb://localhost:27017/"):
+    try:
+        # TODO: change the mongo_uri to the production database when ready...
+        mongo = connect(host=mongo_uri)
+    except Exception as inst:
+        raise Exception("Error in database connection:", inst)
+    return mongo
+
+def recsys(mongo, db_name="test"):
+    if not mongo:
+        raise ValueError("Mongo instance is invalid!")
+    my_db = mongo[db_name]
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     tr_data = generate_training_data(my_db)
     recc = training_recc_engine(tr_data)
@@ -265,11 +274,6 @@ def training_recc_engine(train_data, K=2, train_size=.70, alpha=0.001, beta=0.01
     return recc
 
 if __name__ == '__main__':
-    try:
-        # TODO: change this URL to the production database when ready...
-        mongo_uri = "mongodb://localhost:27017/"
-        mongo = connect(host=mongo_uri)
-    except Exception as inst:
-        raise Exception("Error in database connection:", inst)
-    recsys()
+    mongo = prepare_mongodb()
+    recsys(mongo)
 
