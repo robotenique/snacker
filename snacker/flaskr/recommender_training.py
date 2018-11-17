@@ -110,7 +110,15 @@ def recsys():
     my_db = mongo[DATABASE]
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     tr_data = generate_training_data(my_db)
-    training_recc_engine(tr_data)
+    model = training_recc_engine(tr_data)
+    """ num_recommendations = 10
+    ratings = recc[0]
+    # Negative because we want the max
+    ind = np.argpartition(ratings, -num_recommendations)[-num_recommendations:]
+    print(f"Recommendations for user [0]:")
+    print(f"Indexes: {ind}")
+    print(f"Ratings: {ratings[ind]}") """
+
 
 def generate_training_data(my_db):
     """Given a database, generate training data from that specific database
@@ -172,7 +180,18 @@ def generate_training_data(my_db):
     row = np.array(row).reshape(-1, 1).astype(float)
     col = np.array(col).reshape(-1, 1).astype(float)
     data = np.array(data).reshape(-1, 1).astype(float)
+    #=====================Test example (comment to disable)=====================
+    row = np.arange(10).reshape(-1, 1).astype(float)                          #
+    col = np.arange(10).reshape(-1, 1).astype(float)                          #
+    data = (np.random.rand(10)*10 + 1).reshape(-1, 1)                         #
+    index_user = len(row)                                                     #
+    index_snack = len(col)                                                    #
+    #=====================Test example (comment to disable)=====================
+
+
     """
+    RATING_DATA:
+    =================
     rating_data matrix, in this format (all float to keep type consistent):
     USER_ID  | SNACK_ID  | OVERALL_RATING
        2.    |     33.   |       5.
@@ -194,7 +213,7 @@ def generate_training_data(my_db):
         "user_ratings" : user_ratings # Internal value of each user
     }
 
-def training_recc_engine(train_data, K=2, train_size=.70):
+def training_recc_engine(train_data, K=2, train_size=.70, alpha=0.001, beta=0.01, iterations=30):
     # IMPORTANT: 'K' (num latent features) Should be <= min(len(rows), len(cols))
 
     # Supress scientific notation
@@ -205,15 +224,29 @@ def training_recc_engine(train_data, K=2, train_size=.70):
     """ Data preparation (train and test data) """
     # Divide into train and test data
     rnd_permutation = np.random.permutation(all_data)
-    last_pos = int(train_size*len(df.values)) + 1
+    last_pos = int(train_size*len(all_data)) + 1
     assert last_pos < len(all_data)
     X_train = rnd_permutation[:last_pos]
     X_test = rnd_permutation[last_pos:]
     new = np.zeros((num_users, num_snacks))
     # Populate our matrix with ONLY training data. The rest is 0 (this means it's Not available)
     new[X_train[:, 0].astype(int), X_train[:, 1].astype(int)] = X_train[:, 2]
-    
-    #X_sparse = training_data["X_sparse"]
+    R = new
+    """ Data training """
+    mf = MF(R, K=K, alpha=alpha, beta=beta, iterations=iterations)
+    training_process = mf.train()
+    recc = mf.full_matrix()
+    print("Finished training.")
+    """ Data evaluation """
+    # Calculate the MSE using the Frobenius norm
+    # Correct indexes from the training
+    u_id = X_test[:, 0].astype(int)
+    m_id = X_test[:, 1].astype(int)
+    # Compute the Frobenius norm
+    mse = np.mean((X_test[:, 2] - recc[u_id, m_id])**2)
+    print(f"Mean Squared Error: {mse}")
+    # Return the trained model
+    return recc
 
 if __name__ == '__main__':
     try:
