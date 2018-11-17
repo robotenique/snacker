@@ -1,11 +1,8 @@
 import urllib
-from mongoengine import connect
-from mongoengine.queryset.visitor import Q
 import schema
+import pickle
 import numpy as np
-import pandas as pd
-from scipy.sparse import csr_matrix
-from scipy.sparse.linalg import svds
+from mongoengine import connect
 """
 The purpose of this file is to be used for the recommendation
 algorithm training of our application.
@@ -110,7 +107,23 @@ def recsys():
     my_db = mongo[DATABASE]
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     tr_data = generate_training_data(my_db)
-    model = training_recc_engine(tr_data)
+    recc = training_recc_engine(tr_data)
+    # Create a dict with all the relevant model information
+    model = {"model": recc,
+             "snackID_to_index": tr_data["snackID_to_index"],
+             "index_to_snackID": tr_data["index_to_snackID"],
+             "index_snack": tr_data["index_snack"],
+             "userID_to_index": tr_data["userID_to_index"],
+             "index_to_userID": tr_data["index_to_userID"],
+             "index_user": tr_data["index_user"]}
+    # Save model to file
+    with open("recc_model.pickle", "wb") as f:
+        # Pickle the 'model' dictionary using the highest protocol available
+        pickle.dump(model, f, pickle.HIGHEST_PROTOCOL)
+    print("\nTrained model saved in file 'recc_model.pickle'.")
+
+
+
     """ num_recommendations = 10
     ratings = recc[0]
     # Negative because we want the max
@@ -165,7 +178,7 @@ def generate_training_data(my_db):
                     index_to_snackID[index_snack] =  str(review["snack_id"])
                     index_snack += 1
                 user_ratings[index_user].append([snackID_to_index[str(review["snack_id"])], float(review["overall_rating"])])
-            print(c['first_name'])
+            #print(c['first_name'])
         index_user += 1
     # Create our training data
     row = []
