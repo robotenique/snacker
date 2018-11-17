@@ -16,10 +16,9 @@ Important: Check the docs in deliverable/doc/recommender.md
 def recsys():
     DATABASE = "test"
     my_db = mongo[DATABASE]
-    print(f"Connected to mongodb '{DATABASE}' database.")
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
-    training_data = generate_training_data(my_db)
-    training_dataset(training_data)
+    tr_data = generate_training_data(my_db)
+    training_recc_engine(tr_data)
 
 def generate_training_data(my_db):
     """Given a database, generate training data from that specific database
@@ -78,51 +77,51 @@ def generate_training_data(my_db):
             row.append(user)
             col.append(rating[0])
             data.append(rating[1])
-    # Creating a sparse matrix to avoid HUGE memory usage
-    X_sparse = csr_matrix((data, (row, col)), shape = (index_user, index_snack))
-    print(f"Sparse matrix: \n{X_sparse}\n")
-    # To convert to normal representation use toarray()
-    print(f"Common rep. matrix: \n{X_sparse.toarray()}\n")
+    row = np.array(row).reshape(-1, 1).astype(float)
+    col = np.array(col).reshape(-1, 1).astype(float)
+    data = np.array(data).reshape(-1, 1).astype(float)
+    """
+    rating_data matrix, in this format (all float to keep type consistent):
+    USER_ID  | SNACK_ID  | OVERALL_RATING
+       2.    |     33.   |       5.
+       1.    |     353.  |       2.5
+    """
+    rating_data = np.concatenate((row, col, data), axis=1)
+    print(rating_data)
+    #print(f"Sparse matrix: \n{X_sparse}\n")
+    #print(f"Common rep. matrix: \n{X_sparse.toarray()}\n")
     # Returning an object with all the important information
     return {
-        "X_sparse" : X_sparse,
-        "snackID_to_index" : snackID_to_index,
-        "index_to_snackID": index_to_snackID,
-        "index_snack" :index_snack,
-        "userID_to_index" : userID_to_index,
-        "index_to_userID" : index_to_userID,
-        "index_user" : index_user,
-        "user_ratings" : user_ratings
+        "rating_data": rating_data, # rating_data matrix, info above
+        "snackID_to_index" : snackID_to_index, # SnackID (database id) to index in matrix
+        "index_to_snackID": index_to_snackID, # index in matrix to SnackID (database id)
+        "index_snack" :index_snack, # Number of snacks
+        "userID_to_index" : userID_to_index, # UserID(database id) to index in matrix
+        "index_to_userID" : index_to_userID, # index in matrix to UserID (database id)
+        "index_user" : index_user, # Number of users
+        "user_ratings" : user_ratings # Internal value of each user
     }
 
-def training_dataset(training_data):
+def training_recc_engine(train_data, K=2, train_size=.70):
+    # IMPORTANT: 'K' (num latent features) Should be <= min(len(rows), len(cols))
+
     # Supress scientific notation
     np.set_printoptions(suppress=True, linewidth=300)
-    # IMPORTANT: Should be less than num rows and num cols!
-    num_latent_features = 2
+    all_data = train_data["rating_data"]
+    num_users = train_data["index_user"]
+    num_snacks = train_data["index_snack"]
+    """ Data preparation (train and test data) """
+    # Divide into train and test data
+    rnd_permutation = np.random.permutation(all_data)
+    last_pos = int(train_size*len(df.values)) + 1
+    assert last_pos < len(all_data)
+    X_train = rnd_permutation[:last_pos]
+    X_test = rnd_permutation[last_pos:]
+    new = np.zeros((num_users, num_snacks))
+    # Populate our matrix with ONLY training data. The rest is 0 ==> Not available
+    new[X_train[:, 0].astype(int), X_train[:, 1].astype(int)] = X_train[:, 2]
     #X_sparse = training_data["X_sparse"]
-    X_sparse = np.array([   [5, 3, 0, 1],
-                            [4, 0, 0, 1],
-                            [1, 1, 0, 5],
-                            [1, 0, 0, 4],
-                            [0, 1, 5, 4],
-                         ]).astype(float)
-    user_ratings_mean = np.mean(X_sparse, axis = 1)
-    R_demeaned = X_sparse - user_ratings_mean.reshape(-1, 1)
-    U, sigma, Vt = svds(R_demeaned, k = num_latent_features)
-    sigma = np.diag(sigma)
-    all_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
-    #preds_df = pd.DataFrame(all_user_predicted_ratings, columns = R_df.columns)
-    preds_df = pd.DataFrame(all_user_predicted_ratings)
-    print(preds_df.head())
-    # Testing for user 0
-    num_recommendations = 4
-    ratings = np.array(preds_df.iloc[0])
-    # Negative because we want the max
-    ind = np.argpartition(ratings, -num_recommendations)[-num_recommendations:]
-    print(f"Recommendations for user [0]:")
-    print(f"Indexes: {ind}")
-    print(f"Ratings: {ratings[ind]}")
+
 if __name__ == '__main__':
     try:
         mongo_uri = "mongodb://localhost:27017/"
