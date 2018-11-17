@@ -116,6 +116,7 @@ def recsys():
              "userID_to_index": tr_data["userID_to_index"],
              "index_to_userID": tr_data["index_to_userID"],
              "index_user": tr_data["index_user"]}
+    print(model["index_to_snackID"])
     # Save model to file
     with open("recc_model.pickle", "wb") as f:
         # Pickle the 'model' dictionary using the highest protocol available
@@ -164,7 +165,7 @@ def generate_training_data(my_db):
          }])
     for c in cursor:
         # Add current user into the
-        if not userID_to_index.get(str(c["_id"])):
+        if userID_to_index.get(str(c["_id"])) == None:
             userID_to_index[str(c["_id"])] = index_user
             index_to_userID[index_user] =  str(c["_id"])
             # Empty list at first
@@ -173,12 +174,13 @@ def generate_training_data(my_db):
         if c['review']:
             for review in c['review']:
                 # Add current snack to the mapping if not already there
-                if not snackID_to_index.get(str(review["snack_id"])):
+                if snackID_to_index.get(str(review["snack_id"])) == None:
+                    print("Adicionando: ", str(review["snack_id"]))
                     snackID_to_index[str(review["snack_id"])] = index_snack
                     index_to_snackID[index_snack] =  str(review["snack_id"])
                     index_snack += 1
                 user_ratings[index_user].append([snackID_to_index[str(review["snack_id"])], float(review["overall_rating"])])
-            #print(c['first_name'])
+            print(c['first_name'])
         index_user += 1
     # Create our training data
     row = []
@@ -193,6 +195,7 @@ def generate_training_data(my_db):
     row = np.array(row).reshape(-1, 1).astype(float)
     col = np.array(col).reshape(-1, 1).astype(float)
     data = np.array(data).reshape(-1, 1).astype(float)
+
     #=====================Test example (comment to disable)=====================
     row = np.arange(10).reshape(-1, 1).astype(float)                          #
     col = np.arange(10).reshape(-1, 1).astype(float)                          #
@@ -211,7 +214,7 @@ def generate_training_data(my_db):
        1.    |     353.  |       2.5
     """
     rating_data = np.concatenate((row, col, data), axis=1)
-    print(rating_data)
+    print(f"\nRating data:\n{rating_data}\n")
     #print(f"Sparse matrix: \n{X_sparse}\n")
     #print(f"Common rep. matrix: \n{X_sparse.toarray()}\n")
     # Returning an object with all the important information
@@ -263,6 +266,7 @@ def training_recc_engine(train_data, K=2, train_size=.70, alpha=0.001, beta=0.01
 
 if __name__ == '__main__':
     try:
+        # TODO: change this URL to the production database when ready...
         mongo_uri = "mongodb://localhost:27017/"
         mongo = connect(host=mongo_uri)
     except Exception as inst:
