@@ -421,25 +421,52 @@ def create_snack():
             print(snack_name)
 
             # Add snack to db
-            try:
-                new_snack = Snack(snack_name=create_snack_form.snack_name.data,
-                                  available_at_locations=[create_snack_form.available_at_location.data],
-                                  snack_brand=create_snack_form.snack_brand.data,
-                                  category=create_snack_form.category.data,
-                                  description=create_snack_form.description.data,
-                                  avg_overall_rating=0,
-                                  avg_sourness=0,
-                                  avg_spiciness=0,
-                                  avg_bitterness=0,
-                                  avg_sweetness=0,
-                                  avg_saltiness=0,
-                                  review_count=0
-                                  )
-                new_snack.save()
-            except Exception as e:
-                raise Exception(
-                    f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
-            print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+
+            if request.form['company_name'] != "":
+                print(f"company user {form} \n")
+                try:
+
+                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                      available_at_locations=[create_snack_form.available_at_location.data],
+                                      snack_brand=create_snack_form.snack_brand.data,
+                                      category=create_snack_form.category.data,
+                                      description=create_snack_form.description.data,
+                                      is_verified=True,
+                                      avg_overall_rating=0,
+                                      avg_sourness=0,
+                                      avg_spiciness=0,
+                                      avg_bitterness=0,
+                                      avg_sweetness=0,
+                                      avg_saltiness=0,
+                                      review_count=0
+                                      )
+                    new_snack.save()
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+                print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+            else:
+                print(f"normal user {form} \n")
+                try:
+                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                      available_at_locations=[create_snack_form.available_at_location.data],
+                                      snack_brand=create_snack_form.snack_brand.data,
+                                      category=create_snack_form.category.data,
+                                      description=create_snack_form.description.data,
+                                      avg_overall_rating=0,
+                                      avg_sourness=0,
+                                      avg_spiciness=0,
+                                      avg_bitterness=0,
+                                      avg_sweetness=0,
+                                      avg_saltiness=0,
+                                      review_count=0
+                                      )
+                    new_snack.save()
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+
+                print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             for snack in Snack.objects[:10]:
                 print(snack)
