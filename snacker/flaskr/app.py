@@ -125,101 +125,6 @@ def contact():
 # See below for use cases of different schema objects
 @app.route('/')
 def hello_world():
-    print('This is standard output', file=sys.stdout)
-    # Selecting the database we want to work withf
-    my_database = mongo[DATABASE]
-    for obj in User.objects:
-        print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
-    for obj in CompanyUser.objects:
-        print(f"   Before Save CompanyUser: {obj.email} \n", file=sys.stdout)
-    normal_user = User(email="jayde.yue@mail.utoronto.ca", first_name="Jayde", last_name="Yue", password="123123")
-    company_user = CompanyUser(email="JaydeYue@jaydeyue.com", first_name="Jayde", last_name="Yue",
-                               company_name="The Amazing Jayde Yue Company", password="123123")
-    try:
-        normal_user.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    try:
-        company_user.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    # If without error, then both the normal user and company user should display in User collection
-    # And only company user should display in CompanyUser collection
-    print(f"afaan\n", file=sys.stdout)
-    for obj in User.objects:
-        print(f"   After Save User: {obj.email} \n", file=sys.stdout)
-    for obj in CompanyUser.objects:
-        print(f"   After Save CompanyUser: {obj.email} \n", file=sys.stdout)
-
-    # Test Snack
-    for obj in Snack.objects:
-        print(f"    Before Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
-    # To test it yourself, create a snack with different name and brand from the exisiting snacks in the db
-    snack = Snack(snack_name="Crunchy Cheesy Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
-    snack.description = "Yummy yum"
-    snack.avg_overall_rating = 0
-    snack.avg_bitterness = 0
-    snack.avg_saltiness = 0
-    snack.avg_sourness = 0
-    snack.avg_spiciness = 0
-    snack.avg_sweetness = 0
-    snack.review_count = 0
-    try:
-        snack.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    # Display existing snacks in db, your new snack should be here if it has been saved without error
-    for obj in Snack.objects:
-        print(f"    After Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
-
-    # Test Review
-    # Display existing reviews in the db
-    for obj in Review.objects:
-        print(f"    Before Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd6054687bec22d78d12c59", description="too hot",
-                    geolocation="Canada", overall_rating="2")
-    try:
-        review.save()
-        avg_overall_rating = Review.objects.filter(snack_id=review.snack_id).average('overall_rating')
-        Snack.objects(id=review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
-        review_count = Snack.objects(id=review.snack_id)[0].review_count + 1
-        Snack.objects(id=review.snack_id).update(set__review_count=review_count)
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in Review.objects:
-        print(f"    After Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-
-    # Test MetricReview
-    for obj in MetricReview.objects:
-        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd6054687bec22d78d12c59",
-                                 description="love it!", geolocation="Canada", overall_rating="5", sourness="1",
-                                 spiciness="4")
-    try:
-        metric_review.save()
-        avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
-        avg_sourness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
-        avg_spiciness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
-        avg_bitterness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
-        avg_sweetness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
-        avg_saltiness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
-        Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_spiciness=avg_spiciness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_bitterness=avg_bitterness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_sweetness=avg_sweetness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_saltiness=avg_saltiness)
-        review_count = Snack.objects(id=metric_review.snack_id)[0].review_count + 1
-        Snack.objects(id=metric_review.snack_id).update(set__review_count=review_count)
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in MetricReview.objects:
-        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
     snacks = Snack.objects
     popular_snacks = snacks.order_by("-review_count")[:5]
     top_snacks = snacks.order_by("-avg_overall_rating")[:5]
@@ -241,6 +146,9 @@ def hello_world():
     return render_template('index.html', **context_dict)
 
 
+""" Routes and methods related to user login and authentication """
+
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     # IMPORTANT: Encrypt the password for the increased security.
@@ -249,25 +157,36 @@ def register():
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
     if request.method == "POST":
-        print(f"dfdsf\n", file=sys.stdout)
-        email = request.form['email']
         # Add user to database.
-        try:
-            new_user = User(email=request.form['email'], first_name=request.form['first_name'],
-                            last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
-            new_user.save()
-        except Exception as e:
-            raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
-        print(f"A new user submitted the registration form: {email}", file=sys.stdout)
-        for u in User.objects[:10]:
-            print(u)
+        if request.form['company_name'] != "":
+            print(f"company user {form} \n")
+            try:
+                new_user = CompanyUser(email=request.form['email'], first_name=request.form['first_name'],
+                                       last_name=request.form['last_name'], company_name=request.form['company_name'],
+                                       password=encrypted_password(request.form['password']))
+                new_user.save()
+            except Exception as e:
+                raise Exception\
+                    (f"Error {e}. \n Couldn't add company user {new_user},\n with following registration form: {form}")
+        else:
+            print(f"normal user {form} \n")
+            try:
+                new_user = User(email=request.form['email'], first_name=request.form['first_name'],
+                                last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
+                new_user.save()
+            except Exception as e:
+                raise Exception\
+                    (f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+        login_user(new_user, remember=True)
         user = {
             'email': new_user.email,
             'first_name': new_user.first_name,
-            'last_name': new_user.last_name
+            'last_name': new_user.last_name,
+            'company_name': new_user.last_name
         }
         response = make_response(json.dumps(user))
         response.status_code = 200
+        print(f"register {response}\n")
         return response
 
     if request.args.get("email"):
@@ -276,6 +195,51 @@ def register():
                     "form": form,
                     "user": current_user}
     return render_template("register.html", **context_dict)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.objects(pk=user_id).first()
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    # For GET requests, display the login form; for POST, log in the current user by processing the form.
+    print(f"LOGGING IN\n", file=sys.stdout)
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+
+    form = LoginForm(request.form)
+
+    if request.method == 'POST':
+        user = User.objects(email=request.form['email']).first()
+        print(f"user is {user}\n", file=sys.stdout)
+        if user is None or not user.check_password(bcrypt, request.form['password']):
+            flash("Invalid username or password")
+            return redirect(url_for('login'))
+        login_user(user, remember=True)
+        user = {
+            'email': current_user.email,
+            'first_name': current_user.first_name,
+            'last_name': current_user.last_name,
+            'company_name': current_user.company_name
+        }
+        response = make_response(json.dumps(user))
+        response.status_code = 200
+        print(f"login {response}\n")
+        return response
+
+    context_dict = {"title": "Sign In",
+                    "form": form,
+                    "user": current_user}
+
+    return render_template('login.html', **context_dict)
+
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route("/create-review/<string:snack>", methods=["GET", "POST"])
@@ -455,52 +419,6 @@ def create_snack():
     else:
         # Go back to index if not authenticated
         return redirect(url_for('index'))
-
-
-""" Routes and methods related to user login and authentication """
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.objects(pk=user_id).first()
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    # For GET requests, display the login form; for POST, log in the current user by processing the form.
-    print(f"LOGGING IN\n", file=sys.stdout)
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
-
-    form = LoginForm(request.form)
-
-    if request.method == 'POST':
-        user = User.objects(email=request.form['email']).first()
-        print(f"user is {user}\n", file=sys.stdout)
-        if user is None or not user.check_password(bcrypt, request.form['password']):
-            flash("Invalid username or password")
-            return redirect(url_for('login'))
-        login_user(user, remember=True)
-        user = {
-            'email': current_user.email,
-            'first_name': current_user.first_name,
-            'last_name': current_user.last_name
-        }
-        response = make_response(json.dumps(user))
-        response.status_code = 200
-        return response
-
-    context_dict = {"title": "Sign In",
-                    "form": form,
-                    "user": current_user}
-
-    return render_template('login.html', **context_dict)
-
-
-@app.route("/logout", methods=["GET", "POST"])
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
 
 
 # Finished and tested
