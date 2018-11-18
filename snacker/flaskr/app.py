@@ -222,8 +222,11 @@ def login():
             'email': current_user.email,
             'first_name': current_user.first_name,
             'last_name': current_user.last_name,
-            'company_name': current_user.company_name
         }
+        if isinstance(current_user, CompanyUser):
+            user['company_name'] = current_user.company_name
+        else:
+            user['company_name'] = None
         response = make_response(json.dumps(user))
         response.status_code = 200
         print(f"login {response}\n")
@@ -240,6 +243,17 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route("/account", methods=["GET"])
+def account():
+    if not current_user.is_authenticated:
+        return redirect(url_for("index"))
+
+    context_dict = {"title": "Account",
+                    "user": current_user}
+
+    return render_template('account.html', **context_dict)
 
 
 @app.route("/create-review/<string:snack>", methods=["GET", "POST"])
