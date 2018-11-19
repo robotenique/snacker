@@ -1,28 +1,41 @@
 {% extends "layout.html" %}
 {% block title_block %}Log in{% endblock %}
 {% block body_raw %}
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    {% from "_formhelpers.html" import render_field %}
-    {#  Don't change the function name back to login, that won't work  #}
-    <form onsubmit="authenticate();return false;" id="login_form" name="login"
-          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:200px;">
-      {{ form.hidden_tag() }}
-      <div class="form-group" style="color:white;">
-        {{ render_field(form.email, id="login_email") }}
-      </div>
-      <div class="form-group" style="color:white;">
-        {{ render_field(form.password, id="login_password") }}
-      </div>
-      <input class="btn btn-primary" type="submit" name="submit" value="submit">
-    </form>
 
-    {% if error %}
-      <p class="error"><strong>Error:</strong>{{ error }}</p>
-    {% endif %}
-  </div>
+    <section class="ftco-section bg-light">
+
+        <div class="container" style="width: 50%">
+
+            <form class="p-4 mb-3 bg-white" onsubmit="authenticate();return false;" id="login_form" name="login">
+                {{ form.hidden_tag() }}
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        {{ form.email.label(class='font-weight-bold') }}
+                        {{ form.email(id='login_email', class='form-control', placeholder="example@example.com") }}
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        {{ form.password.label(class='font-weight-bold') }}
+                        {{ form.password(id='login_password', class='form-control', placeholder='••••••••••') }}
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        {{ form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                    </div>
+                </div>
+
+            </form>
+            {% if error %}
+                <p class="error"><strong>Error:</strong>{{ error }}</p>
+            {% endif %}
+
+        </div>
+
+    </section>
+
 {% endblock %}
