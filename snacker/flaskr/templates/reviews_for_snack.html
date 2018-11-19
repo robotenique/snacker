@@ -25,11 +25,83 @@
   <hr>
 {% endfor %}
 {% if (current_user.is_authenticated and not current_user.company_name) %}
-    <section class="ftco-section-parallax" id="review">
-        <div class="container">
-            <a href="/create-review/snack_id={{ query[0].id }}">Write Review</a>
+
+    <div class="row">
+        <div class="col-md-12 ftco-animate">
+          <div id="accordion">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="false"
+                       aria-controls="menuone" style="color: #f85959;">Write Review <span class="collapsed"><i
+                        class="icon-plus-circle" style="color: #f85959;"></i></span><span class="expanded"><i
+                        class="icon-minus-circle" style="color: #f85959;"></i></span></a>
+                  </div>
+                  <div id="menuone" class="collapse">
+                    <div class="card-body">
+                      <h3>Please Write the review below</h3>
+                      <form class="p-5 bg-white" method="POST" name="review_snack">
+                        {{ form.hidden_tag() }}
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.description.label(class='font-weight-bold') }}
+                                {{ form.description(class='form-control', placeholder="Write a Review") }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.overall_rating.label(class='font-weight-bold') }}
+                                {{ form.overall_rating(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.sourness.label(class='font-weight-bold') }}
+                                {{ form.sourness(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.spiciness.label(class='font-weight-bold') }}
+                                {{ form.spiciness(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.saltiness.label(class='font-weight-bold') }}
+                                {{ form.saltiness(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.bitterness.label(class='font-weight-bold') }}
+                                {{ form.bitterness(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-2">
+                                {{ form.sweetness.label(class='font-weight-bold') }}
+                                {{ form.sweetness(class='form-control') }}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                             <input class="btn btn-primary px-3 px-lg-5" type="submit" name="submit" value="Submit">
+                            </div>
+                        </div>
+                      </form>
+
+                      {% if error %}
+                        <p class="error"><strong>Error:</strong>{{ error }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </section>
 {% endif %}
 
 {% endblock %}
