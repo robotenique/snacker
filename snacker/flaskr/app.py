@@ -99,7 +99,8 @@ def index():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    context_dict = {"featured_snacks": featured_snacks,
+    context_dict = {"title": "Index",
+                    "featured_snacks": featured_snacks,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
@@ -109,7 +110,7 @@ def index():
 
 @app.route("/about")
 def about():
-    context_dict = {"title": 'About {APP_NAME}',
+    context_dict = {"title": 'About Snacker',
                     "user": current_user}
     return render_template('about.html', **context_dict)
 
@@ -233,7 +234,8 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    context_dict = {"featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
+    context_dict = {"title": "Index",
+                    "featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
@@ -393,7 +395,7 @@ def create_review(snack):
 
             return redirect(url_for('find_reviews_for_snack', filters=snack))
 
-    context_dict = {"title": "Create Review",
+    context_dict = {"title": "Write Review",
                     "form": review_form,
                     "user": current_user}
     # frontend stuff
@@ -447,7 +449,7 @@ def create_snack():
             return redirect(url_for('index'))
 
         # For frontend purposes
-        context_dict = {"title": "Create Snack",
+        context_dict = {"title": "Add Snack",
                         "form": create_snack_form,
                         "user": current_user}
 
@@ -548,7 +550,8 @@ def find_reviews_for_snack(filters):
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
-    context_dict = {"query": snack_query,
+    context_dict = {"title": "Delicious Snack",
+                    "query": snack_query,
                     "reviews": queryset,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
@@ -606,7 +609,8 @@ def find_snack_by_filter(filters):
     # display = SnackResults(queryset)
     # display.border = True
 
-    context_dict = {"query": queryset,
+    context_dict = {"title": "Search Results",
+                    "query": queryset,
                     "user": current_user}
     # Return the same template as for the review, since it only needs to display a table.
     return render_template('search_query.html', **context_dict)
