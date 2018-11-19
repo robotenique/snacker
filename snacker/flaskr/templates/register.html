@@ -46,15 +46,15 @@
 
                         <div class="row form-group">
                             <div class="col-md-12">
-                                {{ form.is_company.label(class='font-weight-bold') }}
-                                {{ form.is_company(class='form-control') }}
+                                {{ form.company_name.label(class='font-weight-bold') }}
+                                {{ form.company_name(id='register_company', class='form-control') }}
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col-md-12">
                                 {{ form.accept_tos.label(class='font-weight-bold') }}
-                                {{ form.accept_tos(class='form-control') }}
+                                {{ form.accept_tos(class='form-control', value='yes') }}
                             </div>
                         </div>
 
@@ -74,3 +74,4 @@
     </section>
 
 {% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title_block %}Account{% endblock %}
+{% block body_raw %}
+    <section class="ftco-section bg-dark" style="padding: 3.2em 0">
+    <!-- Placeholder to have a width to display the navbar
+      Can later be changed for a static navbar but currently too many unknown js factors.
+      Space should be used to add other elements to the header of the page-->
+    </section>
+    <div class="account_basics">
+        {% if current_user.company_name %}
+            <p class="text-center">Company name: {{ current_user.company_name }}</p>
+        {% endif %}
+        <p class="text-center">Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p class="text-center">email: {{ current_user.email }}</p>
+        <button type="button" class="align-content-center"><a href="/logout" class="nav-link">Logout</a></button>
+        {% if current_user.company_name %}
+            <button type="button" class="align-content-center"><a href="/create-brand" class="nav-link">Add Brand</a></button>
+            <button type="button" class="align-content-center"><a href="/create-snack" class="nav-link">Add Snack</a></button>
+        {% endif %}
+    </div>
+
+{% endblock %}
