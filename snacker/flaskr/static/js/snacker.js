@@ -98,3 +98,29 @@ function createSnack() {
         });
     }
 }
+
+function createReview() {
+    // Otherwise the country of the IP address of the user is added to the list of available locations for this snack
+    $.getJSON( "https://ipapi.co/json/", function( data ) {
+        $.ajax({
+            type: "POST",
+            url: "/create-review/snack_id=" + window.location.href.toString().split('=')[1],
+            data: {
+                "description": document.getElementById("description").value,
+                "review_country": data.country_name,
+                "overall_rating": document.getElementById("overall_rating").value,
+                "sourness": document.getElementById("sourness").value,
+                "spiciness": document.getElementById("spiciness").value,
+                "saltiness": document.getElementById("saltiness").value,
+                "bitterness": document.getElementById("bitterness").value,
+                "sweetness": document.getElementById("sweetness").value,
+            },
+            success: function (result) {
+                window.location.href= "/snack_reviews/snack_id=" + window.location.href.toString().split("=")[1];
+            },
+            error: function (result) {
+                alert('Something wrong ' + result);
+            }
+        });
+    });
+}
