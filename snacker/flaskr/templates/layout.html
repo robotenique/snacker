@@ -56,6 +56,22 @@
     </div>
   </nav>
 
+  {% if title != "Index" %}
+    <section class="ftco-section"
+             style="background-image: url({{ url_for('static', filename='images/snackplates_header.jpg') }});
+        background-size: cover; padding-bottom: 10px;">
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center"
+               data-scrollax-parent="true">
+            <div class="col-md-9 text-center">
+              <p class="breadcrumbs"><span class="mr-2"><a href="/index">Home</a></span><span>< {{ title }}</span></p>
+              <h1 class="mb-3 bread">{{ title }}</h1>
+            </div>
+          </div>
+        </div>
+    </section>
+  {% endif %}
+
   {% block body_raw %}{% endblock %}
 
   <footer class="ftco-footer ftco-bg-dark ftco-section">

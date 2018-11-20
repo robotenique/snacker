@@ -1,22 +1,117 @@
 {% extends "layout.html" %}
 {% block title_block %}Account{% endblock %}
 {% block body_raw %}
-    <section class="ftco-section bg-dark" style="padding: 3.2em 0">
-    <!-- Placeholder to have a width to display the navbar
-      Can later be changed for a static navbar but currently too many unknown js factors.
-      Space should be used to add other elements to the header of the page-->
+
+    <section class="ftco-section bg-light">
+
+        <div class="container">
+
+            <div class="row">
+
+                {% if current_user.company_name %}
+
+                <div class="col-md-12 col-lg-8 mb-3">
+
+                    <div class="bg-white p-4 text-center font-weight-bold">
+                        <p class="h5 text-primary mb-3">Company Name</p>
+                        <p class="text-secondary">{{ current_user.company_name }}</p>
+                        <p class="h5 text-primary mb-3">Name</p>
+                        <p class="text-secondary">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+                        <p class="h5 text-primary mb-3">Email</p>
+                        <p class="text-secondary">{{ current_user.email }}</p>
+                        <p><a href="/logout" class="btn btn-primary px-3 px-md-3">Log Out</a></p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+
+                    <div class="p-4 mb-3 bg-white text-center">
+                        <h3 class="h5 text-black mb-3">Add a Snack</h3>
+                            <a href="/create-snack" class="btn btn-primary px-3 px-md-3">Add Snack
+                                <span><i class="icon-plus-circle"></i></span></a></a>
+                    </div>
+
+                </div>
+                {% else %}
+
+                    <div class="col-md-12 col-lg-12 mb-3">
+
+                        <div class="bg-white p-4 text-center font-weight-bold">
+                            <p class="h5 text-primary mb-3">Name</p>
+                            <p class="text-secondary">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+                            <p class="h5 text-primary mb-3">Email</p>
+                            <p class="text-secondary">{{ current_user.email }}</p>
+                            <p><a href="/logout" class="btn btn-primary px-3 px-md-3">Log Out</a></p>
+                        </div>
+
+                    </div>
+
+                {% endif %}
+            </div>
+            {% if current_user.company_name %}
+                {% if company_brands %}
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 mb-3">
+                            <div class="bg-white p-3 text-center">
+                                <h5 class="text-primary"><strong>{{ current_user.company_name }}</strong> Brands</h5>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="destination-slider owl-carousel ftco-animate">
+                                            {% for brand in company_brands %}
+                                                <div class="text p-3">
+                                                    <h4 class="text-secondary">{{ brand }}</h4>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-12 ftco-animate">
+                        <div id="accordion">
+                            <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                <div class="card-header pl-3">
+                                    <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="false"
+                                        aria-controls="menuone" style="color: #f85959;">Add to
+                                        <strong>{{ current_user.company_name }}</strong><span class="collapsed"><i
+                                        class="icon-plus-circle" style="color: #f85959;"></i></span><span class="expanded"><i
+                                        class="icon-minus-circle" style="color: #f85959;"></i></span></a>
+                                </div>
+                                <div id="menuone" class="collapse">
+                                    <div class="card-body">
+                                        <form class="bg-white p-4" name="add-brand" method="POST">
+                                            {{ form.hidden_tag() }}
+
+                                            <div class="row form-group">
+                                                <div class="col-md-12 pl-4">
+                                                    {{ form.snack_brand(class='form-control') }}
+                                                </div>
+                                            </div>
+
+                                            <div class="row form-group">
+                                                <div class="col-md-12 pl-4">
+                                                    {{ form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            {% endif %}
+
+        </div>
     </section>
-    <div class="account_basics">
-        {% if current_user.company_name %}
-            <p class="text-center">Company name: {{ current_user.company_name }}</p>
-        {% endif %}
-        <p class="text-center">Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
-        <p class="text-center">email: {{ current_user.email }}</p>
-        <button type="button" class="align-content-center"><a href="/logout" class="nav-link">Logout</a></button>
-        {% if current_user.company_name %}
-            <button type="button" class="align-content-center"><a href="/create-brand" class="nav-link">Add Brand</a></button>
-            <button type="button" class="align-content-center"><a href="/create-snack" class="nav-link">Add Snack</a></button>
-        {% endif %}
-    </div>
 
 {% endblock %}
