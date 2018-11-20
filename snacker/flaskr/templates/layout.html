@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {#Our own css#}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/snacker.css') }}">
 </head>
 
@@ -33,17 +35,20 @@
           <li class="nav-item active"><a href="/index" class="nav-link">Home</a></li>
           <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
           <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
-          {#            Need to check if user is logined in here, if so here should say Account#}
           {% if not current_user.is_authenticated %}
             <li class="nav-item cta"><a id="account_link" href="/login" class="nav-link">
               <span>Log in</span></a></li>
             <li class="nav-item cta"><a id="account_link" href="/register" class="nav-link">
               <span>Register</span></a></li>
-            {% else %}
+          {% else %}
+            <li class="nav-item cta"><a id="wishlist" href="/create-snack" class="nav-link">
+              {% if not current_user.company_name %}
+                <span>Add Snack/Wishlist</span></a></li>
+              {% else %}
+                <span>Watchlist</span></a></li>
+              {% endif %}
             <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
-              <span id="if_account">Account</span></a></li>
-            <li class="nav-item cta"><a id="logout" href="/logout" class="nav-link">
-              <span id="if_account">Log out</span></a></li>
+              <span>Account</span></a></li>
           {% endif %}
 
         </ul>
@@ -51,8 +56,23 @@
     </div>
   </nav>
 
-    {% block body_raw %}{% endblock %}
-  </div>
+  {% if title != "Index" %}
+    <section class="ftco-section"
+             style="background-image: url({{ url_for('static', filename='images/snackplates_header.jpg') }});
+        background-size: cover; padding-bottom: 10px;">
+        <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center"
+               data-scrollax-parent="true">
+            <div class="col-md-9 text-center">
+              <p class="breadcrumbs"><span class="mr-2"><a href="/index">Home</a></span><span>< {{ title }}</span></p>
+              <h1 class="mb-3 bread">{{ title }}</h1>
+            </div>
+          </div>
+        </div>
+    </section>
+  {% endif %}
+
+  {% block body_raw %}{% endblock %}
 
   <footer class="ftco-footer ftco-bg-dark ftco-section">
     <div class="container">
@@ -93,7 +113,7 @@
                 <li><a href="#"><span class="text">Harry Chen</span></a></li>
                 <li><a href="#"><span class="text">Flora Shi</span></a></li>
                 <li><a href="#"><span class="text">Alex Chum</span></a></li>
-                <li><a href="#"><span class="text">Guiliano Celani</span></a></li>
+                <li><a href="#"><span class="text">Giuliano Celani</span></a></li>
               </ul>
             </div>
           </div>

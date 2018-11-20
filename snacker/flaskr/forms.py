@@ -1,10 +1,10 @@
 import pycountry
 from flask_wtf import FlaskForm
 from mongoengine import IntField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
-from schema import User
+from schema import User, Review, Snack
 
 
 class RegistrationForm(FlaskForm):
@@ -15,7 +15,8 @@ class RegistrationForm(FlaskForm):
         Length(min=6, max=100),
         DataRequired("Please provide an email address"),
     ])
-    is_company = BooleanField("Are you a company or a distributor?")
+    company_name = StringField("If you are a rep from a snack company, please fill your company's name below",
+                               [Length(min=1, max=255)])
     password = PasswordField("New Password (maximum length is 50)", [
         DataRequired(),
         Length(max=50),
@@ -44,13 +45,16 @@ class LoginForm(FlaskForm):
 
 
 class CreateReviewForm(FlaskForm):
-    description = StringField("Review Description", [Length(min=2, max=255)])
-    overall_rating = IntField("Overall Rating", [DataRequired(), NumberRange(min=1, max=5)])
-    sourness = IntField(NumberRange(min=1, max=5))
-    spiciness = IntField(NumberRange(min=1, max=5))
-    bitterness = IntField(NumberRange(min=1, max=5))
-    sweetness = IntField(NumberRange(min=1, max=5))
-    saltiness = IntField(NumberRange(min=1, max=5))
+    description = TextAreaField("Review Description", [Length(min=2, max=255)])
+
+    range = [(0, ' '), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+
+    overall_rating = SelectField(coerce=int, choices=range, validators=[DataRequired(), NumberRange(min=1, max=5)])
+    sourness = SelectField(coerce=int, choices=range)
+    spiciness = SelectField(coerce=int, choices=range)
+    bitterness = SelectField(coerce=int,  choices=range)
+    sweetness = SelectField(coerce=int, choices=range)
+    saltiness = SelectField(coerce=int, choices=range)
     submit = SubmitField('Submit Review')
 
 
@@ -68,8 +72,13 @@ class CreateSnackForm(FlaskForm):
     available_at_location = SelectField('Available at Locations', choices=country_choices)
     snack_brand = StringField("Snack Brand", [DataRequired(), Length(min=2, max=50)])
 
-    categories = [("Cookies", "Cookies"), ("Chocolate", "Chocolate"), ("Candy", "Candy"), ("Chips", "Chips")]
+    categories = [("Cookies", "Cookies"), ("Chocolate", "Chocolate"), ("Candies", "Candies"), ("Chips", "Chips")]
 
     category = SelectField('Snack Category', choices=categories)
-    description = StringField("Snack Description", [Length(min=2, max=255)])
+    description = TextAreaField("Snack Description", [Length(min=2, max=255)])
     submit = SubmitField('Create Snack')
+
+
+class CompanyBrandForm(FlaskForm):
+    snack_brand = SelectField('Snack Brand Choice')
+    submit = SubmitField('Add Brand')

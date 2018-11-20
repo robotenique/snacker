@@ -1,28 +1,71 @@
 {% extends "layout.html" %}
 {% block title_block %}Create a snack{% endblock %}
 {% block body_raw %}
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    {% from "_formhelpers.html" import render_field %}
-    <form method="POST" name="create_snack"
-          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
-      {{ form.hidden_tag() }}
-      <div class="form-group" style="color:white;">
-        {{ render_field(form.snack_name) }}
-        {{ render_field(form.snack_brand) }}
-        {{ render_field(form.category) }}
-        {{ render_field(form.available_at_location) }}
-        {{ render_field(form.description) }}
-      </div>
-      <input class="btn btn-primary" type="submit" name="submit" value="submit">
-    </form>
 
-    {% if error %}
-      <p class="error"><strong>Error:</strong>{{ error }}</p>
-    {% endif %}
-  </div>
+    <section class="ftco-section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-8 mb-5">
+                    <form class="p-5 bg-white" method="POST" name="create_snack">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                {{ form.snack_name.label(class='font-weight-bold') }}
+                                {{ form.snack_name(class='form-control', placeholder="eg. Cheesy, etc") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                {{ form.snack_brand.label(class='font-weight-bold') }}
+                                {{ form.snack_brand(class='form-control', placeholder="eg. Cheetos, etc") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                {{ form.category.label(class='font-weight-bold') }}
+                                {{ form.category(class='form-control') }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                {{ form.available_at_location.label(class='font-weight-bold') }}
+                                {{ form.available_at_location(class='form-control') }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.description.label(class='font-weight-bold') }}
+                                {{ form.description(class='form-control', placeholder="Describe your snack") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group"></div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                            </div>
+                        </div>
+                    </form>
+                    {% if error %}
+                        <p class="error"><strong>Error:</strong>{{ error }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4">
+
+                    <div class="p-4 mb-3 bg-white text-center">
+                        <h3 class="h5 text-black mb-3">Upload photos of your Snack (NOT WORKING YET)</h3>
+                            <p><a href="#" class="btn btn-secondary px-3 px-lg-5">Upload</a></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

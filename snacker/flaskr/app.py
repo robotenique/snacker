@@ -10,7 +10,7 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 
 """
@@ -99,7 +99,8 @@ def index():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    context_dict = {"featured_snacks": featured_snacks,
+    context_dict = {"title": "Index",
+                    "featured_snacks": featured_snacks,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
@@ -109,7 +110,7 @@ def index():
 
 @app.route("/about")
 def about():
-    context_dict = {"title": 'About {APP_NAME}',
+    context_dict = {"title": 'About Snacker',
                     "user": current_user}
     return render_template('about.html', **context_dict)
 
@@ -125,101 +126,6 @@ def contact():
 # See below for use cases of different schema objects
 @app.route('/')
 def hello_world():
-    print('This is standard output', file=sys.stdout)
-    # Selecting the database we want to work withf
-    my_database = mongo[DATABASE]
-    for obj in User.objects:
-        print(f"   Before Save User: {obj.email} \n", file=sys.stdout)
-    for obj in CompanyUser.objects:
-        print(f"   Before Save CompanyUser: {obj.email} \n", file=sys.stdout)
-    normal_user = User(email="jayde.yue@mail.utoronto.ca", first_name="Jayde", last_name="Yue", password="123123")
-    company_user = CompanyUser(email="JaydeYue@jaydeyue.com", first_name="Jayde", last_name="Yue",
-                               company_name="The Amazing Jayde Yue Company", password="123123")
-    try:
-        normal_user.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    try:
-        company_user.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    # If without error, then both the normal user and company user should display in User collection
-    # And only company user should display in CompanyUser collection
-    print(f"afaan\n", file=sys.stdout)
-    for obj in User.objects:
-        print(f"   After Save User: {obj.email} \n", file=sys.stdout)
-    for obj in CompanyUser.objects:
-        print(f"   After Save CompanyUser: {obj.email} \n", file=sys.stdout)
-
-    # Test Snack
-    for obj in Snack.objects:
-        print(f"    Before Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
-    # To test it yourself, create a snack with different name and brand from the exisiting snacks in the db
-    snack = Snack(snack_name="Crunchy Cheesy Flavoured", available_at_locations=["Canada"], snack_brand="Cheetos")
-    snack.description = "Yummy yum"
-    snack.avg_overall_rating = 0
-    snack.avg_bitterness = 0
-    snack.avg_saltiness = 0
-    snack.avg_sourness = 0
-    snack.avg_spiciness = 0
-    snack.avg_sweetness = 0
-    snack.review_count = 0
-    try:
-        snack.save()
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    # Display existing snacks in db, your new snack should be here if it has been saved without error
-    for obj in Snack.objects:
-        print(f"    After Save Snack: {obj.snack_brand} {obj.snack_name} \n", file=sys.stdout)
-
-    # Test Review
-    # Display existing reviews in the db
-    for obj in Review.objects:
-        print(f"    Before Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    review = Review(user_id="5bd148de67afee4602847c74", snack_id="5bd6054687bec22d78d12c59", description="too hot",
-                    geolocation="Canada", overall_rating="2")
-    try:
-        review.save()
-        avg_overall_rating = Review.objects.filter(snack_id=review.snack_id).average('overall_rating')
-        Snack.objects(id=review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
-        review_count = Snack.objects(id=review.snack_id)[0].review_count + 1
-        Snack.objects(id=review.snack_id).update(set__review_count=review_count)
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in Review.objects:
-        print(f"    After Save Review: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-
-    # Test MetricReview
-    for obj in MetricReview.objects:
-        print(f"    Before Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
-    metric_review = MetricReview(user_id="5bd2897c2c8884ec4714296c", snack_id="5bd6054687bec22d78d12c59",
-                                 description="love it!", geolocation="Canada", overall_rating="5", sourness="1",
-                                 spiciness="4")
-    try:
-        metric_review.save()
-        avg_overall_rating = Review.objects.filter(snack_id=metric_review.snack_id).average('overall_rating')
-        avg_sourness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(sourness__exists=True)).average("sourness")
-        avg_spiciness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(spiciness__exists=True)).average("spiciness")
-        avg_bitterness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(bitterness__exists=True)).average("bitterness")
-        avg_sweetness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(sweetness__exists=True)).average("sweetness")
-        avg_saltiness = Review.objects.filter \
-            (Q(snack_id=metric_review.snack_id) & Q(saltiness__exists=True)).average("saltiness")
-        Snack.objects(id=metric_review.snack_id).update(set__avg_overall_rating=avg_overall_rating)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_sourness=avg_sourness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_spiciness=avg_spiciness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_bitterness=avg_bitterness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_sweetness=avg_sweetness)
-        Snack.objects(id=metric_review.snack_id).update(set__avg_saltiness=avg_saltiness)
-        review_count = Snack.objects(id=metric_review.snack_id)[0].review_count + 1
-        Snack.objects(id=metric_review.snack_id).update(set__review_count=review_count)
-    except Exception as e:
-        print("Error \n %s" % e, file=sys.stdout)
-    for obj in MetricReview.objects:
-        print(f"    After Save MetricReview: {obj.user_id} {obj.snack_id} {obj.description}\n", file=sys.stdout)
     snacks = Snack.objects
     popular_snacks = snacks.order_by("-review_count")[:5]
     top_snacks = snacks.order_by("-avg_overall_rating")[:5]
@@ -233,12 +139,16 @@ def hello_world():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
-    context_dict = {"featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
+    context_dict = {"title": "Index",
+                    "featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
                     "user": current_user}
     return render_template('index.html', **context_dict)
+
+
+""" Routes and methods related to user login and authentication """
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -249,175 +159,44 @@ def register():
         return redirect(url_for("index"))
     form = RegistrationForm(request.form)
     if request.method == "POST":
-        print(f"dfdsf\n", file=sys.stdout)
-        email = request.form['email']
         # Add user to database.
-        try:
-            new_user = User(email=request.form['email'], first_name=request.form['first_name'],
-                            last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
-            new_user.save()
-        except Exception as e:
-            raise Exception(f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
-        print(f"A new user submitted the registration form: {email}", file=sys.stdout)
-        for u in User.objects[:10]:
-            print(u)
+        if request.form['company_name'] != "":
+            print(f"company user {form} \n")
+            try:
+                new_user = CompanyUser(email=request.form['email'], first_name=request.form['first_name'],
+                                       last_name=request.form['last_name'], company_name=request.form['company_name'],
+                                       password=encrypted_password(request.form['password']))
+                new_user.save()
+            except Exception as e:
+                raise Exception\
+                    (f"Error {e}. \n Couldn't add company user {new_user},\n with following registration form: {form}")
+        else:
+            print(f"normal user {form} \n")
+            try:
+                new_user = User(email=request.form['email'], first_name=request.form['first_name'],
+                                last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
+                new_user.save()
+            except Exception as e:
+                raise Exception\
+                    (f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+        login_user(new_user, remember=True)
         user = {
             'email': new_user.email,
             'first_name': new_user.first_name,
-            'last_name': new_user.last_name
+            'last_name': new_user.last_name,
+            'company_name': new_user.last_name
         }
         response = make_response(json.dumps(user))
         response.status_code = 200
+        print(f"register {response}\n")
         return response
 
+    if request.args.get("email"):
+        form.email.data = request.args.get("email")
     context_dict = {"title": "Register",
                     "form": form,
                     "user": current_user}
     return render_template("register.html", **context_dict)
-
-
-@app.route("/create-review", methods=["GET", "POST"])
-@login_required
-def create_review():
-    # Create a review and insert it into database.
-
-    # check authenticated
-    if current_user.is_authenticated:
-        print("is_authenticated")
-        review_form = CreateReviewForm(request.form)
-        # post to db
-        if request.method == "POST" and review_form.validate_on_submit():
-            user_id = current_user.id
-            # snack name and brand
-            # query for it
-            snacks = Snack.objects
-            snack_id = snacks.filter(snack_name=request.snack_name).filter(snack_brand=request.snack_brand)
-
-            # check if metric review
-            if review_form.saltiness == 0 and review_form.sourness == 0 and review_form.spiciness == 0 \
-                and review_form.bitterness == 0 and review_form.sweetness == 0:
-
-                try:
-                    # user_id comes from current_user
-                    # snack_id should come from request sent by frontend
-                    # geolocation is found by request
-                    new_review = Review(user_id=user_id, snack_id=snack_id,
-                                        description=review_form.description.data,
-                                        geolocation="Default", overall_rating=review_form.overall_rating.data)
-                    new_review.save()
-
-                except Exception as e:
-                    raise Exception(
-                        f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
-
-                print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
-
-                for u in Review.objects[:10]:
-                    print(u)
-
-                return redirect(url_for('index'))
-
-            # geolocation stuff
-            # ip_address = request.access_route[0] or request.remote_addr
-            # geodata = get_geodata(ip_address)
-            # location = "{}, {}".format(geodata.get("city"),
-            #                            geodata.get("zipcode"))
-            else:
-                try:
-                    # user_id comes from current_user
-                    # snack_id should come from request sent by frontend
-                    # geolocation is found by request
-                    snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
-                                                       description=review_form.description.data,
-                                                       geolocation="Default",
-                                                       overall_rating=review_form.overall_rating.data,
-                                                       sourness=review_form.sourness.data,
-                                                       spiciness=review_form.spiciness.data,
-                                                       saltiness=review_form.saltiness.data,
-                                                       bitterness=review_form.bitterness.data,
-                                                       sweetness=review_form.sweetness.data)
-                    snack_metric_review.save()
-
-                except Exception as e:
-                    raise Exception(
-                        f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
-
-                print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
-
-                for u in MetricReview.objects[:10]:
-                    print(u)
-
-                return redirect(url_for('index'))
-
-        context_dict = {"title": "Create Review",
-                        "form": review_form,
-                        "user": current_user}
-        # frontend stuff
-        return render_template("create_review.html", **context_dict)
-
-
-    else:
-        return redirect(url_for('index'))
-
-
-# Tested
-# TODO: Need to still add image element
-@app.route("/create-snack", methods=["GET", "POST"])
-@login_required
-def create_snack():
-    # Get snacks from the database.
-
-    if current_user.is_authenticated:
-        print("User is authenticated")
-
-        create_snack_form = CreateSnackForm(request.form)
-
-        new_snack = None
-
-        if request.method == "POST" and create_snack_form.validate_on_submit():
-            snack_brand = create_snack_form.snack_brand.data
-            snack_name = create_snack_form.snack_name.data
-
-            print(snack_name)
-
-            # Add snack to db
-            try:
-                new_snack = Snack(snack_name=create_snack_form.snack_name.data,
-                                  available_at_locations=[create_snack_form.available_at_location.data],
-                                  snack_brand=create_snack_form.snack_brand.data,
-                                  category=create_snack_form.category.data,
-                                  description=create_snack_form.description.data,
-                                  avg_overall_rating=0,
-                                  avg_sourness=0,
-                                  avg_spiciness=0,
-                                  avg_bitterness=0,
-                                  avg_sweetness=0,
-                                  avg_saltiness=0,
-                                  review_count=0
-                                  )
-                new_snack.save()
-            except Exception as e:
-                raise Exception(
-                    f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
-            print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
-
-            for snack in Snack.objects[:10]:
-                print(snack)
-
-            return redirect(url_for('index'))
-
-        # For frontend purposes
-        context_dict = {"title": "Create Snack",
-                        "form": create_snack_form,
-                        "user": current_user}
-
-        return render_template("create_snack.html", **context_dict)
-    else:
-        # Go back to index if not authenticated
-        return redirect(url_for('index'))
-
-
-""" Routes and methods related to user login and authentication """
 
 
 @login_manager.user_loader
@@ -444,10 +223,15 @@ def login():
         user = {
             'email': current_user.email,
             'first_name': current_user.first_name,
-            'last_name': current_user.last_name
+            'last_name': current_user.last_name,
         }
+        if isinstance(current_user, CompanyUser):
+            user['company_name'] = current_user.company_name
+        else:
+            user['company_name'] = None
         response = make_response(json.dumps(user))
         response.status_code = 200
+        print(f"login {response}\n")
         return response
 
     context_dict = {"title": "Sign In",
@@ -463,8 +247,150 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route("/account", methods=["GET", "POST"])
+def account():
+    if not current_user.is_authenticated:
+        return redirect(url_for("index"))
+
+    try:
+        all_snack_brands = []
+        company_brands = []
+
+        for snack in Snack.objects:
+            if snack.snack_brand not in all_snack_brands:
+                all_snack_brands.append((snack.snack_brand, snack.snack_brand))
+
+        # Remove duplicates
+        all_snack_brands = list(set(all_snack_brands))
+        all_snack_brands.sort()
+
+        default = [("Nothing Selected", " ")]
+        all_snack_brands = default + all_snack_brands
+        add_brand_form = CompanyBrandForm(form=request.form)
+        add_brand_form.snack_brand.choices = all_snack_brands
+
+        companyUsers = CompanyUser.objects.filter(company_name=current_user.company_name)
+        for user in companyUsers:
+            company_brands = user.company_snackbrands
+
+        if request.method == "POST" and add_brand_form.validate_on_submit():
+            snack_brand = add_brand_form.snack_brand.data
+
+            if snack_brand != "Nothing Selected":
+                try:
+                    for user in companyUsers:
+                        company_brands.append(snack_brand)
+                        user.update(set__company_snackbrands=company_brands)
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {snack_brand},\n with following creation form: {add_brand_form}")
+                print(f"A new snack_brand added to company user", file=sys.stdout)
+
+                return redirect(url_for('account'))
+
+        context_dict = {"title": "Account",
+                        "company_brands":company_brands,
+                        "form": add_brand_form,
+                        "user": current_user}
+
+        return render_template('account.html', **context_dict)
+
+    except Exception as e:
+        print("User is not a company user")
+
+        context_dict = {"title": "Account",
+                        "user": current_user}
+
+        return render_template('account.html', **context_dict)
+
+
+
+# Tested
+# TODO: Need to still add image element
+@app.route("/create-snack", methods=["GET", "POST"])
+@login_required
+def create_snack():
+    # Get snacks from the database.
+
+    if current_user.is_authenticated:
+        print("User is authenticated")
+
+        create_snack_form = CreateSnackForm(request.form)
+
+        new_snack = None
+
+        if request.method == "POST" and create_snack_form.validate_on_submit():
+            snack_brand = create_snack_form.snack_brand.data
+            snack_name = create_snack_form.snack_name.data
+
+            print(snack_name)
+
+            # Add snack to db
+
+            if request.form['company_name'] != "":
+                print(f"company user {form} \n")
+                try:
+
+                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                      available_at_locations=[create_snack_form.available_at_location.data],
+                                      snack_brand=create_snack_form.snack_brand.data,
+                                      category=create_snack_form.category.data,
+                                      description=create_snack_form.description.data,
+                                      is_verified=True,
+                                      avg_overall_rating=0,
+                                      avg_sourness=0,
+                                      avg_spiciness=0,
+                                      avg_bitterness=0,
+                                      avg_sweetness=0,
+                                      avg_saltiness=0,
+                                      review_count=0
+                                      )
+                    new_snack.save()
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+                print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+            else:
+                print(f"normal user {form} \n")
+                try:
+                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
+                                      available_at_locations=[create_snack_form.available_at_location.data],
+                                      snack_brand=create_snack_form.snack_brand.data,
+                                      category=create_snack_form.category.data,
+                                      description=create_snack_form.description.data,
+                                      avg_overall_rating=0,
+                                      avg_sourness=0,
+                                      avg_spiciness=0,
+                                      avg_bitterness=0,
+                                      avg_sweetness=0,
+                                      avg_saltiness=0,
+                                      review_count=0
+                                      )
+                    new_snack.save()
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+
+                print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
+
+            for snack in Snack.objects[:10]:
+                print(snack)
+
+            return redirect(url_for('index'))
+
+        # For frontend purposes
+        context_dict = {"title": "Add Snack",
+                        "form": create_snack_form,
+                        "user": current_user}
+
+        return render_template("create_snack.html", **context_dict)
+    else:
+        # Go back to index if not authenticated
+        return redirect(url_for('index'))
+
+
 # Finished and tested
-@app.route("/snack_reviews/<string:filters>", methods=['GET'])
+@app.route("/snack_reviews/<string:filters>", methods=['GET', 'POST'])
 def find_reviews_for_snack(filters):
     """
     Find all reviews given filter
@@ -476,12 +402,14 @@ def find_reviews_for_snack(filters):
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Review.objects
     snack_query = None
+    snack_id = None
     # all reviews will be returned if nothing specified
     if "=" in filters:
         for individual_filter in all_filters:
             this_filter = individual_filter.split("=")
             query_index = this_filter[0]
             query_value = this_filter[1]
+            snack_id = query_value
             if query_index == "user_id":
                 queryset = queryset.filter(user_id=query_value)
             elif query_index == "snack_id":
@@ -505,10 +433,119 @@ def find_reviews_for_snack(filters):
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
 
+    # for the review form
+    review_form = CreateReviewForm(request.form)
+
+    saltiness_review = review_form.saltiness.data
+    sweetness_review = review_form.sweetness.data
+    spiciness_review = review_form.spiciness.data
+    bitterness_review = review_form.saltiness.data
+    sourness_review = review_form.sourness.data
+    overall_rating_review = review_form.overall_rating.data
+
+    # post to db
+    if request.method == "POST" and review_form.validate_on_submit():
+        user_id = current_user.id
+        snackObject = Snack.objects(id=snack_id)
+
+        # check if metric review
+        if saltiness_review == 0 and sourness_review == 0 and spiciness_review == 0 \
+            and bitterness_review == 0 and sweetness_review == 0:
+
+            try:
+                # user_id comes from current_user
+                # snack_id should come from request sent by frontend
+                # geolocation is found by request
+                new_review = Review(user_id=user_id, snack_id=snack_id,
+                                    description=review_form.description.data,
+                                    geolocation="Default",
+                                    overall_rating=overall_rating_review
+                                    )
+                new_review.save()
+
+                avg_overall_rating = Review.objects.filter(snack_id=snack_id).average(
+                    'overall_rating')
+
+                snackObject.update(set__avg_overall_rating=avg_overall_rating)
+
+                review_count = snackObject[0].review_count + 1
+                snackObject.update(set__review_count=review_count)
+
+            except Exception as e:
+                raise Exception(
+                    f"Error {e}. \n Couldn't add review {new_review},\n with following review form: {review_form}")
+
+            print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+
+            for u in Review.objects[:10]:
+                print(u)
+
+            current_snack = "snack_id=" + str(snack_id)
+            return redirect(url_for('find_reviews_for_snack', filters=current_snack))
+
+        # geolocation stuff
+        # ip_address = request.access_route[0] or request.remote_addr
+        # geodata = get_geodata(ip_address)
+        # location = "{}, {}".format(geodata.get("city"),
+        #                            geodata.get("zipcode"))
+
+        else:
+            try:
+                # user_id comes from current_user
+                # snack_id should come from request sent by frontend
+                # geolocation is found by request
+                snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
+                                                   description=review_form.description.data,
+                                                   geolocation="Default",
+                                                   overall_rating=overall_rating_review,
+                                                   sourness=sourness_review,
+                                                   spiciness=spiciness_review,
+                                                   saltiness=saltiness_review,
+                                                   bitterness=bitterness_review,
+                                                   sweetness=sweetness_review)
+                snack_metric_review.save()
+
+                avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
+                avg_sourness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
+                avg_spiciness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
+                avg_bitterness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
+                avg_sweetness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
+                avg_saltiness = Review.objects.filter \
+                    (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
+
+                snackObject.update(set__avg_overall_rating=avg_overall_rating)
+                snackObject.update(set__avg_sourness=avg_sourness)
+                snackObject.update(set__avg_spiciness=avg_spiciness)
+                snackObject.update(set__avg_bitterness=avg_bitterness)
+                snackObject.update(set__avg_sweetness=avg_sweetness)
+                snackObject.update(set__avg_saltiness=avg_saltiness)
+
+                review_count = snackObject[0].review_count + 1
+                snackObject.update(set__review_count=review_count)
+
+            except Exception as e:
+                raise Exception(
+                    f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
+
+            print(f"A new user submitted the review form: {user_id}", file=sys.stdout)
+
+            for u in MetricReview.objects[:10]:
+                print(u)
+
+            current_snack = "snack_id=" + str(snack_id)
+            return redirect(url_for('find_reviews_for_snack', filters=current_snack))
+
+
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
-    context_dict = {"query": snack_query,
+    context_dict = {"title": "Delicious Snack",
+                    "form": review_form,
+                    "query": snack_query,
                     "reviews": queryset,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
@@ -566,7 +603,8 @@ def find_snack_by_filter(filters):
     # display = SnackResults(queryset)
     # display.border = True
 
-    context_dict = {"query": queryset,
+    context_dict = {"title": "Search Results",
+                    "query": queryset,
                     "user": current_user}
     # Return the same template as for the review, since it only needs to display a table.
     return render_template('search_query.html', **context_dict)

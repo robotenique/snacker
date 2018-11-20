@@ -1,21 +1,8 @@
 {% extends "layout.html" %}
 {% block title_block %}About{% endblock %}
 {% block body_raw %}
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center"
-           data-scrollax-parent="true">
-        <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-          <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a
-              href="/index">Home</a></span> <span>About</span></p>
-          <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">About Us</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-  <section class="ftco-section">
+
+    <section class="ftco-section">
     <div class="container">
       <div class="row d-md-flex">
         <div class="col-md-6 ftco-animate img about-image"
@@ -89,12 +76,12 @@
               <div class="col-md-6">
                 <div class="card">
                   <div class="card-header">
-                    <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="true"
+                    <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="false"
                        aria-controls="menuone">Can I search for a snack? <span class="collapsed"><i
                         class="icon-plus-circle"></i></span><span class="expanded"><i
                         class="icon-minus-circle"></i></span></a>
                   </div>
-                  <div id="menuone" class="collapse show">
+                  <div id="menuone" class="collapse">
                     <div class="card-body">
                       <p>Yes! Go to the home page, type your favourite snack name in the search bar and hit enter!</p>
                     </div>
@@ -104,13 +91,14 @@
                 <div class="card">
                   <div class="card-header">
                     <a class="card-link" data-toggle="collapse" href="#menutwo" aria-expanded="false"
-                       aria-controls="menutwo">What does the admin eat?<span class="collapsed"><i
+                       aria-controls="menutwo">Can I review a snack? <span class="collapsed"><i
                         class="icon-plus-circle"></i></span><span class="expanded"><i
                         class="icon-minus-circle"></i></span></a>
                   </div>
                   <div id="menutwo" class="collapse">
                     <div class="card-body">
-                      <p>Whatever he can find next to his keyboard.</p>
+                      <p>Yes! In the individual page of a snack, click on write a review if you have not already written
+                          one for this snack!</p>
                     </div>
                   </div>
                 </div>
@@ -118,31 +106,32 @@
                 <div class="card">
                   <div class="card-header">
                     <a class="card-link" data-toggle="collapse" href="#menu3" aria-expanded="false"
-                       aria-controls="menu3">How to create an account?<span class="collapsed"><i
+                       aria-controls="menu3">What does the admin eat?<span class="collapsed"><i
                         class="icon-plus-circle"></i></span><span class="expanded"><i
                         class="icon-minus-circle"></i></span></a>
                   </div>
                   <div id="menu3" class="collapse">
                     <div class="card-body">
-                      <p>Go to the registration page, by clicking the "Register" button from the navigation bar
-                        (top-right corner) and complete all the fields.</p>
+                      <p>Whatever he can find next to his keyboard.</p>
                     </div>
                   </div>
                 </div>
+
               </div>
 
               <div class="col-md-6">
+
                 <div class="card">
                   <div class="card-header">
                     <a class="card-link" data-toggle="collapse" href="#menu4" aria-expanded="false"
-                       aria-controls="menu4">I am a company representative. How can I register?<span
-                        class="collapsed"><i
+                       aria-controls="menu4">How to create an account?<span class="collapsed"><i
                         class="icon-plus-circle"></i></span><span class="expanded"><i
                         class="icon-minus-circle"></i></span></a>
                   </div>
                   <div id="menu4" class="collapse">
                     <div class="card-body">
-                      <p>In the registration form tick the "Are you a company or a distributor?"</p>
+                      <p>Go to the registration page, by clicking the "Register" button from the navigation bar
+                        (top-right corner) and complete all the fields.</p>
                     </div>
                   </div>
                 </div>
@@ -150,11 +139,27 @@
                 <div class="card">
                   <div class="card-header">
                     <a class="card-link" data-toggle="collapse" href="#menu5" aria-expanded="false"
-                       aria-controls="menu5">I'm hungry.<span class="collapsed"><i
+                       aria-controls="menu5">I am a company representative. How can I register?<span
+                        class="collapsed"><i
                         class="icon-plus-circle"></i></span><span class="expanded"><i
                         class="icon-minus-circle"></i></span></a>
                   </div>
                   <div id="menu5" class="collapse">
+                    <div class="card-body">
+                      <p>In the registration page, fill in your official company's name and use an email address
+                            belonging to your company's official domain to register.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#menu6" aria-expanded="false"
+                       aria-controls="menu6">I'm hungry.<span class="collapsed"><i
+                        class="icon-plus-circle"></i></span><span class="expanded"><i
+                        class="icon-minus-circle"></i></span></a>
+                  </div>
+                  <div id="menu6" class="collapse">
                     <div class="card-body">
                       <p>So are we!</p>
                     </div>

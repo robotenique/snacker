@@ -1,33 +1,77 @@
 {% extends "layout.html" %}
 {% block title_block %}Register{% endblock %}
 {% block body_raw %}
-  <div class="hero-wrap js-fullheight"
-       style="background-image: url({{ url_for('static', filename='images/bluesnackplates.png') }});">
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    {% from "_formhelpers.html" import render_field %}
-    {#  Don't change the funciton name back to register, then js can't find the function  #}
-    <form onsubmit="register_user();return false;" name="register"
-          style="margin-left: auto;margin-right:auto;text-align:center;margin-top:100px;">
-      {{ form.hidden_tag() }}
-      <div class="form-group" style="color:white;">
-        {{ render_field(form.first_name, id="register_first") }}
-        {{ render_field(form.last_name, id="register_last") }}
-        {{ render_field(form.email, id="register_email") }}
-        <label style="color:black;">{{ form.is_company.label }}</label>
-        {{ form.is_company(value="Are you a company or a distributor?") }}
-        {{ render_field(form.password, id="register_password") }}
-        {{ render_field(form.confirm) }}
-        <label style="color:black;">{{ form.accept_tos.label }}</label>
-        {{ form.accept_tos(value="yes") }}
-      </div>
-      <input class="btn btn-primary" type="submit" name="submit" value="submit">
-    </form>
 
-    {% if error %}
-      <p class="error"><strong>Error:</strong>{{ error }}</p>
-    {% endif %}
-  </div>
+    <section class="ftco-section bg-light">
+        <div class="container" style="width:50%" >
+            <div class="row">
+                <div class="col-md-12 col-lg-12 mb-5">
+                    <form class="p-5 bg-white" onsubmit="register_user();return false;" name="register">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.first_name.label(class='font-weight-bold') }}
+                                {{ form.first_name(id='register_first', class='form-control', placeholder="John") }}
+                            </div>
+                        </div>
+
+                      <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.last_name.label(class='font-weight-bold') }}
+                                {{ form.last_name(id='register_last', class='form-control', placeholder="Howard") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.email.label(class='font-weight-bold') }}
+                                {{ form.email(id='register_email', class='form-control', placeholder="example@example.com") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.password.label(class='font-weight-bold') }}
+                                {{ form.password(id='register_password', class='form-control', placeholder="••••••••••") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.confirm.label(class='font-weight-bold') }}
+                                {{ form.confirm(class='form-control', placeholder="••••••••••") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.company_name.label(class='font-weight-bold') }}
+                                {{ form.company_name(id='register_company', class='form-control') }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                {{ form.accept_tos.label(class='font-weight-bold') }}
+                                {{ form.accept_tos(class='form-control', value='yes') }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-lg-12">
+                                {{ form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                            </div>
+                        </div>
+
+                    </form>
+                    {% if error %}
+                      <p class="error"><strong>Error:</strong>{{ error }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
 {% endblock %}
+
