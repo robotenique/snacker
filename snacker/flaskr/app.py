@@ -529,6 +529,10 @@ def find_reviews_for_snack(filters):
                 snackObject.update(set__avg_saltiness=avg_saltiness)
 
                 review_count = snackObject[0].review_count + 1
+
+                if review_count > 10:
+                    snackObject.update(set__is_verified=True)
+
                 snackObject.update(set__review_count=review_count)
 
             except Exception as e:
