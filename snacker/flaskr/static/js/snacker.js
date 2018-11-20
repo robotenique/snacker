@@ -56,3 +56,45 @@ function register_user() {
         }
     });
 }
+
+function createSnack() {
+    if (document.getElementById("available_at_location").value != "Nothing Selected") {
+        $.ajax({
+            type: "POST",
+            url: "/create-snack",
+            data: {
+                "snack_name": document.getElementById("snack_name").value,
+                "available_at_locations": document.getElementById("available_at_location").value,
+                "snack_brand": document.getElementById("snack_brand").value,
+                "category": document.getElementById("category").value,
+                "description": document.getElementById("description").value,
+            },
+            success: function (result) {
+                window.location.href="index";
+            },
+            error: function (result) {
+                alert('Something wrong ' + result);
+            }
+        });
+    } else {
+        $.getJSON( "https://ipapi.co/json/", function( data ) {
+            $.ajax({
+                type: "POST",
+                url: "/create-snack",
+                data: {
+                    "snack_name": document.getElementById("snack_name").value,
+                    "available_at_locations": data.country_name,
+                    "snack_brand": document.getElementById("snack_brand").value,
+                    "category": document.getElementById("category").value,
+                    "description": document.getElementById("description").value,
+                },
+                success: function (result) {
+                    window.location.href="index";
+                },
+                error: function (result) {
+                    alert('Something wrong ' + result);
+                }
+            });
+        });
+    }
+}

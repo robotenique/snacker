@@ -6,41 +6,41 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-lg-8 mb-5">
-                    <form class="p-5 bg-white" method="POST" name="create_snack">
+                    <form class="p-5 bg-white" onsubmit="createSnack();return false;" name="create_snack">
                         {{ form.hidden_tag() }}
 
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.snack_name.label(class='font-weight-bold') }}
-                                {{ form.snack_name(class='form-control', placeholder="eg. Cheesy, etc") }}
+                                {{ form.snack_name(class='form-control', placeholder="eg. Cheesy, etc", id="snack_name") }}
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.snack_brand.label(class='font-weight-bold') }}
-                                {{ form.snack_brand(class='form-control', placeholder="eg. Cheetos, etc") }}
+                                {{ form.snack_brand(class='form-control', placeholder="eg. Cheetos, etc", id="snack_brand") }}
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.category.label(class='font-weight-bold') }}
-                                {{ form.category(class='form-control') }}
+                                {{ form.category(class='form-control', id="category") }}
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.available_at_location.label(class='font-weight-bold') }}
-                                {{ form.available_at_location(class='form-control') }}
+                                {{ form.available_at_location(class='form-control', id="available_at_location") }}
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col-md-12">
                                 {{ form.description.label(class='font-weight-bold') }}
-                                {{ form.description(class='form-control', placeholder="Describe your snack") }}
+                                {{ form.description(class='form-control', placeholder="Describe your snack", id="description") }}
                             </div>
                         </div>
 

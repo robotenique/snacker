@@ -13,15 +13,6 @@ from werkzeug.contrib.fixers import ProxyFix
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 
-"""
-You need to create a mongo account and let Jayde know your mongo email address to add you to the db system
-Then you need to create a password.txt and username.txt each storing the password and username of your mongo account
-If the above doesn't work try setting mongo_uri directly to:
-mongodb+srv://your_first_name_with_first_letter_capitalized:your_first_name_with_first_letter_capitalized@csc301-v3uno.mongodb.net/test?retryWrites=true
-If the above works, it should be a parsing problem try updating Python
-If not ask for troubleshoot help in group chat
-"""
-
 app = Flask(__name__)
 
 # With these constant strings, we can connect to generic databases
@@ -304,7 +295,6 @@ def account():
         return render_template('account.html', **context_dict)
 
 
-
 # Tested
 # TODO: Need to still add image element
 @app.route("/create-snack", methods=["GET", "POST"])
@@ -313,29 +303,26 @@ def create_snack():
     # Get snacks from the database.
 
     if current_user.is_authenticated:
-        print("User is authenticated")
-
+        print(f"User is authenticated", file=sys.stdout)
         create_snack_form = CreateSnackForm(request.form)
-
         new_snack = None
 
-        if request.method == "POST" and create_snack_form.validate_on_submit():
-            snack_brand = create_snack_form.snack_brand.data
-            snack_name = create_snack_form.snack_name.data
+        if request.method == "POST":
+            snack_brand = request.form['snack_brand']
+            snack_name = request.form['snack_name']
 
-            print(snack_name)
+            print(f"{snack_name}", file=sys.stdout)
 
             # Add snack to db
 
-            if request.form['company_name'] != "":
-                print(f"company user {form} \n")
+            if hasattr(current_user, 'company_name'):
+                print(f"{current_user}", file=sys.stdout)
                 try:
-
-                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
-                                      available_at_locations=[create_snack_form.available_at_location.data],
-                                      snack_brand=create_snack_form.snack_brand.data,
-                                      category=create_snack_form.category.data,
-                                      description=create_snack_form.description.data,
+                    new_snack = Snack(snack_name=request.form['snack_name'],
+                                      available_at_locations=[request.form['available_at_locations']],
+                                      snack_brand=request.form['snack_brand'],
+                                      category=request.form['category'],
+                                      description=request.form['description'],
                                       is_verified=True,
                                       avg_overall_rating=0,
                                       avg_sourness=0,
@@ -351,13 +338,12 @@ def create_snack():
                         f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
                 print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
             else:
-                print(f"normal user {form} \n")
                 try:
-                    new_snack = Snack(snack_name=create_snack_form.snack_name.data,
-                                      available_at_locations=[create_snack_form.available_at_location.data],
-                                      snack_brand=create_snack_form.snack_brand.data,
-                                      category=create_snack_form.category.data,
-                                      description=create_snack_form.description.data,
+                    new_snack = Snack(snack_name=request.form['snack_name'],
+                                      available_at_locations=[request.form['available_at_locations']],
+                                      snack_brand=request.form['snack_brand'],
+                                      category=request.form['category'],
+                                      description=request.form['description'],
                                       avg_overall_rating=0,
                                       avg_sourness=0,
                                       avg_spiciness=0,
@@ -372,9 +358,6 @@ def create_snack():
                         f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
 
                 print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
-
-            for snack in Snack.objects[:10]:
-                print(snack)
 
             return redirect(url_for('index'))
 
