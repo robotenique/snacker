@@ -10,7 +10,7 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 
 """
@@ -247,15 +247,62 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/account", methods=["GET"])
+@app.route("/account", methods=["GET", "POST"])
 def account():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
 
-    context_dict = {"title": "Account",
-                    "user": current_user}
+    try:
+        all_snack_brands = []
+        company_brands = []
 
-    return render_template('account.html', **context_dict)
+        for snack in Snack.objects:
+            if snack.snack_brand not in all_snack_brands:
+                all_snack_brands.append((snack.snack_brand, snack.snack_brand))
+
+        # Remove duplicates
+        all_snack_brands = list(set(all_snack_brands))
+        all_snack_brands.sort()
+
+        default = [("Nothing Selected", " ")]
+        all_snack_brands = default + all_snack_brands
+        add_brand_form = CompanyBrandForm(form=request.form)
+        add_brand_form.snack_brand.choices = all_snack_brands
+
+        companyUsers = CompanyUser.objects.filter(company_name=current_user.company_name)
+        for user in companyUsers:
+            company_brands = user.company_snackbrands
+
+        if request.method == "POST" and add_brand_form.validate_on_submit():
+            snack_brand = add_brand_form.snack_brand.data
+
+            if snack_brand != "Nothing Selected":
+                try:
+                    for user in companyUsers:
+                        company_brands.append(snack_brand)
+                        user.update(set__company_snackbrands=company_brands)
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't add {snack_brand},\n with following creation form: {add_brand_form}")
+                print(f"A new snack_brand added to company user", file=sys.stdout)
+
+                return redirect(url_for('account'))
+
+        context_dict = {"title": "Account",
+                        "company_brands":company_brands,
+                        "form": add_brand_form,
+                        "user": current_user}
+
+        return render_template('account.html', **context_dict)
+
+    except Exception as e:
+        print("User is not a company user")
+
+        context_dict = {"title": "Account",
+                        "user": current_user}
+
+        return render_template('account.html', **context_dict)
+
 
 
 # Tested

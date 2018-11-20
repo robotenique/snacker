@@ -4,7 +4,7 @@ from mongoengine import IntField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError, NumberRange
 
-from schema import User, Review
+from schema import User, Review, Snack
 
 
 class RegistrationForm(FlaskForm):
@@ -77,3 +77,8 @@ class CreateSnackForm(FlaskForm):
     category = SelectField('Snack Category', choices=categories)
     description = TextAreaField("Snack Description", [Length(min=2, max=255)])
     submit = SubmitField('Create Snack')
+
+
+class CompanyBrandForm(FlaskForm):
+    snack_brand = SelectField('Snack Brand Choice')
+    submit = SubmitField('Add Brand')
