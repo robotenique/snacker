@@ -17,7 +17,7 @@ class Recommender(object):
         """
 
         user_id = str(user.id)
-        calculated_recommendation = False
+        calculated_recommendation = []
         while not calculated_recommendation:
             # Check if the current user is in the trained model
             user_is_trained = user_id in self.userID_to_index.keys()

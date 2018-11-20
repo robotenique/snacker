@@ -73,6 +73,14 @@ def serve_img(snack_id):
     resp = Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
 
+@app.route("/topkek")
+@login_required
+def topkek():
+    print(current_user.id)
+    print(User.objects(pk=current_user.id).first());
+    return "Topkek"
+
+
 
 @app.route("/index")
 def index():
