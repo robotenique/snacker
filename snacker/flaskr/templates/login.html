@@ -6,7 +6,7 @@
 
         <div class="container" style="width: 50%">
 
-            <form class="p-4 mb-3 bg-white" onsubmit="authenticate();return false;" id="login_form" name="login">
+            <form class="p-4 mb-3 bg-white" onsubmit="authenticate(this);return false;" id="login_form" name="login">
                 {{ form.hidden_tag() }}
 
                 <div class="row form-group">

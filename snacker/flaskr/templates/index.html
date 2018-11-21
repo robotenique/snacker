@@ -14,7 +14,7 @@
           <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend
             yours to others</p>
           <div class="block-17 my-4">
-            <form class="d-block d-flex" onsubmit="searchSnacks(); return false;">
+            <form class="d-block d-flex" onsubmit="searchSnacks(this); return false;">
               <div class="fields d-block d-flex">
                 <div class="textfield-search one-third">
                   <input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
@@ -200,7 +200,7 @@
               <p>Register to get the most of our app! :)</p>
               <div class="row d-flex justify-content-center mt-5">
                 <div class="col-md-8">
-                  <form class="subscribe-form" onsubmit="indexRegister(); return false;">
+                  <form class="subscribe-form" onsubmit="indexRegister(this); return false;">
                     <div class="form-group d-flex">
                       <input id="index_email" type="text" class="form-control" placeholder="Enter email address">
                       <input type="submit" value="Register" class="submit px-3">

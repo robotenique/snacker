@@ -6,7 +6,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-lg-8 mb-5">
-                    <form class="p-5 bg-white" onsubmit="createSnack();return false;" name="create_snack">
+                    <form class="p-5 bg-white" onsubmit="createSnack(this);return false;" name="create_snack">
                         {{ form.hidden_tag() }}
 
                         <div class="row form-group">

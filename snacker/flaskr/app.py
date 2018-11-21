@@ -372,7 +372,7 @@ def create_snack():
         return redirect(url_for('index'))
 
 
-@app.route("/create-review/<string:snack>", methods=["GET", "POST"])
+@app.route("/create-review/<string:snack>", methods=["POST"])
 @login_required
 def create_review(snack):
 
@@ -498,6 +498,7 @@ def find_reviews_for_snack(filters):
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Review.objects
     snack_query = None
+    reviewed = False
     # all reviews will be returned if nothing specified
     if "=" in filters:
         for individual_filter in all_filters:
@@ -528,6 +529,8 @@ def find_reviews_for_snack(filters):
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
     review_form = CreateReviewForm(request.form)
+    if len(queryset.filter(user_id=current_user.id)):
+        reviewed = True
 
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
@@ -536,6 +539,7 @@ def find_reviews_for_snack(filters):
                     "form": review_form,
                     "query": snack_query,
                     "reviews": queryset,
+                    "reviewed": reviewed,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
 
