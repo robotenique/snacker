@@ -56,3 +56,71 @@ function register_user() {
         }
     });
 }
+
+function createSnack() {
+    if (document.getElementById("available_at_location").value != "Nothing Selected") {
+        $.ajax({
+            type: "POST",
+            url: "/create-snack",
+            data: {
+                "snack_name": document.getElementById("snack_name").value,
+                "available_at_locations": document.getElementById("available_at_location").value,
+                "snack_brand": document.getElementById("snack_brand").value,
+                "category": document.getElementById("category").value,
+                "description": document.getElementById("description").value,
+            },
+            success: function (result) {
+                window.location.href="index";
+            },
+            error: function (result) {
+                alert('Something wrong ' + result);
+            }
+        });
+    } else {
+        $.getJSON( "https://ipapi.co/json/", function( data ) {
+            $.ajax({
+                type: "POST",
+                url: "/create-snack",
+                data: {
+                    "snack_name": document.getElementById("snack_name").value,
+                    "available_at_locations": data.country_name,
+                    "snack_brand": document.getElementById("snack_brand").value,
+                    "category": document.getElementById("category").value,
+                    "description": document.getElementById("description").value,
+                },
+                success: function (result) {
+                    window.location.href="index";
+                },
+                error: function (result) {
+                    alert('Something wrong ' + result);
+                }
+            });
+        });
+    }
+}
+
+function createReview() {
+    // Otherwise the country of the IP address of the user is added to the list of available locations for this snack
+    $.getJSON( "https://ipapi.co/json/", function( data ) {
+        $.ajax({
+            type: "POST",
+            url: "/create-review/snack_id=" + window.location.href.toString().split('=')[1],
+            data: {
+                "description": document.getElementById("description").value,
+                "review_country": data.country_name,
+                "overall_rating": document.getElementById("overall_rating").value,
+                "sourness": document.getElementById("sourness").value,
+                "spiciness": document.getElementById("spiciness").value,
+                "saltiness": document.getElementById("saltiness").value,
+                "bitterness": document.getElementById("bitterness").value,
+                "sweetness": document.getElementById("sweetness").value,
+            },
+            success: function (result) {
+                window.location.href= "/snack_reviews/snack_id=" + window.location.href.toString().split("=")[1];
+            },
+            error: function (result) {
+                alert('Something wrong ' + result);
+            }
+        });
+    });
+}
