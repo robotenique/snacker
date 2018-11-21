@@ -24,7 +24,7 @@
   </div>
   <hr>
 {% endfor %}
-{% if (current_user.is_authenticated and not current_user.company_name) %}
+{% if (current_user.is_authenticated and not current_user.company_name and not reviewed) %}
 
     <div class="row">
         <div class="col-md-12 ftco-animate">
@@ -41,7 +41,7 @@
                   <div id="menuone" class="collapse">
                     <div class="card-body">
                       <h3>Please Write the review below</h3>
-                      <form class="p-5 bg-white" onsubmit="createReview();return false;" name="review_snack">
+                      <form class="p-5 bg-white" onsubmit="createReview(this,'{{ query.first().id }}');return false;" name="review_snack">
                         {{ form.hidden_tag() }}
                         <div class="row form-group">
                             <div class="col-md-12">
