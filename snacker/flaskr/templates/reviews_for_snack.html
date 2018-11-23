@@ -24,7 +24,7 @@
   </div>
   <hr>
 {% endfor %}
-{% if (current_user.is_authenticated and not current_user.company_name) %}
+{% if (current_user.is_authenticated and not current_user.company_name and not reviewed) %}
 
     <div class="row">
         <div class="col-md-12 ftco-animate">
@@ -41,48 +41,48 @@
                   <div id="menuone" class="collapse">
                     <div class="card-body">
                       <h3>Please Write the review below</h3>
-                      <form class="p-5 bg-white" method="POST" name="review_snack">
+                      <form class="p-5 bg-white" onsubmit="createReview(this,'{{ query.first().id }}');return false;" name="review_snack">
                         {{ form.hidden_tag() }}
                         <div class="row form-group">
                             <div class="col-md-12">
                                 {{ form.description.label(class='font-weight-bold') }}
-                                {{ form.description(class='form-control', placeholder="Write a Review") }}
+                                {{ form.description(class='form-control', placeholder="Write a Review", id="description") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.overall_rating.label(class='font-weight-bold') }}
-                                {{ form.overall_rating(class='form-control') }}
+                                {{ form.overall_rating(class='form-control', id="overall_rating") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.sourness.label(class='font-weight-bold') }}
-                                {{ form.sourness(class='form-control') }}
+                                {{ form.sourness(class='form-control', id="sourness") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.spiciness.label(class='font-weight-bold') }}
-                                {{ form.spiciness(class='form-control') }}
+                                {{ form.spiciness(class='form-control', id="spiciness") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.saltiness.label(class='font-weight-bold') }}
-                                {{ form.saltiness(class='form-control') }}
+                                {{ form.saltiness(class='form-control', id="saltiness") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.bitterness.label(class='font-weight-bold') }}
-                                {{ form.bitterness(class='form-control') }}
+                                {{ form.bitterness(class='form-control', id="bitterness") }}
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-2">
                                 {{ form.sweetness.label(class='font-weight-bold') }}
-                                {{ form.sweetness(class='form-control') }}
+                                {{ form.sweetness(class='form-control', id="sweetness") }}
                             </div>
                         </div>
                         <div class="row form-group">

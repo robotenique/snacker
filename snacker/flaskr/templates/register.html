@@ -6,7 +6,7 @@
         <div class="container" style="width:50%" >
             <div class="row">
                 <div class="col-md-12 col-lg-12 mb-5">
-                    <form class="p-5 bg-white" onsubmit="register_user();return false;" name="register">
+                    <form class="p-5 bg-white" onsubmit="register_user(this);return false;" name="register">
                         {{ form.hidden_tag() }}
 
                         <div class="row form-group">
