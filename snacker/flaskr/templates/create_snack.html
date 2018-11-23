@@ -6,7 +6,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-lg-8 mb-5">
-                    <form class="p-5 bg-white" onsubmit="createSnack(this);return false;" name="create_snack">
+                    <form class="p-5 bg-white" onsubmit="createSnack(this,'{{ selected_snack_brand }}');return false;"
+                          name="create_snack">
                         {{ form.hidden_tag() }}
 
                         <div class="row form-group">
@@ -19,9 +20,9 @@
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.snack_brand.label(class='font-weight-bold') }}
-                                {% if current_user.company_name and snack_brand != "" %}
-                                    {% set selected_brand = snack_brand %}
-                                    {{ form.snack_brand(class='form-control', readonly='readonly', id='snack_brand',
+                                {% if current_user.company_name and selected_snack_brand != "" %}
+                                    {% set selected_brand = selected_snack_brand %}
+                                    {{ form.snack_brand(class='form-control', readonly=true, id='snack_brand',
                                             value=selected_brand) }}
                                     <span class="pl-1" style="font-size: 10px">
                                         Creating a Snack with your desired Brand

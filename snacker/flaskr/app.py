@@ -395,7 +395,7 @@ def create_snack(selected_brand):
 
         # For frontend purposes
         context_dict = {"title": "Add Snack",
-                        "snack_brand": selected_brand,
+                        "selected_snack_brand": selected_brand,
                         "form": create_snack_form,
                         "user": current_user}
 
