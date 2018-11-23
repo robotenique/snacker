@@ -326,15 +326,17 @@ def account():
 
 # Tested
 # TODO: Need to still add image element
-@app.route("/create-snack", methods=["GET", "POST"])
+@app.route("/create-snack/<string:selected_brand>", methods=["GET", "POST"])
 @login_required
-def create_snack():
+def create_snack(selected_brand):
     # Get snacks from the database.
 
     if current_user.is_authenticated:
         print(f"User is authenticated", file=sys.stdout)
         create_snack_form = CreateSnackForm(request.form)
         new_snack = None
+
+        selected_brand = selected_brand.split("=")[1]
 
         if request.method == "POST":
             snack_brand = request.form['snack_brand']
@@ -390,8 +392,10 @@ def create_snack():
 
             return redirect(url_for('index'))
 
+
         # For frontend purposes
         context_dict = {"title": "Add Snack",
+                        "snack_brand": selected_brand,
                         "form": create_snack_form,
                         "user": current_user}
 

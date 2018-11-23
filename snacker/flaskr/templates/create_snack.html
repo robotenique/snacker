@@ -19,7 +19,17 @@
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.snack_brand.label(class='font-weight-bold') }}
-                                {{ form.snack_brand(class='form-control', placeholder="eg. Cheetos, etc", id="snack_brand") }}
+                                {% if current_user.company_name and snack_brand != "" %}
+                                    {% set selected_brand = snack_brand %}
+                                    {{ form.snack_brand(class='form-control', readonly='readonly', id='snack_brand',
+                                            value=selected_brand) }}
+                                    <span class="pl-1" style="font-size: 10px">
+                                        Creating a Snack with your desired Brand
+                                    </span>
+                                {% else %}
+                                    {{ form.snack_brand(class='form-control', placeholder='eg. Cheetos, etc',
+                                        id='snack_brand') }}
+                                {% endif %}
                             </div>
                         </div>
 
