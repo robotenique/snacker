@@ -85,4 +85,4 @@ class CompanyAddBrandForm(FlaskForm):
 
 class CompanySearchBrandForm(FlaskForm):
     search_snack_brand = SelectField('Search Snack')
-    submit = SubmitField('Search Brands')
+    submit = SubmitField('Search')
