@@ -249,10 +249,20 @@ def account():
 
         for snack in Snack.objects:
             if snack.snack_brand not in all_snack_brands:
-                all_snack_brands.append((snack.snack_brand, snack.snack_brand))
+                all_snack_brands.append(snack.snack_brand)
 
         # Remove duplicates
         all_snack_brands = list(set(all_snack_brands))
+
+        companyUsers = CompanyUser.objects.filter(company_name=current_user.company_name)
+        company_brands = companyUsers[0].company_snackbrands
+        all_snack_brands = list(filter(lambda a: a not in company_brands, all_snack_brands))
+
+        all_snack_brands_temp = []
+        for snack in all_snack_brands:
+            all_snack_brands_temp.append((snack, snack))
+
+        all_snack_brands = all_snack_brands_temp
         all_snack_brands.sort()
 
         default = [("Nothing Selected", " ")]
@@ -260,18 +270,13 @@ def account():
         add_brand_form = CompanyBrandForm(form=request.form)
         add_brand_form.snack_brand.choices = all_snack_brands
 
-        companyUsers = CompanyUser.objects.filter(company_name=current_user.company_name)
-        for user in companyUsers:
-            company_brands = user.company_snackbrands
-
         if request.method == "POST" and add_brand_form.validate_on_submit():
             snack_brand = add_brand_form.snack_brand.data
 
             if snack_brand != "Nothing Selected":
                 try:
                     for user in companyUsers:
-                        company_brands.append(snack_brand)
-                        user.update(set__company_snackbrands=company_brands)
+                        user.update(add_to_set__company_snackbrands=snack_brand)
                 except Exception as e:
                     raise Exception(
                         f"Error {e}. \n Couldn't add {snack_brand},\n with following creation form: {add_brand_form}")
