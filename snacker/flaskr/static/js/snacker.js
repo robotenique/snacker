@@ -75,7 +75,7 @@ function createSnack(form, selected_snack_brand) {
                     "description": form.description.value,
                 },
                 success: function (result) {
-                    window.location.href="index";
+                    window.location.replace("/index");
                 },
                 error: function (result) {
                     alert('Something wrong ' + result);
