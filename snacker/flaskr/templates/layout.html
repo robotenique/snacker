@@ -41,14 +41,17 @@
             <li class="nav-item cta"><a id="account_link" href="/register" class="nav-link">
               <span>Register</span></a></li>
           {% else %}
-            <li class="nav-item cta"><a id="wishlist" href="/create-snack" class="nav-link">
               {% if not current_user.company_name %}
+                <li class="nav-item cta"><a id="wishlist" href="/create-snack/selected_brand=" class="nav-link">
                 <span>Add Snack/Wishlist</span></a></li>
               {% else %}
+                <li class="nav-item cta"><a id="wishlist" href="#" class="nav-link">
                 <span>Watchlist</span></a></li>
               {% endif %}
             <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
               <span>Account</span></a></li>
+            <li class="nav-item cta"><a id="logout" href="/logout" class="nav-link">
+              <span>Log out</span></a></li>
           {% endif %}
 
         </ul>

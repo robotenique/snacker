@@ -57,14 +57,14 @@ function register_user(form) {
     });
 }
 
-function createSnack(form) {
+function createSnack(form, selected_snack_brand) {
     // A snack submission should always create a snack regardless of the ip API status
     var location = form.available_at_location.value;
     $.getJSON( "https://ipapi.co/json/", function( data ) {})
         .always( function( data ) {
             $.ajax({
                 type: "POST",
-                url: "/create-snack",
+                url: "/create-snack/selected_brand=" + selected_snack_brand,
                 data: {
                     "snack_name": form.snack_name.value,
                     "available_at_locations": (location != "Nothing Selected" ? location
@@ -75,7 +75,7 @@ function createSnack(form) {
                     "description": form.description.value,
                 },
                 success: function (result) {
-                    window.location.href="index";
+                    window.location.replace("/index");
                 },
                 error: function (result) {
                     alert('Something wrong ' + result);

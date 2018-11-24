@@ -79,6 +79,10 @@ class CreateSnackForm(FlaskForm):
     submit = SubmitField('Create Snack')
 
 
-class CompanyBrandForm(FlaskForm):
-    snack_brand = SelectField('Snack Brand Choice')
+class CompanyAddBrandForm(FlaskForm):
+    add_snack_brand = SelectField('Add Brand')
     submit = SubmitField('Add Brand')
+
+class CompanySearchBrandForm(FlaskForm):
+    search_snack_brand = SelectField('Search Snack')
+    submit = SubmitField('Search')

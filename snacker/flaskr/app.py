@@ -10,7 +10,7 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyBrandForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, CompanySearchBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 
 app = Flask(__name__)
@@ -251,50 +251,79 @@ def account():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
 
-    try:
+    if hasattr(current_user, 'company_name'):
         all_snack_brands = []
         company_brands = []
+        query_set = []
 
         for snack in Snack.objects:
             if snack.snack_brand not in all_snack_brands:
-                all_snack_brands.append((snack.snack_brand, snack.snack_brand))
+                all_snack_brands.append(snack.snack_brand)
 
         # Remove duplicates
         all_snack_brands = list(set(all_snack_brands))
-        all_snack_brands.sort()
-
-        default = [("Nothing Selected", " ")]
-        all_snack_brands = default + all_snack_brands
-        add_brand_form = CompanyBrandForm(form=request.form)
-        add_brand_form.snack_brand.choices = all_snack_brands
 
         companyUsers = CompanyUser.objects.filter(company_name=current_user.company_name)
-        for user in companyUsers:
-            company_brands = user.company_snackbrands
+        company_brands = companyUsers[0].company_snackbrands
+        all_snack_brands = list(filter(lambda a: a not in company_brands, all_snack_brands))
 
-        if request.method == "POST" and add_brand_form.validate_on_submit():
-            snack_brand = add_brand_form.snack_brand.data
+        all_snack_brands_temp = []
+        for snack in all_snack_brands:
+            all_snack_brands_temp.append((snack, snack))
 
-            if snack_brand != "Nothing Selected":
+        search_company_brands = []
+        for snack in company_brands:
+            search_company_brands.append((snack, snack))
+
+
+        all_snack_brands = all_snack_brands_temp
+        all_snack_brands.sort()
+        search_company_brands.sort()
+
+        default = [("Nothing Selected", "Select A Brand")]
+        search_company_brands = default + search_company_brands
+        all_snack_brands = default + all_snack_brands
+
+        search_form = CompanySearchBrandForm()
+        search_form.search_snack_brand.choices = search_company_brands
+
+        add_form = CompanyAddBrandForm()
+        add_form.add_snack_brand.choices = all_snack_brands
+
+        if request.method == "POST" and add_form.validate_on_submit():
+            add_snack_brand = add_form.add_snack_brand.data
+
+            if add_snack_brand != "Nothing Selected":
                 try:
                     for user in companyUsers:
-                        company_brands.append(snack_brand)
-                        user.update(set__company_snackbrands=company_brands)
+                        user.update(add_to_set__company_snackbrands=add_snack_brand)
                 except Exception as e:
                     raise Exception(
-                        f"Error {e}. \n Couldn't add {snack_brand},\n with following creation form: {add_brand_form}")
+                        f"Error {e}. \n Couldn't add {add_snack_brand},\n with following creation form: {account_form}")
                 print(f"A new snack_brand added to company user", file=sys.stdout)
 
                 return redirect(url_for('account'))
 
+        if request.method == "POST" and search_form.validate_on_submit():
+
+            search_snack_brand = search_form.search_snack_brand.data
+
+            if search_snack_brand != "Nothing Selected":
+                for snack in Snack.objects:
+                    if snack.snack_brand == search_snack_brand:
+                        query_set.append(snack)
+
+
         context_dict = {"title": "Account",
-                        "company_brands":company_brands,
-                        "form": add_brand_form,
+                        "company_brands": company_brands,
+                        "search_form": search_form,
+                        "add_form": add_form,
+                        "query_set": query_set,
                         "user": current_user}
 
         return render_template('account.html', **context_dict)
 
-    except Exception as e:
+    else:
         print("User is not a company user")
 
         context_dict = {"title": "Account",
@@ -305,15 +334,19 @@ def account():
 
 # Tested
 # TODO: Need to still add image element
-@app.route("/create-snack", methods=["GET", "POST"])
+@app.route("/create-snack/<string:selected_brand>", methods=["GET", "POST"])
 @login_required
-def create_snack():
+def create_snack(selected_brand):
     # Get snacks from the database.
 
     if current_user.is_authenticated:
         print(f"User is authenticated", file=sys.stdout)
         create_snack_form = CreateSnackForm(request.form)
         new_snack = None
+
+        selected_brand = selected_brand.split("=")[1]
+        print(selected_brand)
+
 
         if request.method == "POST":
             snack_brand = request.form['snack_brand']
@@ -369,8 +402,10 @@ def create_snack():
 
             return redirect(url_for('index'))
 
+
         # For frontend purposes
         context_dict = {"title": "Add Snack",
+                        "selected_snack_brand": selected_brand,
                         "form": create_snack_form,
                         "user": current_user}
 
@@ -537,8 +572,10 @@ def find_reviews_for_snack(filters):
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
     review_form = CreateReviewForm(request.form)
-    if len(queryset.filter(user_id=current_user.id)):
-        reviewed = True
+
+    if current_user.is_authenticated:
+        if len(queryset.filter(user_id=current_user.id)):
+            reviewed = True
 
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
