@@ -244,6 +244,11 @@ def account():
     if not current_user.is_authenticated:
         return redirect(url_for("index"))
 
+    context_dict = {"title": "Account",
+                    "user": current_user,
+                    "edit_user_form": UpdateUserForm(),
+                    "edit_password_form": UpdatePasswordForm()}
+
     if hasattr(current_user, 'company_name'):
         all_snack_brands = []
         company_brands = []
@@ -307,24 +312,15 @@ def account():
                         query_set.append(snack)
 
 
-        context_dict = {"title": "Account",
-                        "company_brands": company_brands,
+        context_dict.update({"company_brands": company_brands,
                         "search_form": search_form,
                         "add_form": add_form,
-                        "query_set": query_set,
-                        "user": current_user}
+                        "query_set": query_set})
 
         return render_template('account.html', **context_dict)
 
     else:
         print("User is not a company user")
-        edit_user_form = UpdateUserForm()
-        edit_password_form = UpdatePasswordForm()
-
-        context_dict = {"title": "Account",
-                        "user": current_user,
-                        "edit_user_form": edit_user_form,
-                        "edit_password_form": edit_password_form}
 
         return render_template('account.html', **context_dict)
 

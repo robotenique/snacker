@@ -15,7 +15,7 @@ class RegistrationForm(FlaskForm):
         Length(min=6, max=100),
         DataRequired("Please provide an email address"),
     ])
-    company_name = StringField("If you are a rep from a snack company, please fill your company's name below",
+    company_name = StringField("If you are representing a snack company, please fill your company's name below",
                                [Length(min=1, max=255)])
     password = PasswordField("New Password (maximum length is 50)", [
         DataRequired(),
@@ -96,7 +96,7 @@ class UpdateUserForm(FlaskForm):
         Length(min=6, max=100),
         DataRequired("Please provide an email address"),
     ])
-    company_name = StringField("If you are a rep from a snack company, please fill your company's name below",
+    company_name = StringField("Company name",
                                [Length(min=1, max=255)])
 
     submit = SubmitField('Edit Details')
