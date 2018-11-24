@@ -10,7 +10,8 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 
-from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, CompanySearchBrandForm
+from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
+    CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
 
 app = Flask(__name__)
@@ -317,9 +318,13 @@ def account():
 
     else:
         print("User is not a company user")
+        edit_user_form = UpdateUserForm()
+        edit_password_form = UpdatePasswordForm()
 
         context_dict = {"title": "Account",
-                        "user": current_user}
+                        "user": current_user,
+                        "edit_user_form": edit_user_form,
+                        "edit_password_form": edit_password_form}
 
         return render_template('account.html', **context_dict)
 
