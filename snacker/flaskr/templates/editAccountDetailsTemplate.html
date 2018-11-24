@@ -8,6 +8,14 @@
             name="login">
         {{ edit_user_form.hidden_tag() }}
 
+        {% if current_user.company_name %}
+          <div class="row form-group">
+            <div class="col-md-12">
+              {{ edit_user_form.company_name.label(class='font-weight-bold') }}
+              {{ edit_user_form.company_name(id='register_company', class='form-control', value=current_user.company_name) }}
+            </div>
+          </div>
+        {% endif %}
         <div class="row form-group">
           <div class="col-md-12">
             {{ edit_user_form.first_name.label(class='font-weight-bold') }}

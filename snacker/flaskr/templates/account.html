@@ -11,14 +11,7 @@
         {% if current_user.company_name %}
 
           <div class="col-md-12 col-lg-8 mb-3">
-
             <div class="bg-white p-4 pb-5 pt-5 text-center font-weight-bold">
-              <div class="row form-group">
-                <div class="col-md-12">
-                  {{ edit_user_form.company_name.label(class='font-weight-bold') }}
-                  {{ edit_user_form.company_name(id='register_company', class='form-control', value=current_user.company_name) }}
-                </div>
-              </div>
               {% include "editAccountDetailsTemplate.html" %}
             </div>
           </div>
