@@ -356,6 +356,43 @@ def create_brand():
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
 
+#Tested
+@app.route("/verify-snack", methods=["GET", "POST"])
+@login_required
+def verify_snack():
+    if current_user.is_authenticated and hasattr(current_user, 'company_name'):
+        print(f"User is authenticated", file=sys.stdout)
+
+        if request.method == "POST":
+            snack_id = request.form["snack_id"]
+            snack_object = Snack.objects(id=snack_id)
+
+            company_user_object = CompanyUser.objects(id=current_user.id)
+            snack = "snack_id=" + str(snack_id)
+
+            print(snack_id)
+
+            if company_user_object[0].company_name == snack_object[0].snack_company_name:
+                try:
+                    snack_object.update(set__is_verified=True)
+                    print("ayyyyy")
+
+                except Exception as e:
+                    raise Exception(
+                        f"Error {e}. \n Couldn't verify {snack_id}")
+                print(f"The company user verified this snack: {snack_id}", file=sys.stdout)
+                return redirect(url_for('find_reviews_for_snack', filters=snack))
+            else:
+                print(f"User is not the snack's company: {current_user.id}", file=sys.stdout)
+                #we want to give the user an error message
+                return redirect(url_for('find_reviews_for_snack', filters=snack))
+
+        else:
+
+            return redirect(url_for('find_reviews_for_snack'))
+    else:
+        # Go back to index if not authenticated or if user is not company user
+        return redirect(url_for('index'))
 
 # Tested
 # TODO: Need to still add image element
