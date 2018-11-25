@@ -357,7 +357,7 @@ def create_brand():
         return redirect(url_for('index'))
 
 #Tested
-@app.route("/verify-snack", methods=["GET", "POST"])
+@app.route("/verify-snack", methods=["POST"])
 @login_required
 def verify_snack():
     if current_user.is_authenticated and hasattr(current_user, 'company_name'):
