@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title_block %}Create a brand{% endblock %}
+{% block body_raw %}
+
+    <section class="ftco-section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-8 mb-5">
+                    <form class="p-5 bg-white" method="POST" name="create_brand">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                {{ form.add_snack_brand.label(class='font-weight-bold') }}
+                                {{ form.add_snack_brand(class='form-control',
+                                    placeholder="Your brand name, i.e. Oreo", id="brand_name") }}
+                            </div>
+                        </div>
+
+                        <div class="row form-group"></div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <input class="btn btn-primary px-3 px-lg-5" type="submit" name="submit" value="Submit">
+                            </div>
+                        </div>
+                    </form>
+                    {% if error %}
+                        <p class="error"><strong>Error:</strong>{{ error }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

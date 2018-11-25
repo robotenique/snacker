@@ -110,3 +110,22 @@ function createReview(form, snack_id) {
             });
         });
 }
+
+function verify_snack(snack_id) {
+    console.log(snack_id);
+    $.ajax({
+        type: "POST",
+        url: "/verify-snack",
+        data: {
+            "snack_id": snack_id
+        },
+        dataType: "json",
+        success: function (result) {
+            alert("Snack verified!");
+            window.location.href="/snack_reviews/snack_id="+snack_id;
+        },
+        error: function (result) {
+            alert('Something wrong ' + result);
+        }
+    });
+}
