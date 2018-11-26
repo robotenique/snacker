@@ -74,6 +74,7 @@ def topkek():
 
 
 
+@app.route("/")
 @app.route("/index")
 def index():
     if current_user.is_authenticated:
@@ -99,12 +100,17 @@ def index():
     interesting_facts.append(("Reviews", Review.objects.count()))
     interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
 
+    snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
+    snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
+
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
-                    "user": current_user}
+                    "user": current_user,
+                    "snack_names": snack_names,
+                    "snack_brands": snack_brands}
     return render_template('index.html', **context_dict)
 
 
@@ -120,33 +126,6 @@ def contact():
     context_dict = {"title": 'Contact Us',
                     "user": current_user}
     return render_template('contact.html', **context_dict)
-
-
-# Go to the local url and refresh that page to test
-# See below for use cases of different schema objects
-@app.route('/')
-def hello_world():
-    snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:5]
-    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
-    # TODO: Recommend snacks tailored to user
-    featured_snacks = top_snacks
-
-    # Use JS Queries later
-    # Needs to be a divisor of 12
-    interesting_facts = []
-    interesting_facts.append(("Snacks", Snack.objects.count()))
-    interesting_facts.append(("Reviews", Review.objects.count()))
-    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
-
-    context_dict = {"title": "Index",
-                    "featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "popular_snacks": snacks.order_by("-review_count")[:5],
-                    "interesting_facts": interesting_facts,
-                    "user": current_user}
-    return render_template('index.html', **context_dict)
-
 
 """ Routes and methods related to user login and authentication """
 

@@ -13,14 +13,14 @@
             the snacks you need </h1>
           <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Discover the world of snacks and recommend
             yours to others</p>
-          <div class="block-17 my-4">
-            <form class="d-block d-flex" onsubmit="searchSnacks(this); return false;">
+          <div class="block-17 my-4" style="overflow: visible;">
+            <form class="d-block d-flex" autocomplete="off" onsubmit="searchSnacks(this); return false;">
               <div class="fields d-block d-flex">
-                <div class="textfield-search one-third">
-                  <input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc.">
+                <div class="textfield-search one-third autocomplete">
+                  <input id="index_search_brand" type="text" class="form-control" placeholder="Brand: Cheetos etc." oninput="autocompleteListener(this, {{ snack_brands }})" onkeydown="autocompleteKeydown(event, this)">
                 </div>
                 <div class="textfield-search one-third">
-                  <input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc.">
+                  <input id="index_search_name" type="text" class="form-control" placeholder="Name: Cheesy etc." oninput="autocompleteListener(this, {{ snack_names }})" onkeydown="autocompleteKeydown(event, this)">
                 </div>
                 <div class="select-wrap one-third">
                   <div class="icon"><span class="ion-ios-arrow-down"></span></div>
@@ -214,4 +214,11 @@
       </div>
     </section>
   {% endif %}
+{% endblock %}
+{% block extra_js %}
+  <script>    
+  document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+  });
+  </script>
 {% endblock %}
