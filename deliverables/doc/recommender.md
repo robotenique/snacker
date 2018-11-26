@@ -56,3 +56,18 @@ This is the basic procedure done by **recommender_training.py**:
 * The training is basically using the SVD idea to use [latent features/variables](https://en.wikipedia.org/wiki/Latent_variable) to approximate the matrix built in the last step. Every entry in the last step matrix which has a value of 0 is considered as 'missing data'. This means that the SGD won't use this data to optimize (minimize [MSE](https://en.wikipedia.org/wiki/Mean_squared_error)). The conditions and hyperparameters of this training can be changed in the file.
 * The result of the training is a matrix **recc**, which predicts the rating that every user would give to every item. The model can be evaluated by calculating the Frobenius norm over the **test** list. [More info about evaluation here!](https://stats.stackexchange.com/questions/97411/evaluating-matrix-factorization-algorithms-for-netflix)
 * Now the model, along with all the mapping dictionaries and relevant information, is saved in a file using Pickle.
+
+**Current mock idea:**
+
+* 1000 Users, demographic division tbd, jointly with the 'profile' of each users
+* Approx. 2000 Snacks from all over the world
+
+Total = 2mi of possible reviews. Going to generate: 408 000 (.2 times of the data);
+
+
+
+
+IMPORTANT: Procedures when adding information to the production database
+===
+
+1. Remove the 'delete' from the routes to add new things into the database!
