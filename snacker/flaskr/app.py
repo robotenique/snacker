@@ -30,7 +30,6 @@ ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
-    print("hello")
     mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
     # mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
@@ -356,6 +355,38 @@ def create_brand():
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
 
+#not tested
+@app.route("/add_to_fav", methods=["POST"])
+@login_required
+def add_to_fav():
+    if current_user.is_authenticated:
+        print(f"ADD TO FAVOURITE")
+        print(f"User is authenticated", file=sys.stdout)
+        if request.method == "POST":
+            user_obj = User.objects(pk=current_user.id)
+            snack_id = request.form["snack_id"]
+
+            snack = "snack_id=" + snack_id
+            prev_url = request.form["prev_url"]
+
+            print(f"Added this snack to favourites/watchlist: {request.form}", file=sys.stdout)
+            try:
+                user_obj.update(add_to_set__wish_list=snack_id)
+            except Exception as e:
+                raise Exception(
+                    f"Error {e}. \n Couldn't add {snack_id} to watchlist ")
+
+            print(f"length of watchlist{len(current_user.wish_list)}", file=sys.stdout)
+            print(f"Added this snack to favourites/watchlist: {snack_id}", file=sys.stdout)
+            #return redirect(url_for('find_snack_by_filter', filters=snack))
+            #return redirect(url_for('index'))
+            return redirect(url_for('find_reviews_for_snack', filters=snack))
+        else:
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index')) # cannot add to wish list if user is not authenticated
+
+
 #Tested
 @app.route("/verify-snack", methods=["POST"])
 @login_required
@@ -574,6 +605,7 @@ def find_reviews_for_snack(filters):
     Results currently ordered by descending overall rating
     /snack_reviews/snack_id=abc+overall_rating=3...
     """
+    print(f"FILTER IN FIND_REVIEWS{filters}\n", file=sys.stdout)
     all_filters = filters.split("+")
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Review.objects

@@ -129,3 +129,30 @@ function verify_snack(snack_id) {
         }
     });
 }
+function get_current_url(){
+    var url=window.location.href;
+    return url
+    }
+
+function add_to_fav(snack_id) {
+
+    var prev_url = window.location.href;
+
+    console.log(snack_id);
+    $.ajax({
+        type: "POST",
+        url: "/add_to_fav",
+        data: {
+            "snack_id": snack_id,
+            "prev_url": prev_url,
+            "test":"test"
+        },
+        dataType: "json",
+        success: function (result) {
+            alert("Snack added to favourite!");
+        },
+        error: function (result) {
+            alert("error");
+        }
+    });
+}

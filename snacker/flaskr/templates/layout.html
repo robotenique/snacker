@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% block head %}
   <title>{% block title_block %}{% endblock %}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,6 +20,7 @@
 
     {#Our own css#}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/snacker.css') }}">
+  {% endblock %}
 </head>
 
 <body>
