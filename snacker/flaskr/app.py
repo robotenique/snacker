@@ -299,11 +299,8 @@ def change_password():
     form = UpdatePasswordForm(request.form)
     if request.method == "POST":
         try:
-            print (str(bcrypt.generate_password_hash(request.form["password"])))
-            print (current_user.password)
-            current_user.update(password=str(bcrypt.generate_password_hash(request.form["password"])))
+            current_user.update(password=bcrypt.generate_password_hash(request.form["password"]).decode('utf-8'))
             current_user.save()
-            print(current_user.password)
             print(f"User {form} \n")
             response = make_response()
             response.status_code = 200
