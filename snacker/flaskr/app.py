@@ -218,6 +218,7 @@ def login():
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     logout_user()
+    print(f"{current_user.is_authenticated}", file=sys.stdout)
     return redirect(url_for('index'))
 
 
