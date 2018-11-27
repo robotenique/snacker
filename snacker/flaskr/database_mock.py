@@ -1,7 +1,11 @@
 import json
 import string
 import random as rnd
-import requests as req
+#import requests as req
+#import matplotlib.pyplot as plt
+#import matplotlib.mlab as mlab
+import math
+import numpy as np
 
 #@app.route("/add-snacks")
 def add_snacks():
@@ -63,6 +67,15 @@ def add_snacks():
 
 #@app.route("/add-reviews")
 def add_reviews():
+    """add_reviews
+    Get all snacks from the database, clusterized by category.
+    Get all users from the database.
+    Generate ~400k of reviews and commit them to the database,
+    according to a specific user profile (the predefined user behavior).
+    Then, saves the user behavior in a file in snacks/users_snack_profiles.json
+    
+    """
+
     snack_from_db = Snack.objects
     cluster = dbmock.cluster_snacks(snack_from_db)
     salty  = cluster["salty"]
@@ -75,7 +88,6 @@ def add_reviews():
         return cluster[rnd.choice(("salty", "spicy", "sour", "sweet", "bitter", "remaining_snacks"))]
     users = list(User.objects)
     rnd.shuffle(users)
-    users = users
     num_users = len(users)
     # Comparators for the user profile
     is_salty = lambda idx : idx < num_users*.14
@@ -190,7 +202,7 @@ def add_custom_reviews(user, list_of_snacks, num=1, snack_type="", good_rating=T
             sweetness_review = round_valid(2, 1.1) # Not so much sweet
             bitterness_review = round_valid(4.4, .7) # is bitter
         else:
-            # add review to the database
+            # add normal review to the database if it's not any particular profile
             commit_normal_review_database(user, snack, geoloc=geoloc, rating=rating)
             continue
         #print(f"{user}, {snack}, geoloc={geoloc}, rating={rating}, saltiness_review={saltiness_review}, spiciness_review={spiciness_review}, sourness_review={sourness_review},sweetness_review={sweetness_review}, bitterness_review={bitterness_review}")
@@ -202,6 +214,9 @@ def add_custom_reviews(user, list_of_snacks, num=1, snack_type="", good_rating=T
 def commit_normal_review_database(user, snack, geoloc="Canada", rating=1):
     user_id = user.id
     snack_id = snack.id
+    """ Commit a given review to the database, and don't raise any exceptions
+        if it fails (only print a notification message).
+        IMPORTANT: The review should be a normal (without metrics) review!"""
     try:
         new_review = Review(user_id=user_id, snack_id=snack_id,
                             geolocation=geoloc,
@@ -224,6 +239,9 @@ def commit_normal_review_database(user, snack, geoloc="Canada", rating=1):
 def commit_metric_review_database(user, snack, geoloc="Canada", rating=1, saltiness_review=1,
                       spiciness_review=1, sourness_review=1, sweetness_review=1,
                       bitterness_review=1):
+    """ Commit a given review to the database, and don't raise any exceptions
+        if it fails (only print a notification message).
+        IMPORTANT: The review should be a metric review!"""
     user_id = user.id
     snack_id = snack.id
     try:
@@ -363,108 +381,56 @@ def format_mocked_users():
         parsed_users.append(user_formatted)
     return parsed_users
 
-def add_custom_reviews(user, list_of_snacks, num=1, snack_type=""):
-    # Considering that this user is loves snacks of the current list
-    # Will add 'num' of new reviews, from 3.5 to 4, following a normal distribution, kinda
-    # Round numbers to valid range, in a norm distr. (with normal distribution, we never know :] )
-    def round_valid(mu, sigma):
-        val = int(round(rnd.normalvariate(mu, sigma)))
-        val = val if val <= 5 else 5
-        val = val if val >= 1 else 1
-        return val
+def gen_normal_plot(mu, variance, label=""):
+    """ Given a mean and a variance, plot the normal distribution
+        in matplotlib, filling the space below the curve, and
+        adding the correct label to the plot"""
+    sigma = math.sqrt(variance)
+    x = np.linspace(-4*sigma + mu, 4*sigma + mu, 100)
+    y = mlab.normpdf(x, mu, sigma)
+    if label:
+        plt.plot(x, y, label=label)
+    ax = plt.gca()
+    ax.fill_between(x, 0, y, alpha=0.5)
+    plt.legend()
 
-    for snack in rnd.sample(list_of_snacks, num):
-        rating = round_valid(4.2, .6)
-        # Keeps the geolocation the same of the first available location at the snack
-        if snack.available_at_locations:
-            geoloc = snack.available_at_locations[0]
-        else:
-            geoloc = "Canada"
-        if snack_type == "salty":
-            saltiness_review = round_valid(4.4, .7) # is salty
-            spiciness_review = round_valid(3, 1.1) # not very related
-            sourness_review = round_valid(1, 1.1) # Not so much sour
-            sweetness_review = round_valid(2, .6) # Things which are salty tend not to be sweet
-            bitterness_review = round_valid(2, 1.1) # Less bitter
-        elif snack_type == "spicy":
-            saltiness_review = round_valid(3, 1.1) # not very related
-            spiciness_review = round_valid(4.4, .7) # is spicy
-            sourness_review = round_valid(2, 1.1) # Not so much sour
-            sweetness_review = round_valid(2, .6) # Not so much sweet
-            bitterness_review = round_valid(2, 1.1) # Less bitter
-        elif snack_type == "sour":
-            saltiness_review = round_valid(1, 1.1) # Not so much salty
-            spiciness_review = round_valid(2, 1.1) # Not so much spicy
-            sourness_review = round_valid(4.4, .7) # is sour
-            sweetness_review = round_valid(3, 1.1) # not very related but can vary
-            bitterness_review = round_valid(4, 1.1) # Tend to be bitter
-        elif snack_type == "sweet":
-            saltiness_review = round_valid(2, .6) # Things which are sweet tend not to be salty
-            spiciness_review = round_valid(2, .6) # Not so much spicy
-            sourness_review = round_valid(3, 1.1) # not very related but can vary
-            sweetness_review = round_valid(4.4, .7) # is sweet
-            bitterness_review = round_valid(2, 1.1) # Less bitter
-        elif snack_type == "bitter":
-            saltiness_review = round_valid(2, 1.1) # Less bitter
-            spiciness_review = round_valid(3, 1.1) # Can be spicy
-            sourness_review = round_valid(4, 1) # Tend to somewhat relate to sour
-            sweetness_review = round_valid(2, 1.1) # Not so much sweet
-            bitterness_review = round_valid(4.4, .7) # is bitter
-        else:
-            saltiness_review = 1
-            spiciness_review = 1
-            sourness_review = 1
-            sweetness_review = 1
-            bitterness_review = 1
-
-        #print(f"{user}, {snack}, geoloc={geoloc}, rating={rating}, saltiness_review={saltiness_review}, spiciness_review={spiciness_review}, sourness_review={sourness_review},sweetness_review={sweetness_review}, bitterness_review={bitterness_review}")
-        # add review to the database
-        commit_review_database(user, snack, geoloc=geoloc, rating=rating, saltiness_review=saltiness_review,
-                               spiciness_review=spiciness_review, sourness_review=sourness_review,
-                               sweetness_review=sweetness_review, bitterness_review=bitterness_review)
-
-def commit_review_database(user, snack, geoloc="Canada", rating=1, saltiness_review=1,
-                      spiciness_review=1, sourness_review=1, sweetness_review=1,
-                      bitterness_review=1):
-    user_id = user.id
-    snack_id = snack.id
-    try:
-        snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
-                                            geolocation=geoloc,
-                                            overall_rating=rating,
-                                            sourness=sourness_review,
-                                            spiciness=spiciness_review,
-                                            saltiness=saltiness_review,
-                                            bitterness=bitterness_review,
-                                            sweetness=sweetness_review)
-        snack_metric_review.save()
-
-        avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
-        avg_sourness = Review.objects.filter \
-            (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
-        avg_spiciness = Review.objects.filter \
-            (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
-        avg_bitterness = Review.objects.filter \
-            (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
-        avg_sweetness = Review.objects.filter \
-            (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
-        avg_saltiness = Review.objects.filter \
-            (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
-
-        snack.update(set__avg_overall_rating=avg_overall_rating)
-        snack.update(set__avg_sourness=avg_sourness)
-        snack.update(set__avg_spiciness=avg_spiciness)
-        snack.update(set__avg_bitterness=avg_bitterness)
-        snack.update(set__avg_sweetness=avg_sweetness)
-        snack.update(set__avg_saltiness=avg_saltiness)
-
-        review_count = snack.review_count + 1
-        snack.update(set__review_count=review_count)
-        if review_count > 10:
-            snack.update(set__is_verified=True)
-        snack.update(add_to_set__available_at_locations=geoloc)
-    except Exception as e:
-        raise Exception(f"Error {e}. \n Couldn't add metric review {snack_metric_review}!!")
+def generate_graph():
+    """ Generate all 5 base user profile normal distribution plots!"""
+    gen_normal_plot(4.4, .7, "Saltiness")
+    gen_normal_plot(3, 1.1,  "Spiciness")
+    gen_normal_plot(1, 1.1,  "Sourness")
+    gen_normal_plot(2, .6,   "Sweetness")
+    gen_normal_plot(2, 1.1,  "Bitterness")
+    plt.title("Salty user profile")
+    plt.show()
+    gen_normal_plot(3, 1.1, "Saltiness")
+    gen_normal_plot(4.4, .7, "Spiciness")
+    gen_normal_plot(2, 1.1, "Sourness")
+    gen_normal_plot(2, .6, "Sweetness")
+    gen_normal_plot(2, 1.1, "Bitterness")
+    plt.title("Spicy user profile")
+    plt.show()
+    gen_normal_plot(1, 1.1, "Saltiness")
+    gen_normal_plot(2, 1.1, "Spiciness")
+    gen_normal_plot(4.4, .7, "Sourness")
+    gen_normal_plot(3, 1.1, "Sweetness")
+    gen_normal_plot(4, 1.1, "Bitterness")
+    plt.title("Sour user profile")
+    plt.show()
+    gen_normal_plot(2, .6, "Saltiness")
+    gen_normal_plot(2, .6, "Spiciness")
+    gen_normal_plot(3, 1.1, "Sourness")
+    gen_normal_plot(4.4, .7, "Sweetness")
+    gen_normal_plot(2, 1.1, "Bitterness")
+    plt.title("Sweet user profile")
+    plt.show()
+    gen_normal_plot(2, 1.1, "Saltiness")
+    gen_normal_plot(3, 1.1, "Spiciness")
+    gen_normal_plot(4, 1, "Sourness")
+    gen_normal_plot(2, 1.1, "Sweetness")
+    gen_normal_plot(4.4, .7, "Bitterness")
+    plt.title("Bitter user profile")
+    plt.show()
 
 if __name__ == "__main__":
-    format_mocked_users()
+    pass

@@ -65,8 +65,8 @@ This is the basic procedure done by **recommender_training.py**:
 * All users have the same password: 123456
 * The user group will be saved at 'usergroup.json'
 * The base profiles are: salty, spicy, sour, sweet, bitter. Then I put three more: mix(spicy, sweet), mix(sweet, sour), mix(salty, sour)
-* For the base class, the user will rate 60 snacks of that category (salty, sweet, etc) with rating from 4 to 5. Then, choose random snacks from all the snacks, and give them ratings from 0 to 4 (a normal distribution in this case), until he completes the 22 remaining ratings.
-* For the mixed classes, first there is 1/2 chance of choosing each category, and the user will rate 50 randomly choosen snacks which belongs to one of those categories. Then,it will choose snacks from neither category, and give them ratings from 0 to 4 following a normal distribution.
+* For the base class, the user will rate 60 snacks of that category (salty, sweet, etc) with rating from 4 to 5. Then, choose random snacks from all the snacks, and give them ratings following a more uniform normal distribution for the 22 snacks left to review.
+* For the mixed classes, first there is 1/2 chance of choosing each category, and the user will rate 50 randomly choosen snacks which belongs to one of those categories. Then,it will choose snacks from the 'remaining_snacks' category, and give them ratings from 0 to 4 following a normal distribution.
 * Distribution of classes are like this:
 
 The division of the user profiles will be like this:
@@ -75,9 +75,9 @@ The division of the user profiles will be like this:
 14% - Sour
 14% - Sweet
 14% - Bitter
-10% - mix(spicy, sweet)
-10% - mix(sweet, sour)
-10% - mix(salty, sour)
+10% - mix(spicy, sweet) + remaining_snacks
+10% - mix(sweet, sour) + remaining_snacks
+10% - mix(salty, sour) + remaining_snacks
 
 
 
@@ -86,7 +86,7 @@ IMPORTANT: Procedures when adding information to the production database
 ===
 
 1. Remove the 'delete' from the routes to add new things into the database!
-
+2. Get app.py from github, then add the new methods there!
 
 * Change db to remote database
 * DELETE all unnecessary routes
