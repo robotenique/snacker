@@ -229,8 +229,6 @@ def account():
                     "edit_password_form": UpdatePasswordForm()}
 
     if hasattr(current_user, 'company_name'):
-        query_set = []
-
         all_snack_brands = list({snack.snack_brand for snack in Snack.objects})
 
         # Remove duplicates
@@ -238,13 +236,8 @@ def account():
         # TODO: I'm not sure if the next line is working as it should - ADAM.
         all_snack_brands = list(filter(lambda a: a not in company_brands, all_snack_brands))
 
-        all_snack_brands_temp = []
-        for snack in all_snack_brands:
-            all_snack_brands_temp.append((snack, snack))
-
-        search_company_brands = []
-        for snack in company_brands:
-            search_company_brands.append((snack, snack))
+        all_snack_brands_temp = [(snack, snack) for snack in all_snack_brands]
+        search_company_brands = [(snack, snack) for snack in company_brands]
 
         all_snack_brands = all_snack_brands_temp
         all_snack_brands.sort()
@@ -274,15 +267,14 @@ def account():
                 return redirect(url_for('account'))
             else:
                 return redirect(url_for("create_brand"))
-
+        # TODO: Somebody called it query_set - but actually implemented it as a list - what should be the correct one?
+        query_set = []
         if request.method == "POST" and search_form.validate_on_submit():
 
             search_snack_brand = search_form.search_snack_brand.data
 
             if search_snack_brand != "Nothing Selected":
-                for snack in Snack.objects:
-                    if snack.snack_brand == search_snack_brand:
-                        query_set.append(snack)
+                query_set = [snack for snack in Snack.objects if snack.snack_brand == search_snack_brand]
 
         context_dict.update({"company_brands": company_brands,
                              "search_form": search_form,
