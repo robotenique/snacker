@@ -62,3 +62,56 @@ def add_snacks():
     return str(sl[:10])
 
 
+@app.route("/add-reviews")
+def add_reviews():
+    all_snacks = Snack.objects
+    country2snacks = {}
+    salty = [] # ~943
+    spicy = [] # ~525
+    sour = []  # ~453
+    sweet = []  # ~967
+    bitter = [] # ~307
+    salty_kwords = ("salty", "chips", "cracker", "grain", "grains", "cheese", "cheddar", "doritos", "potato", "bacon", "sticks")
+    spicy_kwords = ("spicy",  "pepper", "onion", "jalapeno", "chipotle", "salsa", "hummus", "dip", "quesadillas", "chilli"
+                    "tacos", "sriracha", "hot", "garlic", "pimiento", "guacamole", "spice", "salsa", "wasabi",
+                    "pimenta", "apimentado", "taco")
+    sour_kwords = ("sour", "almold", "cranberry", "cherry", "lemon", "citric", "orange", "vinegar", "apple", "limes", "kimchi",
+                   "tamarind", "mustard", "guava", "gooseberry", "pickles", "yogurt", "soy", "popcorn", "garlic", "fire", "angry",
+                   "limón", "limão")
+    sweet_kwords = ("sweet", "cream", "chocolate", "tart", "berry", "peanut", "nut", "oreo", "cookie", "macadamia", "cake", "cherry",
+                    "pretzel", "frosted", "treats", "pumpkin", "sugar", "candy", "doce", "butter", "cinnamon", "caramel", "fruit",
+                    "glazed", "toffee")
+    bitter_kwords = ("bitter", "coffee", "tomato", "dill", "ginger", "gengibre", "peppermint", "mint", "citrus", "aspargus", "lemon",
+                     "lime", "cocoa", "cacao", "cacau", "dark", "wine", "beer", "dandelion", "eggplant", "karela",
+                     "gourd")
+
+    for s in all_snacks:
+        for country in s["available_at_locations"]:
+            if country2snacks.get(country) == None:
+                country2snacks[country] = [s]
+            else:
+                country2snacks[country].append(s)
+        if s.description and any((kword in s.description.lower()+" "+s.snack_name.lower() for kword in salty_kwords)):
+            salty.append(s)
+        if s.description and any((kword in s.description.lower()+" "+s.snack_name.lower() for kword in spicy_kwords)):
+            spicy.append(s)
+        if s.description and any((kword in s.description.lower()+" "+s.snack_name.lower() for kword in sour_kwords)):
+            sour.append(s)
+        if s.description and any((kword in s.description.lower()+" "+s.snack_name.lower() for kword in sweet_kwords)):
+            sweet.append(s)
+        if s.description and any((kword in s.description.lower()+" "+s.snack_name.lower() for kword in bitter_kwords)):
+            bitter.append(s)
+    print(len(salty))
+    print(len(spicy))
+    print(len(sour))
+    print(len(sweet))
+    print(len(bitter))
+    return "kek"
+    # Sort by quantity
+    sorted_country2snacks = sorted(country2snacks.items(), key = lambda el: -len(el[1]))
+    for s in sorted_country2snacks[0][:10]:
+        print(s)
+
+    for s in sorted_country2snacks:
+        print(f"{s[0]} - {len(s[1])}")
+    return 'topkek'
