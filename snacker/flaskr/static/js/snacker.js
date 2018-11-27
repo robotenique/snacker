@@ -152,7 +152,7 @@ function add_to_fav(snack_id) {
             alert("Snack added to favourite!");
         },
         error: function (result) {
-            alert("error");
+            alert("snacker added to fav");
         }
     });
 }
