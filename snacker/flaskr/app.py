@@ -127,6 +127,7 @@ def contact():
                     "user": current_user}
     return render_template('contact.html', **context_dict)
 
+
 """ Routes and methods related to user login and authentication """
 
 
@@ -144,7 +145,8 @@ def register():
             try:
                 new_user = CompanyUser(email=request.form['email'], first_name=request.form['first_name'],
                                        last_name=request.form['last_name'], company_name=request.form['company_name'],
-                                       password=encrypted_password(request.form['password']))
+                                       password=encrypted_password(request.form['password']),
+                                       last_country=request.form['last_country'])
                 new_user.save()
             except Exception as e:
                 raise Exception\
@@ -153,7 +155,8 @@ def register():
             print(f"normal user {form} \n")
             try:
                 new_user = User(email=request.form['email'], first_name=request.form['first_name'],
-                                last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
+                                last_name=request.form['last_name'], last_country=request.form['last_country'],
+                                password=encrypted_password(request.form['password']))
                 new_user.save()
             except Exception as e:
                 raise Exception\
@@ -204,6 +207,7 @@ def login():
             'first_name': current_user.first_name,
             'last_name': current_user.last_name,
         }
+        current_user.update(set__last_country=request.form['last_country'])
         if isinstance(current_user, CompanyUser):
             user['company_name'] = current_user.company_name
         else:
