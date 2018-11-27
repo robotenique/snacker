@@ -9,6 +9,7 @@ from flask_login import LoginManager, login_required, current_user, logout_user,
 from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
+from difflib import SequenceMatcher
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
     CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm, CreateBrandForm
@@ -609,6 +610,8 @@ def find_snack_by_filter(filters):
     all_filters = filters.split("+")
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Snack.objects
+    snack_name = ""
+    snack_brand = ""
 
     # the search string should be all if we want to get all snacks, but we can type anything that doesn't include '='
     # to get the same results
@@ -618,8 +621,8 @@ def find_snack_by_filter(filters):
             query_index = this_filter[0]
             query_value = this_filter[1]
             if query_index == "snack_name":
-                # Change to contain so that snacks with similar name to inputted name will be returned too
                 if query_value != "":
+                    snack_name = query_value
                     queryset = queryset.filter(snack_name__contains=query_value)
             elif query_index == "available_at_locations":
                 # Note for this, say if they enter n, they will still return snacks in Canada because their contains
@@ -629,6 +632,7 @@ def find_snack_by_filter(filters):
                     queryset = queryset.filter(available_at_locations__contains=query_value)
             elif query_index == "snack_brand":
                 if query_value != "":
+                    snack_brand = query_value
                     queryset = queryset.filter(snack_brand=query_value)
             elif query_index == "snack_company_name":
                 queryset = queryset.filter(snack_company_name=query_value)
@@ -639,17 +643,38 @@ def find_snack_by_filter(filters):
                     queryset = queryset.filter(is_verified=True)
             elif query_index == "category":
                 queryset = queryset.filter(category=query_value)
+            print(f" loop brand {snack_brand}\n", file=sys.stdout)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
-    # TODO: What are the comments below?!
-    # display = SnackResults(queryset)
-    # display.border = True
+    print(f" brand2 {snack_brand}\n", file=sys.stdout)
+
+    # No search results, gonna recommend some similar snacks to the search string
+    similar_snacks = []
+    if not queryset.first():
+        similar_snacks.extend(Snack.objects.filter(snack_brand__contains=snack_brand))
+        similar_snacks.extend(Snack.objects.filter(snack_name__contains=snack_brand))
+        similar_snacks.extend(Snack.objects.filter(snack_brand__contains=snack_name))
+        if not len(similar_snacks) == 0:
+            similar_snacks = find_similar_snacks(snack_name, snack_brand, 0.8)
 
     context_dict = {"title": "Search Results",
                     "query": queryset,
-                    "user": current_user}
+                    "user": current_user,
+                    "similar_snacks": similar_snacks}
     # Return the same template as for the review, since it only needs to display a table.
     return render_template('search_query.html', **context_dict)
+
+
+def find_similar_snacks(name, brand, diff):
+    result = []
+    for snack in Snack.objects:
+        if SequenceMatcher(None, snack.snack_brand, brand).ratio() >= diff:
+            result.append(snack)
+        elif SequenceMatcher(None, snack.snack_name, name).ratio() >= diff:
+            result.append(snack)
+    if len(result) == 0:
+        return find_similar_snacks(name, brand, diff - 0.1)
+    return result
 
 
 @app.route("/my_list", methods=['GET'])
