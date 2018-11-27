@@ -60,6 +60,30 @@ def add_snacks():
     print(f"{len(sl)}")
     return str(sl[:10])
 
+def add_reviews():
+    snack_from_db = Snack.objects
+    cluster = dbmock.cluster_snacks()
+    salty  = cluster["salty"]
+    spicy  = cluster["spicy"]
+    sour   = cluster["sour"]
+    sweet  = cluster["sweet"]
+    bitter = cluster["bitter"]
+    remaining_snacks = cluster["remaining_snacks"]
+    users = rnd.shuffle(User.objects)
+    num_users = len(users)
+    # Comparators for the review
+    is_salty = lambda idx : idx < num_users*.14
+    is_spicy = lambda idx : idx < num_users*(.14*2)
+    is_sour = lambda idx : idx < num_users*(.14*3)
+    is_sweet = lambda idx : idx < num_users*(.14*4)
+    is_bitter = lambda idx : idx < num_users*(.14*5)
+    is_mixed_spicy_sweet = lambda idx : idx < num_users*.8
+    is_mixed_sweet_sour = lambda idx : idx < num_users*.9
+    is_mixed_salty_sour = lambda idx : True
+    for user, idx in zip(users, range(num_users)):
+        print(f"Number of users = {len(users)}")
+        print(f"Number of snacks = {len(snack_from_db)}")
+    return "no reviews added!"
 
 def cluster_snacks(all_snacks):
     """
@@ -157,62 +181,109 @@ def format_mocked_users():
         }
         parsed_users.append(user_formatted)
     return parsed_users
-""" ''
-        user_id = current_user.id
-        snack_id = snack.split('=')[1]
-        snackObject = Snack.objects(id=snack_id)
-        saltiness_review = 1
-        sweetness_review = 1
-        spiciness_review = 1
-        bitterness_review = 1
-        sourness_review = 1
-        overall_rating_review = 3.2
 
-        # check if metric review
+def add_custom_reviews(user, list_of_snacks, num=1, snack_type=""):
+    # Considering that this user is loves snacks of the current list
+    # Will add 'num' of new reviews, from 3.5 to 4, following a normal distribution, kinda
+    # Round numbers to valid range, in a norm distr. (with normal distribution, we never know :] )
+    def round_valid(mu, sigma):
+        val = int(round(rnd.normalvariate(mu, sigma)))
+        val = val if val <= 5 else 5
+        val = val if val >= 1 else 1
+        return val
 
-        try:
-            # user_id comes from current_user
-            # snack_id should come from request sent by frontend
-            # geolocation is found by request
-            snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
-                                                description=request.form['description'],
-                                                geolocation=request.form['review_country'],
-                                                overall_rating=overall_rating_review,
-                                                sourness=sourness_review,
-                                                spiciness=spiciness_review,
-                                                saltiness=saltiness_review,
-                                                bitterness=bitterness_review,
-                                                sweetness=sweetness_review)
-            snack_metric_review.save()
+    for snack in rnd.sample(list_of_snacks, num):
+        rating = round_valid(4.2, .6)
+        # Keeps the geolocation the same of the first available location at the snack
+        if snack.available_at_locations:
+            geoloc = snack.available_at_locations[0]
+        else:
+            geoloc = "Canada"
+        if snack_type == "salty":
+            saltiness_review = round_valid(4.4, .7) # is salty
+            spiciness_review = round_valid(3, 1.1) # not very related
+            sourness_review = round_valid(1, 1.1) # Not so much sour
+            sweetness_review = round_valid(2, .6) # Things which are salty tend not to be sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "spicy":
+            saltiness_review = round_valid(3, 1.1) # not very related
+            spiciness_review = round_valid(4.4, .7) # is spicy
+            sourness_review = round_valid(2, 1.1) # Not so much sour
+            sweetness_review = round_valid(2, .6) # Not so much sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "sour":
+            saltiness_review = round_valid(1, 1.1) # Not so much salty
+            spiciness_review = round_valid(2, 1.1) # Not so much spicy
+            sourness_review = round_valid(4.4, .7) # is sour
+            sweetness_review = round_valid(3, 1.1) # not very related but can vary
+            bitterness_review = round_valid(4, 1.1) # Tend to be bitter
+        elif snack_type == "sweet":
+            saltiness_review = round_valid(2, .6) # Things which are sweet tend not to be salty
+            spiciness_review = round_valid(2, .6) # Not so much spicy
+            sourness_review = round_valid(3, 1.1) # not very related but can vary
+            sweetness_review = round_valid(4.4, .7) # is sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "bitter":
+            saltiness_review = round_valid(2, 1.1) # Less bitter
+            spiciness_review = round_valid(3, 1.1) # Can be spicy
+            sourness_review = round_valid(4, 1) # Tend to somewhat relate to sour
+            sweetness_review = round_valid(2, 1.1) # Not so much sweet
+            bitterness_review = round_valid(4.4, .7) # is bitter
+        else:
+            saltiness_review = 1
+            spiciness_review = 1
+            sourness_review = 1
+            sweetness_review = 1
+            bitterness_review = 1
 
-            avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
-            avg_sourness = Review.objects.filter \
-                (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
-            avg_spiciness = Review.objects.filter \
-                (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
-            avg_bitterness = Review.objects.filter \
-                (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
-            avg_sweetness = Review.objects.filter \
-                (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
-            avg_saltiness = Review.objects.filter \
-                (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
+        #print(f"{user}, {snack}, geoloc={geoloc}, rating={rating}, saltiness_review={saltiness_review}, spiciness_review={spiciness_review}, sourness_review={sourness_review},sweetness_review={sweetness_review}, bitterness_review={bitterness_review}")
+        # add review to the database
+        commit_review_database(user, snack, geoloc=geoloc, rating=rating, saltiness_review=saltiness_review,
+                               spiciness_review=spiciness_review, sourness_review=sourness_review,
+                               sweetness_review=sweetness_review, bitterness_review=bitterness_review)
 
-            snackObject.update(set__avg_overall_rating=avg_overall_rating)
-            snackObject.update(set__avg_sourness=avg_sourness)
-            snackObject.update(set__avg_spiciness=avg_spiciness)
-            snackObject.update(set__avg_bitterness=avg_bitterness)
-            snackObject.update(set__avg_sweetness=avg_sweetness)
-            snackObject.update(set__avg_saltiness=avg_saltiness)
+def commit_review_database(user, snack, geoloc="Canada", rating=1, saltiness_review=1,
+                      spiciness_review=1, sourness_review=1, sweetness_review=1,
+                      bitterness_review=1):
+    user_id = user.id
+    snack_id = snack.id
+    try:
+        snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
+                                            geolocation=geoloc,
+                                            overall_rating=rating,
+                                            sourness=sourness_review,
+                                            spiciness=spiciness_review,
+                                            saltiness=saltiness_review,
+                                            bitterness=bitterness_review,
+                                            sweetness=sweetness_review)
+        snack_metric_review.save()
 
-            review_count = snackObject[0].review_count + 1
-            snackObject.update(set__review_count=review_count)
-            if review_count > 10:
-                snackObject.update(set__is_verified=True)
-            snackObject.update(add_to_set__available_at_locations=request.form['review_country'])
+        avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
+        avg_sourness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
+        avg_spiciness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
+        avg_bitterness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
+        avg_sweetness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
+        avg_saltiness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
 
-        except Exception as e:
-            raise Exception(
-                f"Error {e}. \n Couldn't add metric review {snack_metric_review},\n with following review form: {review_form}")
- """
+        snack.update(set__avg_overall_rating=avg_overall_rating)
+        snack.update(set__avg_sourness=avg_sourness)
+        snack.update(set__avg_spiciness=avg_spiciness)
+        snack.update(set__avg_bitterness=avg_bitterness)
+        snack.update(set__avg_sweetness=avg_sweetness)
+        snack.update(set__avg_saltiness=avg_saltiness)
+
+        review_count = snack.review_count + 1
+        snack.update(set__review_count=review_count)
+        if review_count > 10:
+            snack.update(set__is_verified=True)
+        snack.update(add_to_set__available_at_locations=geoloc)
+    except Exception as e:
+        raise Exception(f"Error {e}. \n Couldn't add metric review {snack_metric_review}!!")
+
 if __name__ == "__main__":
     format_mocked_users()
