@@ -687,7 +687,6 @@ def find_wishlist():
     context_dict = {"title": title,
                     "query": result,
                     "user": current_user}
-    # Return the same template as for the review, since it only needs to display a table.
     return render_template('my_list.html', **context_dict)
 
 
