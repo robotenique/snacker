@@ -289,6 +289,30 @@ def account():
         return render_template('account.html', **context_dict)
 
 
+@app.route("/change_user_details", methods=["POST"])
+def change_user_details():
+    return None
+
+
+@app.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    form = UpdatePasswordForm(request.form)
+    if request.method == "POST":
+        try:
+            print (str(bcrypt.generate_password_hash(request.form["password"])))
+            print (current_user.password)
+            current_user.update(password=str(bcrypt.generate_password_hash(request.form["password"])))
+            current_user.save()
+            print(current_user.password)
+            print(f"User {form} \n")
+            response = make_response()
+            response.status_code = 200
+            print(f"response change password {response}\n")
+            return response
+        except Exception as e:
+            raise Exception(f"Error {e}. \n Couldn't change the password of the user,\n with following form: {form}")
+
+
 # Tested
 @app.route("/create-brand", methods=["GET", "POST"])
 @login_required

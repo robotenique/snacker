@@ -46,7 +46,8 @@ function changePassword(form) {
             console.log(result);
             window.location.href = "account";
         },
-        error: function (result) {
+        error: function (result, error) {
+            alert(result, error);
             alert('invalid password');
         }
     });
