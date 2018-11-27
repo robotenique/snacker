@@ -59,10 +59,25 @@ This is the basic procedure done by **recommender_training.py**:
 
 **Current mock idea:**
 
-* 1000 Users, demographic division tbd, jointly with the 'profile' of each users
-* Approx. 2000 Snacks from all over the world
+* 5000 Users, no demographic division. Users were generated using [RandomUser API](https://randomuser.me)
+* Approx. 2200 Snacks from all over the world
+* Total = 2mi of possible reviews. Going to generate: 408 000 (.2 times of the data) => ~82 review per user >:D;
+* All users have the same password: 123456
+* The user group will be saved at 'usergroup.json'
+* The base profiles are: salty, spicy, sour, sweet, bitter. Then I put three more: mix(spicy, sweet), mix(sweet, sour), mix(salty, sour)
+* For the base class, the user will rate 60 snacks of that category (salty, sweet, etc) with rating from 4 to 5. Then, choose random snacks from all the snacks, and give them ratings from 0 to 4 (a normal distribution in this case), until he completes the 22 remaining ratings.
+* For the mixed classes, first there is 1/2 chance of choosing each category, and the user will rate 50 randomly choosen snacks which belongs to one of those categories. Then,it will choose snacks from neither category, and give them ratings from 0 to 4 following a normal distribution.
+* Distribution of classes are like this:
 
-Total = 2mi of possible reviews. Going to generate: 408 000 (.2 times of the data);
+The division of the user profiles will be like this:
+14% - Salty
+14% - Spicy
+14% - Sour
+14% - Sweet
+14% - Bitter
+10% - mix(spicy, sweet)
+10% - mix(sweet, sour)
+10% - mix(salty, sour)
 
 
 
@@ -71,3 +86,7 @@ IMPORTANT: Procedures when adding information to the production database
 ===
 
 1. Remove the 'delete' from the routes to add new things into the database!
+
+
+* Change db to remote database
+* DELETE all unnecessary routes
