@@ -667,5 +667,26 @@ def find_snack_by_filter(filters):
     return render_template('search_query.html', **context_dict)
 
 
+@app.route("/my_list", methods=['GET'])
+def find_wishlist():
+    """
+    Return all snacks in wishlist of current user
+    """
+    result = []
+    for i in range(len(current_user.wish_list)):
+        result.extend(Snack.objects(id=current_user.wish_list[i]))
+    print(f"{result}\n", file=sys.stdout)
+    title = "Wishlist"
+
+    if hasattr(current_user, 'company_name'):
+        title = "Watchlist"
+
+    context_dict = {"title": title,
+                    "query": result,
+                    "user": current_user}
+    # Return the same template as for the review, since it only needs to display a table.
+    return render_template('my_list.html', **context_dict)
+
+
 if __name__ == '__main__':
     app.run()
