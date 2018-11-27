@@ -40,6 +40,14 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
+
+.text {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  padding: 16px 32px;
+}
+
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -175,7 +183,11 @@ figure {
 
 img {
   vertical-align: middle;
-  border-style: none; }
+  border-style: none;
+  position: relative;
+  width: 50%;
+    }
+
 
 svg:not(:root) {
   overflow: hidden; }

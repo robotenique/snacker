@@ -19,7 +19,7 @@ class User(UserMixin, Document):
     # User has to verify his email address, before he becomes a verified user.
     is_verified = BooleanField(required=True, default=False)
     password = StringField(max_length=255, required=True, db_field='password')
-    wish_list = ListField(IntField())
+    wish_list = ListField(StringField())
     authenticated = BooleanField(default=False)
     meta = {'allow_inheritance': True}
 

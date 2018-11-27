@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block title_block %}Snacker{% endblock %}
-
+{% block head %}
+  {{ super() }}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% endblock %}
 {% block body_raw %}
 
   <section class="ftco-section query bg-light">
@@ -11,13 +15,17 @@
         {% for snack in query %}
           <div class="item">
             <!-- set image size with css style for different media devices -->
-            <img class="query-img" 
-            src={{ url_for('serve_img', snack_id=snack.id) }}
-            style="width: 210px; height: 210px; float: left; padding: 1em;">
+            <div>
+
+                <img src={{ url_for('serve_img', snack_id=snack.id) }}
+                style="width: 210px; height: 210px; float: left; padding: 1em;">
+            </div>
             <div class="snack-query-title">
               <a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name|truncate(60) }}</a>
-              {% if snack.is_verified %}<i class="fas fa-check-square" style:"color:green;"></i>{% endif %}
+              {% if snack.is_verified %}<i class="fas fa-check-square" style="color:green;"></i>{% endif %}
             </div>
+
+
             <div class="query-ratings">
               <div class="sweetness">
                 <span>sweetness: </span>
@@ -107,6 +115,15 @@
               <p>{{ snack.description|truncate(320) }}</p>
               {% endif %}
             </div>
+
+            <div>
+              <a href="#" title="Header" style="float:left;">
+                <button onclick="add_to_fav('{{ query.first().id }}')" style="border-radius: 80%;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                    <i class="icon-heart nav-link" style="color: #f85959;font-size: 1.5em;"></i>
+                </button>
+              </a>
+            </div>
+
           </div>
           <hr>
         {% endfor %}
