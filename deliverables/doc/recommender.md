@@ -80,6 +80,13 @@ The division of the user profiles will be like this:
 10% - mix(salty, sour) + remaining_snacks
 
 
+Each user profile will rate the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
+
+![salty-profile](../resources/d3/salty_profile.png)
+
+
+
+
 
 
 IMPORTANT: Procedures when adding information to the production database
@@ -88,5 +95,6 @@ IMPORTANT: Procedures when adding information to the production database
 1. Remove the 'delete' from the routes to add new things into the database!
 2. Get app.py from github, then add the new methods there!
 
+* FOR THE TA to run: Create username.txt, and password.txt!!
 * Change db to remote database
 * DELETE all unnecessary routes
