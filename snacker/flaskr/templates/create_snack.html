@@ -10,11 +10,6 @@
                           name="create_snack">
                         {{ form.hidden_tag() }}
 
-                        {% if selected_snack_brand == "from Search" %}
-                            <p class="text-danger">Your Search did not return anything,
-                                feel free to add the snack for others to see</p>
-                        {% endif %}
-
                         <div class="row form-group">
                             <div class="col-md-5">
                                 {{ form.snack_name.label(class='font-weight-bold') }}

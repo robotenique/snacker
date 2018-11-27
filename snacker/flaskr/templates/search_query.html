@@ -131,6 +131,113 @@
           </div>
           <hr>
         {% endfor %}
+        {% if not query.first() %}
+            <a href="/create-snack/snack_brand=" class="add-searched-snack-button">
+                          Can't find the snack you are looking for? Create the snack yourself!</a>
+            <hr>
+            <h4>Some snacks similar to your search</h4>
+            {% for snack in similar_snacks %}
+              <div class="item">
+                <!-- set image size with css style for different media devices -->
+                <img class="query-img" style="width: 210px; height: 210px; float: left; padding: 1em;"
+                    src={{ url_for('serve_img', snack_id=snack.id) }}>
+                <div class="snack-query-title">
+                  <a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name|truncate(60) }}</a>
+                      {% if snack.is_verified %}
+                        <span class="verified_block">
+                            Verified Snack</span>
+                      {% endif %}
+                </div>
+                <div class="query-ratings">
+                  <div class="sweetness">
+                    <span>sweetness: </span>
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_sweetness %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_sweetness %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="bitterness">
+                    <span>bitterness: </span>
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_bitterness %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_bitterness %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="sourness">
+                    <span>sourness: </span>
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_sourness %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_sourness %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="spiciness">
+                    <span>spiciness: </span>
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_spiciness %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_spiciness %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                  <div class="saltiness">
+                    <span>saltiness: </span>
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_saltiness %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_saltiness %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                </div>
+                <div class="snack-query-brand">
+                  <span>by </span><a href="#" style="padding-right: 1.5em;">{{ snack.snack_brand }}</a>
+                </div>
+                <div class="query-overall-rating">
+                  {% for n in range(5) %}
+                    {% if n+1 <= snack.avg_overall_rating %}
+                    <i class="icon-star"></i>
+                    {% elif n+0.5 <= snack.avg_overall_rating %}
+                    <i class="icon-star-half-empty"></i>
+                    {% else %}
+                    <i class="icon-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                  <span style="padding-left: 1em;">{{ snack.review_count }} reviews</span>
+                </div>
+                <div class="query-description">
+                  <p class="locations">Found in:
+                    {% for loc in snack.available_at_locations%}
+                      <span>{{ loc }}</span>
+                    {% endfor %}
+                  </p>
+                  {% if snack.description %}
+                  <p>{{ snack.description|truncate(320) }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+        {% endif %}
         {% block reviews %}
         {% endblock %}
         </div>

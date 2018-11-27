@@ -109,6 +109,14 @@
   color: LightSlateGrey;
 }
 
+.add-searched-snack-button {
+  background: dodgerblue;
+  color: white;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 18px;
+}
+
 .verify-button {
   background: dodgerblue;
   color: white;

@@ -14,47 +14,51 @@ function indexRegister(form) {
 
 /*Login the user*/
 function authenticate(form) {
-    console.log(form.login_email.value);
-    $.ajax({
-        type: "POST",
-        url: "/login",
-        data: {
-            "email": form.login_email.value,
-            "password": form.login_password.value
-        },
-        dataType: "json",
-        success: function (result) {
-            console.log(result);
-            window.location.href = "index";
-        },
-        error: function (result) {
-            alert('invalid username or password');
-        }
-    });
+    $.getJSON( "https://ipapi.co/json/", function( data ) {})
+        .always( function( data ) {
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {
+                    "email": form.login_email.value,
+                    "password": form.login_password.value,
+                    "last_country": data.country_name,
+                },
+                dataType: "json",
+                success: function (result) {
+                    window.location.href = "index";
+                },
+                error: function (result) {
+                    alert('invalid username or password');
+                }
+            });
+        });
 }
 
 /*Login the user*/
 function register_user(form) {
-    console.log(form.register_company.value);
-    $.ajax({
-        type: "POST",
-        url: "/register",
-        data: {
-            "email": form.register_email.value,
-            "password": form.register_password.value,
-            "company_name": form.register_company.value,
-            "first_name": form.register_first.value,
-            "last_name": form.register_last.value,
-        },
-        dataType: "json",
-        success: function (result) {
-            console.log(result);
-            window.location.href = "index";
-        },
-        error: function (result) {
-            alert('Something wrong ' + result);
-        }
-    });
+    $.getJSON( "https://ipapi.co/json/", function( data ) {})
+        .always( function( data ) {
+            $.ajax({
+                type: "POST",
+                url: "/register",
+                data: {
+                    "email": form.register_email.value,
+                    "password": form.register_password.value,
+                    "company_name": form.register_company.value,
+                    "first_name": form.register_first.value,
+                    "last_name": form.register_last.value,
+                    "last_country": data.country_name,
+                },
+                dataType: "json",
+                success: function (result) {
+                    window.location.href = "index";
+                },
+                error: function (result) {
+                    alert('Something wrong ' + result);
+                }
+            });
+        });
 }
 
 function createSnack(form, selected_snack_brand) {
