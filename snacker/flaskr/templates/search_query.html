@@ -22,7 +22,10 @@
             </div>
             <div class="snack-query-title">
               <a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name|truncate(60) }}</a>
-              {% if snack.is_verified %}<i class="fas fa-check-square" style="color:green;"></i>{% endif %}
+              {% if snack.is_verified %}
+                <span style=" background: green; color: white; border-radius: 4px; padding: 3px; font-size: 18px">
+                    Verified Snack</span>
+              {% endif %}
             </div>
 
 
