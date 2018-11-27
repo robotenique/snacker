@@ -95,9 +95,9 @@ def index():
     # Use JS Queries later
     # Needs to be a divisor of 12
     interesting_facts = []
-    interesting_facts.append(("Snacks", snacks.count()))
-    interesting_facts.append(("Reviews", Review.objects.count()))
-    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+    interesting_facts.extend([("Snacks", snacks.count()),
+                              ("Reviews", Review.objects.count()),
+                              ("Five stars given", Review.objects(overall_rating=5).count())])
 
     snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
     snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
@@ -139,26 +139,20 @@ def register():
     form = RegistrationForm(request.form)
     if request.method == "POST":
         # Add user to database.
-        if request.form['company_name'] != "":
-            print(f"company user {form} \n")
-            try:
+        try:
+            print(f"User {form} \n")
+            if request.form['company_name'] != "":
                 new_user = CompanyUser(email=request.form['email'], first_name=request.form['first_name'],
                                        last_name=request.form['last_name'], company_name=request.form['company_name'],
                                        password=encrypted_password(request.form['password']))
-                new_user.save()
-            except Exception as e:
-                raise Exception \
-                    (f"Error {e}. \n Couldn't add company user {new_user},\n with following registration form: {form}")
-        else:
-            print(f"normal user {form} \n")
-            try:
+            else:
                 new_user = User(email=request.form['email'], first_name=request.form['first_name'],
                                 last_name=request.form['last_name'],
                                 password=encrypted_password(request.form['password']))
-                new_user.save()
-            except Exception as e:
-                raise Exception \
-                    (f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+            new_user.save()
+        except Exception as e:
+            raise Exception(f"Error {e}. \n Couldn't add company user,\n with following registration form: {form}")
+
         login_user(new_user, remember=True)
         user = {
             'email': new_user.email,
@@ -204,11 +198,8 @@ def login():
             'email': current_user.email,
             'first_name': current_user.first_name,
             'last_name': current_user.last_name,
+            'company_name': current_user.company_name if isinstance(current_user, CompanyUser) else None
         }
-        if isinstance(current_user, CompanyUser):
-            user['company_name'] = current_user.company_name
-        else:
-            user['company_name'] = None
         response = make_response(json.dumps(user))
         response.status_code = 200
         print(f"login {response}\n")
@@ -238,17 +229,13 @@ def account():
                     "edit_password_form": UpdatePasswordForm()}
 
     if hasattr(current_user, 'company_name'):
-        all_snack_brands = []
-        company_brands = []
         query_set = []
 
-        for snack in Snack.objects:
-            if snack.snack_brand not in all_snack_brands:
-                all_snack_brands.append(snack.snack_brand)
+        all_snack_brands = list({snack.snack_brand for snack in Snack.objects})
 
         # Remove duplicates
-        all_snack_brands = list(set(all_snack_brands))
         company_brands = current_user.company_snackbrands
+        # TODO: I'm not sure if the next line is working as it should - ADAM.
         all_snack_brands = list(filter(lambda a: a not in company_brands, all_snack_brands))
 
         all_snack_brands_temp = []
@@ -281,7 +268,7 @@ def account():
                     current_user.update(add_to_set__company_snackbrands=add_snack_brand)
                 except Exception as e:
                     raise Exception(
-                        f"Error {e}. \n Couldn't add {add_snack_brand},\n with following creation form: {account_form}")
+                        f"Error {e}. \n Couldn't add {add_snack_brand},\n with following creation form: {add_form}")
                 print(f"A new snack_brand added to company user", file=sys.stdout)
 
                 return redirect(url_for('account'))
