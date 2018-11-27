@@ -112,6 +112,10 @@
         {% endfor %}
         {% block reviews %}
         {% endblock %}
+        {% if not query.first() %}
+            <a href="/create-snack/snack_brand=" class="verify-button">
+                          Can't find the snack you are looking for? Create the snack yourself!</a>
+        {% endif %}
         </div>
       </div>
     </div>

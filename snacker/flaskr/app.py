@@ -385,7 +385,10 @@ def create_snack(selected_brand):
         create_snack_form = CreateSnackForm(request.form)
         new_snack = None
 
-        selected_brand = selected_brand.split("=")[1]
+        parts = selected_brand.split("=")
+        selected_brand = ""
+        if len(parts) == 2:
+            selected_brand = parts[1]
         print(selected_brand)
 
         if request.method == "POST":
