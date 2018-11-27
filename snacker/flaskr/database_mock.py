@@ -2,7 +2,6 @@ import json
 import random as rnd
 
 
-@app.route("/add-snacks")
 def add_snacks():
     # Open database and parse json
     my_database = mongo[DATABASE]
@@ -11,7 +10,6 @@ def add_snacks():
     snacks = parsed
     s = snacks
     # For demonstration purposes, this delete every entry in the Snack collection
-    Snack.objects.delete()
     for s in snacks:
         new_snack = Snack(snack_name=s["title"],
                           available_at_locations=[s["country"]])
@@ -62,16 +60,19 @@ def add_snacks():
     return str(sl[:10])
 
 
-@app.route("/add-reviews")
-def add_reviews():
-    all_snacks = Snack.objects
+def cluster_snacks(all_snacks):
+    """
+    Receives the list of all snacks from the database, them cluster them
+    using predefined key words!
+    """
     country2snacks = {}
-    salty = [] # ~943
-    spicy = [] # ~525
+    salty = []  # ~943
+    spicy = []  # ~525
     sour = []  # ~453
     sweet = []  # ~967
-    bitter = [] # ~307
-    salty_kwords = ("salty", "chips", "cracker", "grain", "grains", "cheese", "cheddar", "doritos", "potato", "bacon", "sticks")
+    bitter = []  # ~307
+    salty_kwords = ("salty", "chips", "cracker", "grain", "grains",
+                    "cheese", "cheddar", "doritos", "potato", "bacon", "sticks")
     spicy_kwords = ("spicy",  "pepper", "onion", "jalapeno", "chipotle", "salsa", "hummus", "dip", "quesadillas", "chilli"
                     "tacos", "sriracha", "hot", "garlic", "pimiento", "guacamole", "spice", "salsa", "wasabi",
                     "pimenta", "apimentado", "taco")
@@ -106,12 +107,17 @@ def add_reviews():
     print(len(sour))
     print(len(sweet))
     print(len(bitter))
-    return "kek"
     # Sort by quantity
-    sorted_country2snacks = sorted(country2snacks.items(), key = lambda el: -len(el[1]))
+    """ sorted_country2snacks = sorted(
+        country2snacks.items(), key=lambda el: -len(el[1]))
     for s in sorted_country2snacks[0][:10]:
         print(s)
 
     for s in sorted_country2snacks:
-        print(f"{s[0]} - {len(s[1])}")
-    return 'topkek'
+        print(f"{s[0]} - {len(s[1])}") """
+
+    return {"salty": salty,
+            "spicy": spicy,
+            "sour": sour,
+            "sweet": sweet,
+            "bitter": bitter}
