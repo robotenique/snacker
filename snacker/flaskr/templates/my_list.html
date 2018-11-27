@@ -11,7 +11,7 @@
         {% for snack in query %}
           <div class="item">
             <!-- set image size with css style for different media devices -->
-            <img class="query-img" 
+            <img class="query-img"
             src={{ url_for('serve_img', snack_id=snack.id) }}
             style="width: 210px; height: 210px; float: left; padding: 1em;">
             <div class="snack-query-title">
@@ -100,8 +100,6 @@
                 {% for loc in snack.available_at_locations%}
                   <span>{{ loc }}</span>
                 {% endfor %}
-               
-
               </p>
               {% if snack.description %}
               <p>{{ snack.description|truncate(320) }}</p>
@@ -112,10 +110,6 @@
         {% endfor %}
         {% block reviews %}
         {% endblock %}
-        {% if not query.first() %}
-            <a href="/create-snack/snack_brand=" class="verify-button">
-                          Can't find the snack you are looking for? Create the snack yourself!</a>
-        {% endif %}
         </div>
       </div>
     </div>
