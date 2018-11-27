@@ -4,36 +4,36 @@
   {% block editAccountBlock %}
     <div class="container" style="width: 50%">
 
-      <form class="p-4 mb-3 bg-white" onsubmit="authenticate(this);return false;" id="login_form"
-            name="login">
+      <form class="p-4 mb-3 bg-white" onsubmit="changeUserDetails(this);return false;" id="user_details_form"
+            name="user_details_form">
         {{ edit_user_form.hidden_tag() }}
 
         {% if current_user.company_name %}
           <div class="row form-group">
             <div class="col-md-12">
               {{ edit_user_form.company_name.label(class='font-weight-bold') }}
-              {{ edit_user_form.company_name(id='register_company', class='form-control', value=current_user.company_name) }}
+              {{ edit_user_form.company_name(id='edit_company', class='form-control', value=current_user.company_name) }}
             </div>
           </div>
         {% endif %}
         <div class="row form-group">
           <div class="col-md-12">
             {{ edit_user_form.first_name.label(class='font-weight-bold') }}
-            {{ edit_user_form.first_name(id='register_first', class='form-control', value=current_user.first_name) }}
+            {{ edit_user_form.first_name(id='edit_first', class='form-control', value=current_user.first_name) }}
           </div>
         </div>
 
         <div class="row form-group">
           <div class="col-md-12">
             {{ edit_user_form.last_name.label(class='font-weight-bold') }}
-            {{ edit_user_form.last_name(id='register_last', class='form-control', value=current_user.last_name) }}
+            {{ edit_user_form.last_name(id='edit_last', class='form-control', value=current_user.last_name) }}
           </div>
         </div>
 
         <div class="row form-group">
           <div class="col-md-12">
             {{ edit_user_form.email.label(class='font-weight-bold') }}
-            {{ edit_user_form.email(id='login_email', class='form-control', value=current_user.email) }}
+            {{ edit_user_form.email(id='edit_email', class='form-control', value=current_user.email) }}
           </div>
         </div>
 
@@ -50,12 +50,13 @@
 
     </div>
 
-
+    <form class="p-4 mb-3 bg-white" onsubmit="changePassword(this);return false;" id="password_form"
+            name="password_form">
     <div class="container" style="width: 50%">
       <div class="row form-group">
         <div class="col-md-12">
           {{ edit_password_form.password.label(class='font-weight-bold') }}
-          {{ edit_password_form.password(id='register_password', class='form-control', placeholder="••••••••••") }}
+          {{ edit_password_form.password(id='edit_password', class='form-control', placeholder="••••••••••") }}
         </div>
       </div>
 
@@ -71,7 +72,7 @@
           {{ edit_password_form.submit(class='btn btn-primary px-3 px-lg-5') }}
         </div>
       </div>
-
+    </form>
     </div>
 
 

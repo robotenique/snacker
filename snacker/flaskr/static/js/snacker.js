@@ -33,6 +33,49 @@ function authenticate(form) {
     });
 }
 
+function changePassword(form) {
+    console.log(form);
+    $.ajax({
+        type: "POST",
+        url: "/change_password",
+        data: {
+            "password": form.edit_password.value
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid password');
+        }
+    });
+}
+
+function changeUserDetails(form) {
+    console.log(form.edit_email.value);
+    $.ajax({
+        type: "POST",
+        url: "/change_user_details",
+        data: {
+            "email": form.edit_email.value,
+            "company_name": form.edit_company.value,
+            "first_name": form.edit_first.value,
+            "last_name": form.edit_last.value,
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid data');
+        }
+    });
+}
+
+
+
 /*Login the user*/
 function register_user(form) {
     console.log(form.register_company.value);
