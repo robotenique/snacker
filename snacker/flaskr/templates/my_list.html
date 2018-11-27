@@ -100,8 +100,6 @@
                 {% for loc in snack.available_at_locations%}
                   <span>{{ loc }}</span>
                 {% endfor %}
-
-
               </p>
               {% if snack.description %}
               <p>{{ snack.description|truncate(320) }}</p>
