@@ -24,8 +24,8 @@
   </div>
   <hr>
 {% endfor %}
-{% if (current_user.is_authenticated and not current_user.company_name and not reviewed) %}
 
+{% if (current_user.is_authenticated and not current_user.company_name and not reviewed) %}
     <div class="row">
         <div class="col-md-12 ftco-animate">
           <div id="accordion">
@@ -102,6 +102,32 @@
             </div>
           </div>
         </div>
+    </div>
+{% elif current_user.is_authenticated and current_user.company_name and not verified%}
+    <div class="row">
+        <div class="col-md-12 ftco-animate">
+          <div id="accordion">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <a class="card-link" data-toggle="collapse" href="#menutwo" aria-expanded="false"
+                       aria-controls="menutwo" style="color: #f85959;">Verify this snack<span class="collapsed"><i
+                        class="icon-plus-circle" style="color: #f85959;"></i></span><span class="expanded"><i
+                        class="icon-minus-circle" style="color: #f85959;"></i></span></a>
+                  </div>
+                  <div id="menutwo" class="collapse">
+                    <div class="card-body">
+                      <button onclick="verify_snack('{{ query.first().id }}')" class="verify-button">
+                          Yes this snack is legit and belongs to my company, please verify it!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
 {% endif %}
 
 {% endblock %}

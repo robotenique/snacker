@@ -15,7 +15,7 @@ class RegistrationForm(FlaskForm):
         Length(min=6, max=100),
         DataRequired("Please provide an email address"),
     ])
-    company_name = StringField("If you are a rep from a snack company, please fill your company's name below",
+    company_name = StringField("If you are representing a snack company, please fill your company's name below",
                                [Length(min=1, max=255)])
     password = PasswordField("New Password (maximum length is 50)", [
         DataRequired(),
@@ -79,6 +79,46 @@ class CreateSnackForm(FlaskForm):
     submit = SubmitField('Create Snack')
 
 
-class CompanyBrandForm(FlaskForm):
-    snack_brand = SelectField('Snack Brand Choice')
+class CreateBrandForm(FlaskForm):
+    add_snack_brand = StringField("Brand Name", [DataRequired(), Length(min=2, max=50)])
+    submit = SubmitField('Create Brand')
+
+
+class CompanyAddBrandForm(FlaskForm):
+    add_snack_brand = SelectField('Add Brand')
     submit = SubmitField('Add Brand')
+
+
+class CompanySearchBrandForm(FlaskForm):
+    search_snack_brand = SelectField('Search Snack')
+    submit = SubmitField('Search')
+
+
+class UpdateUserForm(FlaskForm):
+    first_name = StringField("First Name", [DataRequired(), Length(min=2, max=100)])
+    last_name = StringField("Last Name", [DataRequired(), Length(min=2, max=100)])
+    email = StringField("Email Address", [
+        Email("Invalid email address provided"),
+        Length(min=6, max=100),
+        DataRequired("Please provide an email address"),
+    ])
+    company_name = StringField("Company name",
+                               [Length(min=1, max=255)])
+
+    submit = SubmitField('Edit Details')
+
+    def validate_email(self, field):
+        # Prevent multiple users from having the same email address.
+        user = User.objects(email=field.data).first()
+        if user is not None:
+            raise ValidationError("This email is already registered, please use another email address")
+
+
+class UpdatePasswordForm(FlaskForm):
+    password = PasswordField("New Password (maximum length is 50)", [
+        DataRequired(),
+        Length(max=50),
+        EqualTo("confirm", message="Passwords don't match")
+    ])
+    confirm = PasswordField("Repeat Password", [DataRequired()])
+    submit = SubmitField('Change Password')

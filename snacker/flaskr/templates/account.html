@@ -2,116 +2,156 @@
 {% block title_block %}Account{% endblock %}
 {% block body_raw %}
 
-    <section class="ftco-section bg-light">
+  <section class="ftco-section bg-light">
 
-        <div class="container">
+    <div class="container">
 
-            <div class="row">
+      <div class="row">
 
-                {% if current_user.company_name %}
+        {% if current_user.company_name %}
 
-                <div class="col-md-12 col-lg-8 mb-3">
-
-                    <div class="bg-white p-4 text-center font-weight-bold">
-                        <p class="h5 text-primary mb-3">Company Name</p>
-                        <p class="text-secondary">{{ current_user.company_name }}</p>
-                        <p class="h5 text-primary mb-3">Name</p>
-                        <p class="text-secondary">{{ current_user.first_name }} {{ current_user.last_name }}</p>
-                        <p class="h5 text-primary mb-3">Email</p>
-                        <p class="text-secondary">{{ current_user.email }}</p>
-                        <p><a href="/logout" class="btn btn-primary px-3 px-md-3">Log Out</a></p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-
-                    <div class="p-4 mb-3 bg-white text-center">
-                        <h3 class="h5 text-black mb-3">Add a Snack</h3>
-                            <a href="/create-snack" class="btn btn-primary px-3 px-md-3">Add Snack
-                                <span><i class="icon-plus-circle"></i></span></a></a>
-                    </div>
-
-                </div>
-                {% else %}
-
-                    <div class="col-md-12 col-lg-12 mb-3">
-
-                        <div class="bg-white p-4 text-center font-weight-bold">
-                            <p class="h5 text-primary mb-3">Name</p>
-                            <p class="text-secondary">{{ current_user.first_name }} {{ current_user.last_name }}</p>
-                            <p class="h5 text-primary mb-3">Email</p>
-                            <p class="text-secondary">{{ current_user.email }}</p>
-                            <p><a href="/logout" class="btn btn-primary px-3 px-md-3">Log Out</a></p>
-                        </div>
-
-                    </div>
-
-                {% endif %}
+          <div class="col-md-12 col-lg-8 mb-3">
+            <div class="bg-white p-4 pb-5 pt-5 text-center font-weight-bold">
+              {% include "editAccountDetailsTemplate.html" %}
             </div>
-            {% if current_user.company_name %}
-                {% if company_brands %}
-                    <div class="row">
-                        <div class="col-md-12 col-lg-12 mb-3">
-                            <div class="bg-white p-3 text-center">
-                                <h5 class="text-primary"><strong>{{ current_user.company_name }}</strong> Brands</h5>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="destination-slider owl-carousel ftco-animate">
-                                            {% for brand in company_brands %}
-                                                <div class="text p-3">
-                                                    <h4 class="text-secondary">{{ brand }}</h4>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </div>
+          </div>
+
+          <div class="col-md-12 col-lg-4">
+            <div class="block-17 mb-3">
+              <form class="d-block d-flex" method="POST" name="search-brand">
+                {{ search_form.hidden_tag() }}
+                <div class="fields d-block d-flex">
+                  <div class="select-wrap">
+                    {{ search_form.search_snack_brand(class='form-control') }}
+                  </div>
+                </div>
+                {{ search_form.submit(class='search-submit btn btn-primary') }}
+              </form>
+            </div>
+            {% if query_set != [] %}
+              <div class="p-4 mb-3 bg-white">
+                <div class="row ftco-animate align-items-center">
+                  <div class="col-md-12">
+                    <div class="carousel-testimony owl-carousel">
+                      {% for snack in query_set %}
+                        <div class="item">
+                          <div class="testimony-wrap d-flex text-center">
+                            <a href="/snack_reviews/snack_id={{ snack.id }}" class="user-img mb-3"
+                               style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }});
+                                   border-radius: 0%;">
+                            </a>
+                            <div class="text ml-4">
+                              <h3 class="text-primary font-weight-bold">
+                                {{ snack.snack_name.split(" ")[0] + "..." }}
+                              </h3>
+                              <p class="rate" style="font-size: 7px">
+                                <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
+                                {% for n in range(5) %}
+                                  {% if n+1 <= snack.avg_overall_rating %}
+                                    <i class="icon-star"></i>
+                                  {% elif n+0.5 <= snack.avg_overall_rating %}
+                                    <i class="icon-star-half-empty"></i>
+                                  {% else %}
+                                    <i class="icon-star-o"></i>
+                                  {% endif %}
+                                {% endfor %}
+                                <span>({{ snack.review_count }})</span>
+                              </p>
                             </div>
+                          </div>
                         </div>
+                      {% endfor %}
                     </div>
-                {% endif %}
-
-                <div class="row">
-                    <div class="col-md-12 ftco-animate">
-                        <div id="accordion">
-                            <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                <div class="card-header pl-3">
-                                    <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="false"
-                                        aria-controls="menuone" style="color: #f85959;">Add to
-                                        <strong>{{ current_user.company_name }}</strong><span class="collapsed"><i
-                                        class="icon-plus-circle" style="color: #f85959;"></i></span><span class="expanded"><i
-                                        class="icon-minus-circle" style="color: #f85959;"></i></span></a>
-                                </div>
-                                <div id="menuone" class="collapse">
-                                    <div class="card-body">
-                                        <form class="bg-white p-4" name="add-brand" method="POST">
-                                            {{ form.hidden_tag() }}
-
-                                            <div class="row form-group">
-                                                <div class="col-md-12 pl-4">
-                                                    {{ form.snack_brand(class='form-control') }}
-                                                </div>
-                                            </div>
-
-                                            <div class="row form-group">
-                                                <div class="col-md-12 pl-4">
-                                                    {{ form.submit(class='btn btn-primary px-3 px-lg-5') }}
-                                                </div>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
+                  </div>
+                </div>
+              </div>
             {% endif %}
+          </div>
+        {% else %}
 
+          <div class="col-md-12 col-lg-12 mb-3">
+            <div class="bg-white p-4 pb-5 pt-5 text-center font-weight-bold">
+              {% include "editAccountDetailsTemplate.html" %}
+            </div>
+          </div>
+
+        {% endif %}
+      </div>
+      {% if current_user.company_name %}
+        {% if company_brands %}
+          <div class="row">
+            <div class="col-md-12 col-lg-12 mb-3">
+              <div class="bg-white p-3 text-center">
+                <h5 class="text-primary"><strong>{{ current_user.company_name }}</strong> Brands</h5>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="destination-slider owl-carousel ftco-animate">
+                      {% for brand in company_brands %}
+                        <a href="create-snack/selected_brand={{ brand }}" class="text p-3">
+                          <h4 class="text-secondary">{{ brand }}
+                            <div class="font-weight-bold d-flex justify-content-center
+                                                            align-items-center"
+                                 style="font-size: 10px; color: #f85959;">
+                              <span>Add Snack</span>
+                            </div>
+                          </h4>
+                        </a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-md-12 ftco-animate">
+            <div id="accordion">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header pl-3">
+                      <a class="card-link" data-toggle="collapse" href="#menuone" aria-expanded="false"
+                         aria-controls="menuone" style="color: #f85959;">
+                        Add a brand to <strong>{{ current_user.company_name }}</strong>
+                        <span class="collapsed">
+                                            <i class="icon-plus-circle" style="color: #f85959;"></i>
+                                        </span>
+                        <span class="expanded">
+                                            <i class="icon-minus-circle" style="color: #f85959;"></i>
+                                        </span>
+                      </a>
+                    </div>
+                    <div id="menuone" class="collapse">
+                      <div class="card-body">
+                        <form class="bg-white p-4" name="add-brand" method="POST">
+                          {{ add_form.hidden_tag() }}
+
+                          <div class="row form-group">
+                            <div class="col-md-12 pl-4">
+                              {{ add_form.add_snack_brand(class='form-control') }}
+                            </div>
+                          </div>
+
+                          <div class="row form-group">
+                            <div class="col-md-12 pl-4">
+                              {{ add_form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                            </div>
+                          </div>
+
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </section>
+      {% endif %}
+
+    </div>
+  </section>
 
 {% endblock %}
