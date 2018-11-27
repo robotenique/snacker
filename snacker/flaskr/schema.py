@@ -70,6 +70,12 @@ class Snack(Document):
     avg_sweetness = DecimalField()
     avg_saltiness = DecimalField()
 
+    def __str__(self):
+        return f"[\n\tName: {self.snack_name}\n\tBrand: {self.snack_brand}\n\tdescription: {self.description}\n]"
+
+    def __repr__(self):
+        return f"[\n\tName: {self.snack_name}\n\tBrand: {self.snack_brand}\n\tdescription: {self.description}\n]"
+
 
 # An unique ID is automatically created (review.id).
 # Timestamp comes with the automatic id (getTimestamp()).
