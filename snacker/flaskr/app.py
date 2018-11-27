@@ -65,13 +65,13 @@ def serve_img(snack_id):
     resp = Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
 
+
 @app.route("/topkek")
 @login_required
 def topkek():
     print(current_user.id)
     print(User.objects(pk=current_user.id).first());
     return "Topkek"
-
 
 
 @app.route("/")
@@ -81,7 +81,6 @@ def index():
         print("ok")
     max_show = 5  # Maximum of snacks to show
     snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:max_show]
     top_snacks = snacks.order_by("-avg_overall_rating")
     featured_snacks = []
     # Getting snacks that have some image to display
@@ -127,6 +126,7 @@ def contact():
                     "user": current_user}
     return render_template('contact.html', **context_dict)
 
+
 """ Routes and methods related to user login and authentication """
 
 
@@ -147,16 +147,17 @@ def register():
                                        password=encrypted_password(request.form['password']))
                 new_user.save()
             except Exception as e:
-                raise Exception\
+                raise Exception \
                     (f"Error {e}. \n Couldn't add company user {new_user},\n with following registration form: {form}")
         else:
             print(f"normal user {form} \n")
             try:
                 new_user = User(email=request.form['email'], first_name=request.form['first_name'],
-                                last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
+                                last_name=request.form['last_name'],
+                                password=encrypted_password(request.form['password']))
                 new_user.save()
             except Exception as e:
-                raise Exception\
+                raise Exception \
                     (f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
         login_user(new_user, remember=True)
         user = {
@@ -297,9 +298,9 @@ def account():
                         query_set.append(snack)
 
         context_dict.update({"company_brands": company_brands,
-                            "search_form": search_form,
-                            "add_form": add_form,
-                            "query_set": query_set})
+                             "search_form": search_form,
+                             "add_form": add_form,
+                             "query_set": query_set})
 
         return render_template('account.html', **context_dict)
 
@@ -335,7 +336,8 @@ def create_brand():
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
 
-#Tested
+
+# Tested
 @app.route("/verify-snack", methods=["POST"])
 @login_required
 def verify_snack():
@@ -363,7 +365,7 @@ def verify_snack():
                 return redirect(url_for('find_reviews_for_snack', filters=snack))
             else:
                 print(f"User is not the snack's company: {current_user.id}", file=sys.stdout)
-                #we want to give the user an error message
+                # we want to give the user an error message
                 return redirect(url_for('find_reviews_for_snack', filters=snack))
 
         else:
@@ -372,6 +374,7 @@ def verify_snack():
     else:
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
+
 
 # Tested
 # TODO: Need to still add image element
@@ -437,7 +440,6 @@ def create_snack(selected_brand):
 @app.route("/create-review/<string:snack>", methods=["POST"])
 @login_required
 def create_review(snack):
-
     # check authenticated
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
