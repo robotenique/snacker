@@ -5,6 +5,10 @@
   <title>{% block title_block %}{% endblock %}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Alex+Brush" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/open-iconic-bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
@@ -34,9 +38,24 @@
 
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active"><a href="/index" class="nav-link">Home</a></li>
-          <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+
+          {% if title == "Index" %}
+            <li class="nav-item active"><a href="/index" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+            <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+          {% elif title == "About Snacker" %}
+            <li class="nav-item"><a href="/index" class="nav-link">Home</a></li>
+            <li class="nav-item active"><a href="/about" class="nav-link">About</a></li>
+            <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+          {% elif title == "Contact Us" %}
+            <li class="nav-item"><a href="/index" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+            <li class="nav-item active"><a href="/contact" class="nav-link">Contact</a></li>
+          {% else %}
+            <li class="nav-item"><a href="/index" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+            <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+          {% endif %}
           {% if not current_user.is_authenticated %}
             <li class="nav-item cta"><a id="account_link" href="/login" class="nav-link">
               <span>Log in</span></a></li>
