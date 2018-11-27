@@ -2,79 +2,104 @@
 <html>
 <body>
   {% block editAccountBlock %}
-    <div class="container" style="width: 50%">
+    <div class="col-md-12 nav-link-wrap mb-5">
+      <div class="nav ftco-animate nav-pills justify-content-center" id="v-pills-tab" role="tablist"
+           aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-whatwedo-tab" data-toggle="pill" href="#v-pills-whatwedo"
+           role="tab" aria-controls="v-pills-whatwedo" aria-selected="true">Account Details</a>
+        <a class="nav-link" id="v-pills-mission-tab" data-toggle="pill" href="#v-pills-mission" role="tab"
+           aria-controls="v-pills-mission" aria-selected="false">Update Details</a>
+        <a class="nav-link" id="v-pills-goal-tab" data-toggle="pill" href="#v-pills-goal" role="tab"
+           aria-controls="v-pills-goal" aria-selected="false">Update Password</a>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="tab-content ftco-animate" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-whatwedo" role="tabpanel"
+             aria-labelledby="v-pills-whatwedo-tab">
+            <div class="text-center font-weight-bold">
+              {% if current_user.company_name %}
+                <p class="h4 text-primary mb-3">Company Name</p>
+                <p class="text-secondary">{{ current_user.company_name }}</p>
+              {% endif %}
+              <p class="h4 text-primary mb-3">Name</p>
+              <p class="text-secondary">{{ current_user.first_name }} {{ current_user.last_name }}</p>
+              <p class="h4 text-primary mb-3">Email</p>
+              <p class="text-secondary">{{ current_user.email }}</p>
+            </div>
 
-      <form class="p-4 mb-3 bg-white" onsubmit="authenticate(this);return false;" id="login_form"
+        </div>
+
+        <div class="tab-pane fade" id="v-pills-mission" role="tabpanel" aria-labelledby="v-pills-mission-tab">
+          <form class="pl-4 pr-4" onsubmit="authenticate(this);return false;" id="login_form"
             name="login">
-        {{ edit_user_form.hidden_tag() }}
+            {{ edit_user_form.hidden_tag() }}
 
-        {% if current_user.company_name %}
-          <div class="row form-group">
-            <div class="col-md-12">
-              {{ edit_user_form.company_name.label(class='font-weight-bold') }}
-              {{ edit_user_form.company_name(id='register_company', class='form-control', value=current_user.company_name) }}
+            {% if current_user.company_name %}
+              <div class="row form-group justify-content-center">
+                <div class="col-md-6">
+                  {{ edit_user_form.company_name.label(class='font-weight-bold') }}
+                  {{ edit_user_form.company_name(id='register_company', class='form-control',
+                    value=current_user.company_name) }}
+                </div>
+              </div>
+            {% endif %}
+            <div class="row form-group justify-content-center">
+              <div class="col-md-6">
+                {{ edit_user_form.first_name.label(class='font-weight-bold') }}
+                {{ edit_user_form.first_name(id='register_first', class='form-control', value=current_user.first_name) }}
+              </div>
+            </div>
+
+            <div class="row form-group justify-content-center">
+              <div class="col-md-6">
+                {{ edit_user_form.last_name.label(class='font-weight-bold') }}
+                {{ edit_user_form.last_name(id='register_last', class='form-control', value=current_user.last_name) }}
+              </div>
+            </div>
+
+            <div class="row form-group justify-content-center">
+              <div class="col-md-6">
+                {{ edit_user_form.email.label(class='font-weight-bold') }}
+                {{ edit_user_form.email(id='login_email', class='form-control', value=current_user.email) }}
+              </div>
+            </div>
+
+            <div class="row form-group justify-content-center">
+              <div class="col-md-6">
+                {{ edit_user_form.submit(class='btn btn-primary px-3 px-lg-5') }}
+              </div>
+            </div>
+
+          </form>
+          {% if error %}
+            <p class="error"><strong>Error:</strong>{{ error }}</p>
+          {% endif %}
+        </div>
+
+        <div class="pl-4 pr-4 tab-pane fade" id="v-pills-goal" role="tabpanel" aria-labelledby="v-pills-goal-tab">
+          <div class="row form-group justify-content-center">
+            <div class="col-md-6">
+              {{ edit_password_form.password.label(class='font-weight-bold') }}
+              {{ edit_password_form.password(id='register_password', class='form-control', placeholder="••••••••••") }}
             </div>
           </div>
-        {% endif %}
-        <div class="row form-group">
-          <div class="col-md-12">
-            {{ edit_user_form.first_name.label(class='font-weight-bold') }}
-            {{ edit_user_form.first_name(id='register_first', class='form-control', value=current_user.first_name) }}
+
+          <div class="row form-group justify-content-center">
+            <div class="col-md-6">
+              {{ edit_password_form.confirm.label(class='font-weight-bold') }}
+              {{ edit_password_form.confirm(class='form-control', placeholder="••••••••••") }}
+            </div>
+          </div>
+
+          <div class="row form-group justify-content-center">
+            <div class="col-md-6">
+              {{ edit_password_form.submit(class='btn btn-primary px-3 px-sm-4') }}
+            </div>
           </div>
         </div>
-
-        <div class="row form-group">
-          <div class="col-md-12">
-            {{ edit_user_form.last_name.label(class='font-weight-bold') }}
-            {{ edit_user_form.last_name(id='register_last', class='form-control', value=current_user.last_name) }}
-          </div>
-        </div>
-
-        <div class="row form-group">
-          <div class="col-md-12">
-            {{ edit_user_form.email.label(class='font-weight-bold') }}
-            {{ edit_user_form.email(id='login_email', class='form-control', value=current_user.email) }}
-          </div>
-        </div>
-
-        <div class="row form-group">
-          <div class="col-md-12">
-            {{ edit_user_form.submit(class='btn btn-primary px-3 px-lg-5') }}
-          </div>
-        </div>
-
-      </form>
-      {% if error %}
-        <p class="error"><strong>Error:</strong>{{ error }}</p>
-      {% endif %}
-
+      </div>
     </div>
-
-
-    <div class="container" style="width: 50%">
-      <div class="row form-group">
-        <div class="col-md-12">
-          {{ edit_password_form.password.label(class='font-weight-bold') }}
-          {{ edit_password_form.password(id='register_password', class='form-control', placeholder="••••••••••") }}
-        </div>
-      </div>
-
-      <div class="row form-group">
-        <div class="col-md-12">
-          {{ edit_password_form.confirm.label(class='font-weight-bold') }}
-          {{ edit_password_form.confirm(class='form-control', placeholder="••••••••••") }}
-        </div>
-      </div>
-
-      <div class="row form-group">
-        <div class="col-md-12">
-          {{ edit_password_form.submit(class='btn btn-primary px-3 px-lg-5') }}
-        </div>
-      </div>
-
-    </div>
-
-
   {% endblock %}
 </body>
 </html>
