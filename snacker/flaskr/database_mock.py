@@ -3,6 +3,7 @@ import string
 import random as rnd
 import requests as req
 
+#@app.route("/add-snacks")
 def add_snacks():
     # Open database and parse json
     my_database = mongo[DATABASE]
@@ -60,18 +61,23 @@ def add_snacks():
     print(f"{len(sl)}")
     return str(sl[:10])
 
+#@app.route("/add-reviews")
 def add_reviews():
     snack_from_db = Snack.objects
-    cluster = dbmock.cluster_snacks()
+    cluster = dbmock.cluster_snacks(snack_from_db)
     salty  = cluster["salty"]
     spicy  = cluster["spicy"]
     sour   = cluster["sour"]
     sweet  = cluster["sweet"]
     bitter = cluster["bitter"]
     remaining_snacks = cluster["remaining_snacks"]
-    users = rnd.shuffle(User.objects)
+    def get_random_category():
+        return cluster[rnd.choice(("salty", "spicy", "sour", "sweet", "bitter", "remaining_snacks"))]
+    users = list(User.objects)
+    rnd.shuffle(users)
+    users = users
     num_users = len(users)
-    # Comparators for the review
+    # Comparators for the user profile
     is_salty = lambda idx : idx < num_users*.14
     is_spicy = lambda idx : idx < num_users*(.14*2)
     is_sour = lambda idx : idx < num_users*(.14*3)
@@ -80,10 +86,185 @@ def add_reviews():
     is_mixed_spicy_sweet = lambda idx : idx < num_users*.8
     is_mixed_sweet_sour = lambda idx : idx < num_users*.9
     is_mixed_salty_sour = lambda idx : True
+    user_profile = { "salty" : [],
+                      "spicy" : [],
+                      "sour" : [],
+                      "sweet" : [],
+                      "bitter" : [],
+                      "mixed_spicy_sweet" : [],
+                      "mixed_sweet_sour" : [],
+                      "mixed_salty_sour" : []}
     for user, idx in zip(users, range(num_users)):
-        print(f"Number of users = {len(users)}")
-        print(f"Number of snacks = {len(snack_from_db)}")
+        if is_salty(idx):
+            add_custom_reviews(user, salty, num=60, snack_type="salty")
+            add_custom_reviews(user, get_random_category(), num=22)
+            user_profile["salty"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_spicy(idx):
+            add_custom_reviews(user, salty, num=60, snack_type="spicy")
+            add_custom_reviews(user, get_random_category(), num=22)
+            user_profile["spicy"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_sour(idx):
+            add_custom_reviews(user, salty, num=60, snack_type="sour")
+            add_custom_reviews(user, get_random_category(), num=22)
+            user_profile["sour"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_sweet(idx):
+            add_custom_reviews(user, salty, num=60, snack_type="sweet")
+            add_custom_reviews(user, get_random_category(), num=22)
+            user_profile["sweet"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_bitter(idx):
+            add_custom_reviews(user, salty, num=60, snack_type="bitter")
+            add_custom_reviews(user, get_random_category(), num=22)
+            user_profile["bitter"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_mixed_spicy_sweet(idx):
+            add_custom_reviews(user, spicy, num=25, snack_type="salty")
+            add_custom_reviews(user, sweet, num=25, snack_type="sweet")
+            add_custom_reviews(user, remaining_snacks, num=30)
+            user_profile["mixed_spicy_sweet"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_mixed_sweet_sour(idx):
+            add_custom_reviews(user, spicy, num=25, snack_type="sweet")
+            add_custom_reviews(user, sweet, num=25, snack_type="sour")
+            add_custom_reviews(user, remaining_snacks, num=30)
+            user_profile["mixed_sweet_sour"].append((user.id, user.email, user.first_name, user.last_name))
+        elif is_mixed_salty_sour(idx):
+            add_custom_reviews(user, spicy, num=25, snack_type="salty")
+            add_custom_reviews(user, sweet, num=25, snack_type="sour")
+            add_custom_reviews(user, remaining_snacks, num=30)
+            user_profile["mixed_salty_sour"].append((user.id, user.email, user.first_name, user.last_name))
+        if idx%100 == 0:
+            print(f"Finish user {user.first_name}, index = {idx} out of {len(users)}")
+    print(f"Number of users = {len(users)}")
+    print(f"Number of snacks = {len(users)}")
+    # Save user list profile to a json file
+    with open("snacks/users_snack_profiles.json", "rb") as user_prof_file:
+        json.dump(user_profile, user_prof_file)
     return "no reviews added!"
+
+def add_custom_reviews(user, list_of_snacks, num=1, snack_type="", good_rating=True):
+    # Considering that this user is loves snacks of the current list
+    # Will add 'num' of new reviews, from 3.5 to 4, following a normal distribution, kinda
+    # Round numbers to valid range, in a norm distr. (with normal distribution, we never know :] )
+    def round_valid(mu, sigma):
+        val = int(round(rnd.normalvariate(mu, sigma)))
+        val = val if val <= 5 else 5
+        val = val if val >= 1 else 1
+        return val
+    list_of_snacks = rnd.sample(list_of_snacks, num)
+    for snack in list_of_snacks:
+        if good_rating:
+            rating = round_valid(4.2, .6) # Give a good rating
+        else:
+            rating = round_valid(3, 1.1) # Give a more uniform rating
+        # Keeps the geolocation the same of the first available location at the snack
+        if snack.available_at_locations:
+            geoloc = snack.available_at_locations[0]
+        else:
+            geoloc = "Canada"
+        if snack_type == "salty":
+            saltiness_review = round_valid(4.4, .7) # is salty
+            spiciness_review = round_valid(3, 1.1) # not very related
+            sourness_review = round_valid(1, 1.1) # Not so much sour
+            sweetness_review = round_valid(2, .6) # Things which are salty tend not to be sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "spicy":
+            saltiness_review = round_valid(3, 1.1) # not very related
+            spiciness_review = round_valid(4.4, .7) # is spicy
+            sourness_review = round_valid(2, 1.1) # Not so much sour
+            sweetness_review = round_valid(2, .6) # Not so much sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "sour":
+            saltiness_review = round_valid(1, 1.1) # Not so much salty
+            spiciness_review = round_valid(2, 1.1) # Not so much spicy
+            sourness_review = round_valid(4.4, .7) # is sour
+            sweetness_review = round_valid(3, 1.1) # not very related but can vary
+            bitterness_review = round_valid(4, 1.1) # Tend to be bitter
+        elif snack_type == "sweet":
+            saltiness_review = round_valid(2, .6) # Things which are sweet tend not to be salty
+            spiciness_review = round_valid(2, .6) # Not so much spicy
+            sourness_review = round_valid(3, 1.1) # not very related but can vary
+            sweetness_review = round_valid(4.4, .7) # is sweet
+            bitterness_review = round_valid(2, 1.1) # Less bitter
+        elif snack_type == "bitter":
+            saltiness_review = round_valid(2, 1.1) # Less bitter
+            spiciness_review = round_valid(3, 1.1) # Can be spicy
+            sourness_review = round_valid(4, 1) # Tend to somewhat relate to sour
+            sweetness_review = round_valid(2, 1.1) # Not so much sweet
+            bitterness_review = round_valid(4.4, .7) # is bitter
+        else:
+            # add review to the database
+            commit_normal_review_database(user, snack, geoloc=geoloc, rating=rating)
+            continue
+        #print(f"{user}, {snack}, geoloc={geoloc}, rating={rating}, saltiness_review={saltiness_review}, spiciness_review={spiciness_review}, sourness_review={sourness_review},sweetness_review={sweetness_review}, bitterness_review={bitterness_review}")
+        commit_metric_review_database(user, snack, geoloc=geoloc, rating=rating, saltiness_review=saltiness_review,
+                               spiciness_review=spiciness_review, sourness_review=sourness_review,
+                               sweetness_review=sweetness_review, bitterness_review=bitterness_review)
+
+
+def commit_normal_review_database(user, snack, geoloc="Canada", rating=1):
+    user_id = user.id
+    snack_id = snack.id
+    try:
+        new_review = Review(user_id=user_id, snack_id=snack_id,
+                            geolocation=geoloc,
+                            overall_rating=rating)
+        new_review.save()
+
+        avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
+
+        snack.update(set__avg_overall_rating=avg_overall_rating)
+
+        review_count = snack.review_count + 1
+        snack.update(set__review_count=review_count)
+        if review_count > 10:
+            snack.update(set__is_verified=True)
+        snack.update(add_to_set__available_at_locations=geoloc)
+
+    except:
+        print(f" Couldn't add review {new_review}")
+
+def commit_metric_review_database(user, snack, geoloc="Canada", rating=1, saltiness_review=1,
+                      spiciness_review=1, sourness_review=1, sweetness_review=1,
+                      bitterness_review=1):
+    user_id = user.id
+    snack_id = snack.id
+    try:
+        snack_metric_review = MetricReview(user_id=user_id, snack_id=snack_id,
+                                            geolocation=geoloc,
+                                            overall_rating=rating,
+                                            sourness=sourness_review,
+                                            spiciness=spiciness_review,
+                                            saltiness=saltiness_review,
+                                            bitterness=bitterness_review,
+                                            sweetness=sweetness_review)
+        snack_metric_review.save()
+
+        avg_overall_rating = Review.objects.filter(snack_id=snack_id).average('overall_rating')
+        avg_sourness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(sourness__exists=True)).average("sourness")
+        avg_spiciness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(spiciness__exists=True)).average("spiciness")
+        avg_bitterness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(bitterness__exists=True)).average("bitterness")
+        avg_sweetness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(sweetness__exists=True)).average("sweetness")
+        avg_saltiness = Review.objects.filter \
+            (Q(snack_id=snack_id) & Q(saltiness__exists=True)).average("saltiness")
+
+        snack.update(set__avg_overall_rating=avg_overall_rating)
+        snack.update(set__avg_sourness=avg_sourness)
+        snack.update(set__avg_spiciness=avg_spiciness)
+        snack.update(set__avg_bitterness=avg_bitterness)
+        snack.update(set__avg_sweetness=avg_sweetness)
+        snack.update(set__avg_saltiness=avg_saltiness)
+
+        review_count = snack.review_count + 1
+        snack.update(set__review_count=review_count)
+        if review_count > 10:
+            snack.update(set__is_verified=True)
+        snack.update(add_to_set__available_at_locations=geoloc)
+    except:
+        print(f"Couldn't add metric review {snack_metric_review}!!")
+
+
 
 def cluster_snacks(all_snacks):
     """
