@@ -365,7 +365,6 @@ def create_snack(selected_brand):
     if current_user.is_authenticated:
         print(f"User is authenticated", file=sys.stdout)
         create_snack_form = CreateSnackForm(request.form)
-        new_snack = None
 
         parts = selected_brand.split("=")
         selected_brand = ""
@@ -399,7 +398,7 @@ def create_snack(selected_brand):
                 new_snack.save()
             except Exception as e:
                 raise Exception(
-                    f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+                    f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             return redirect(url_for('index'))
@@ -657,8 +656,8 @@ def find_wishlist():
     Return all snacks in wishlist of current user
     """
     result = []
-    for i in range(len(current_user.wish_list)):
-        result.extend(Snack.objects(id=current_user.wish_list[i]))
+    for wish in current_user.wish_list:
+        result.extend(Snack.objects(id=wish))
     print(f"{result}\n", file=sys.stdout)
     title = "Wishlist"
 
