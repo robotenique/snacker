@@ -54,13 +54,20 @@ function changePassword(form) {
 }
 
 function changeUserDetails(form) {
-    console.log(form.edit_email.value);
+    console.log(form);
+    company = "";
+    try {
+        if(document.getElementById("edit_company")) {
+        company = form.edit_company.value;
+        }
+    } catch (e) {
+    }
     $.ajax({
         type: "POST",
         url: "/change_user_details",
         data: {
             "email": form.edit_email.value,
-            "company_name": form.edit_company.value,
+            "company_name": company,
             "first_name": form.edit_first.value,
             "last_name": form.edit_last.value,
         },
