@@ -64,6 +64,7 @@ def serve_img(snack_id):
     resp = Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
 
+
 @app.route("/topkek")
 @login_required
 def topkek():
@@ -72,14 +73,13 @@ def topkek():
     return "Topkek"
 
 
-
+@app.route("/")
 @app.route("/index")
 def index():
     if current_user.is_authenticated:
         print("ok")
     max_show = 5  # Maximum of snacks to show
     snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:max_show]
     top_snacks = snacks.order_by("-avg_overall_rating")
     featured_snacks = []
     # Getting snacks that have some image to display
@@ -94,16 +94,21 @@ def index():
     # Use JS Queries later
     # Needs to be a divisor of 12
     interesting_facts = []
-    interesting_facts.append(("Snacks", snacks.count()))
-    interesting_facts.append(("Reviews", Review.objects.count()))
-    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
+    interesting_facts.extend([("Snacks", snacks.count()),
+                              ("Reviews", Review.objects.count()),
+                              ("Five stars given", Review.objects(overall_rating=5).count())])
+
+    snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
+    snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
 
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
                     "popular_snacks": snacks.order_by("-review_count")[:5],
                     "interesting_facts": interesting_facts,
-                    "user": current_user}
+                    "user": current_user,
+                    "snack_names": snack_names,
+                    "snack_brands": snack_brands}
     return render_template('index.html', **context_dict)
 
 
@@ -121,32 +126,6 @@ def contact():
     return render_template('contact.html', **context_dict)
 
 
-# Go to the local url and refresh that page to test
-# See below for use cases of different schema objects
-@app.route('/')
-def hello_world():
-    snacks = Snack.objects
-    popular_snacks = snacks.order_by("-review_count")[:5]
-    top_snacks = snacks.order_by("-avg_overall_rating")[:5]
-    # TODO: Recommend snacks tailored to user
-    featured_snacks = top_snacks
-
-    # Use JS Queries later
-    # Needs to be a divisor of 12
-    interesting_facts = []
-    interesting_facts.append(("Snacks", Snack.objects.count()))
-    interesting_facts.append(("Reviews", Review.objects.count()))
-    interesting_facts.append(("Five stars given", Review.objects(overall_rating=5).count()))
-
-    context_dict = {"title": "Index",
-                    "featured_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "popular_snacks": snacks.order_by("-review_count")[:5],
-                    "interesting_facts": interesting_facts,
-                    "user": current_user}
-    return render_template('index.html', **context_dict)
-
-
 """ Routes and methods related to user login and authentication """
 
 
@@ -159,25 +138,20 @@ def register():
     form = RegistrationForm(request.form)
     if request.method == "POST":
         # Add user to database.
-        if request.form['company_name'] != "":
-            print(f"company user {form} \n")
-            try:
+        try:
+            print(f"User {form} \n")
+            if request.form['company_name'] != "":
                 new_user = CompanyUser(email=request.form['email'], first_name=request.form['first_name'],
                                        last_name=request.form['last_name'], company_name=request.form['company_name'],
                                        password=encrypted_password(request.form['password']))
-                new_user.save()
-            except Exception as e:
-                raise Exception\
-                    (f"Error {e}. \n Couldn't add company user {new_user},\n with following registration form: {form}")
-        else:
-            print(f"normal user {form} \n")
-            try:
+            else:
                 new_user = User(email=request.form['email'], first_name=request.form['first_name'],
-                                last_name=request.form['last_name'], password=encrypted_password(request.form['password']))
-                new_user.save()
-            except Exception as e:
-                raise Exception\
-                    (f"Error {e}. \n Couldn't add user {new_user},\n with following registration form: {form}")
+                                last_name=request.form['last_name'],
+                                password=encrypted_password(request.form['password']))
+            new_user.save()
+        except Exception as e:
+            raise Exception(f"Error {e}. \n Couldn't add company user,\n with following registration form: {form}")
+
         login_user(new_user, remember=True)
         user = {
             'email': new_user.email,
@@ -223,11 +197,8 @@ def login():
             'email': current_user.email,
             'first_name': current_user.first_name,
             'last_name': current_user.last_name,
+            'company_name': current_user.company_name if isinstance(current_user, CompanyUser) else None
         }
-        if isinstance(current_user, CompanyUser):
-            user['company_name'] = current_user.company_name
-        else:
-            user['company_name'] = None
         response = make_response(json.dumps(user))
         response.status_code = 200
         print(f"login {response}\n")
@@ -257,26 +228,15 @@ def account():
                     "edit_password_form": UpdatePasswordForm()}
 
     if hasattr(current_user, 'company_name'):
-        all_snack_brands = []
-        company_brands = []
-        query_set = []
-
-        for snack in Snack.objects:
-            if snack.snack_brand not in all_snack_brands:
-                all_snack_brands.append(snack.snack_brand)
+        all_snack_brands = list({snack.snack_brand for snack in Snack.objects})
 
         # Remove duplicates
-        all_snack_brands = list(set(all_snack_brands))
         company_brands = current_user.company_snackbrands
+        # TODO: I'm not sure if the next line is working as it should - ADAM.
         all_snack_brands = list(filter(lambda a: a not in company_brands, all_snack_brands))
 
-        all_snack_brands_temp = []
-        for snack in all_snack_brands:
-            all_snack_brands_temp.append((snack, snack))
-
-        search_company_brands = []
-        for snack in company_brands:
-            search_company_brands.append((snack, snack))
+        all_snack_brands_temp = [(snack, snack) for snack in all_snack_brands]
+        search_company_brands = [(snack, snack) for snack in company_brands]
 
         all_snack_brands = all_snack_brands_temp
         all_snack_brands.sort()
@@ -300,26 +260,25 @@ def account():
                     current_user.update(add_to_set__company_snackbrands=add_snack_brand)
                 except Exception as e:
                     raise Exception(
-                        f"Error {e}. \n Couldn't add {add_snack_brand},\n with following creation form: {account_form}")
+                        f"Error {e}. \n Couldn't add {add_snack_brand},\n with following creation form: {add_form}")
                 print(f"A new snack_brand added to company user", file=sys.stdout)
 
                 return redirect(url_for('account'))
             else:
                 return redirect(url_for("create_brand"))
-
+        # TODO: Somebody called it query_set - but actually implemented it as a list - what should be the correct one?
+        query_set = []
         if request.method == "POST" and search_form.validate_on_submit():
 
             search_snack_brand = search_form.search_snack_brand.data
 
             if search_snack_brand != "Nothing Selected":
-                for snack in Snack.objects:
-                    if snack.snack_brand == search_snack_brand:
-                        query_set.append(snack)
+                query_set = [snack for snack in Snack.objects if snack.snack_brand == search_snack_brand]
 
         context_dict.update({"company_brands": company_brands,
-                            "search_form": search_form,
-                            "add_form": add_form,
-                            "query_set": query_set})
+                             "search_form": search_form,
+                             "add_form": add_form,
+                             "query_set": query_set})
 
         return render_template('account.html', **context_dict)
 
@@ -355,7 +314,7 @@ def create_brand():
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
 
-#not tested
+
 @app.route("/add_to_fav", methods=["POST"])
 @login_required
 def add_to_fav():
@@ -387,7 +346,6 @@ def add_to_fav():
         return redirect(url_for('index')) # cannot add to wish list if user is not authenticated
 
 
-#Tested
 @app.route("/verify-snack", methods=["POST"])
 @login_required
 def verify_snack():
@@ -415,7 +373,7 @@ def verify_snack():
                 return redirect(url_for('find_reviews_for_snack', filters=snack))
             else:
                 print(f"User is not the snack's company: {current_user.id}", file=sys.stdout)
-                #we want to give the user an error message
+                # we want to give the user an error message
                 return redirect(url_for('find_reviews_for_snack', filters=snack))
 
         else:
@@ -424,6 +382,7 @@ def verify_snack():
     else:
         # Go back to index if not authenticated or if user is not company user
         return redirect(url_for('index'))
+
 
 # Tested
 # TODO: Need to still add image element
@@ -435,9 +394,11 @@ def create_snack(selected_brand):
     if current_user.is_authenticated:
         print(f"User is authenticated", file=sys.stdout)
         create_snack_form = CreateSnackForm(request.form)
-        new_snack = None
 
-        selected_brand = selected_brand.split("=")[1]
+        parts = selected_brand.split("=")
+        selected_brand = ""
+        if len(parts) == 2:
+            selected_brand = parts[1]
         print(selected_brand)
 
         if request.method == "POST":
@@ -466,7 +427,7 @@ def create_snack(selected_brand):
                 new_snack.save()
             except Exception as e:
                 raise Exception(
-                    f"Error {e}. \n Couldn't add {new_snack},\n with following creation form: {create_snack_form}")
+                    f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             return redirect(url_for('index'))
@@ -486,7 +447,6 @@ def create_snack(selected_brand):
 @app.route("/create-review/<string:snack>", methods=["POST"])
 @login_required
 def create_review(snack):
-
     # check authenticated
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -718,6 +678,26 @@ def find_snack_by_filter(filters):
                     "user": current_user}
     # Return the same template as for the review, since it only needs to display a table.
     return render_template('search_query.html', **context_dict)
+
+
+@app.route("/my_list", methods=['GET'])
+def find_wishlist():
+    """
+    Return all snacks in wishlist of current user
+    """
+    result = []
+    for wish in current_user.wish_list:
+        result.extend(Snack.objects(id=wish))
+    print(f"{result}\n", file=sys.stdout)
+    title = "Wishlist"
+
+    if hasattr(current_user, 'company_name'):
+        title = "Watchlist"
+
+    context_dict = {"title": title,
+                    "query": result,
+                    "user": current_user}
+    return render_template('my_list.html', **context_dict)
 
 
 if __name__ == '__main__':

@@ -44,10 +44,10 @@
               <span>Register</span></a></li>
           {% else %}
               {% if not current_user.company_name %}
-                <li class="nav-item cta"><a id="wishlist" href="/create-snack/selected_brand=" class="nav-link">
-                <span>Add Snack/Wishlist</span></a></li>
+                <li class="nav-item cta"><a id="wishlist" href="/my_list" class="nav-link">
+                <span>Wishlist</span></a></li>
               {% else %}
-                <li class="nav-item cta"><a id="wishlist" href="#" class="nav-link">
+                <li class="nav-item cta"><a id="wishlist" href="/my_list" class="nav-link">
                 <span>Watchlist</span></a></li>
               {% endif %}
             <li class="nav-item cta"><a id="account" href="/account" class="nav-link">
