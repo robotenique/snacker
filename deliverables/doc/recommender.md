@@ -82,7 +82,6 @@ The division of the user profiles will be like this:
 Examples of users from each category:
 -> Likes spicy and sweet: otto.joki@example.com (China)
 -> Likes Salty and spicy: inmaculada.perez@example.com (Mexico)
--> Canadian who liked some sweet snacks: juliano@example.com (Canada)
 
 
 Each user profile will rate the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
@@ -108,3 +107,6 @@ IMPORTANT: Procedures when adding information to the production database
 * FOR THE TA to run: Create username.txt, and password.txt!! (Will the TA actually run the project??)
 * Change db to remote database
 * DELETE all unnecessary routes
+
+TODO's:
+--> Maybe change user id in the reviews to be user first_name (or last name)

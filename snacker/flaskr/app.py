@@ -93,7 +93,7 @@ def index():
                 break
     # TODO: Recommend snacks tailored to user, if authenticated
     if current_user.is_authenticated:
-         country = ""
+        country = ""
         try:
             country = current_user.last_country
         except:

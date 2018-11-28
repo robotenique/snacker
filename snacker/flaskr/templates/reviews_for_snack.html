@@ -2,7 +2,7 @@
 {% block title_block %}Snacker{% endblock %}
 
 {% block reviews %}
-{% for review in reviews %}
+{% for review in reviews[:15] %} <!-- Add limit of 15 reviews! -->
   <div class="review">
     <div class="review-user">
       <span>User: {{ review.user_id }}</span>
