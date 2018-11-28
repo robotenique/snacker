@@ -22,7 +22,7 @@ function authenticate(form) {
                 data: {
                     "email": form.login_email.value,
                     "password": form.login_password.value,
-                    "last_country": data.country_name,
+                    "last_country": (data ? data.country_name : ""),
                 },
                 dataType: "json",
                 success: function (result) {
@@ -34,6 +34,57 @@ function authenticate(form) {
             });
         });
 }
+
+function changePassword(form) {
+    console.log(form);
+    $.ajax({
+        type: "POST",
+        url: "/change_password",
+        data: {
+            "password": form.edit_password.value
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid password');
+            window.location.href = "account";
+        }
+    });
+}
+
+function changeUserDetails(form) {
+    console.log(form);
+    company = "";
+    try {
+        if(document.getElementById("edit_company")) {
+        company = form.edit_company.value;
+        }
+    } catch (e) {
+    }
+    $.ajax({
+        type: "POST",
+        url: "/change_user_details",
+        data: {
+            "email": form.edit_email.value,
+            "company_name": company,
+            "first_name": form.edit_first.value,
+            "last_name": form.edit_last.value,
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid data');
+        }
+    });
+}
+
+
 
 /*Login the user*/
 function register_user(form) {
@@ -48,7 +99,7 @@ function register_user(form) {
                     "company_name": form.register_company.value,
                     "first_name": form.register_first.value,
                     "last_name": form.register_last.value,
-                    "last_country": data.country_name,
+                    "last_country": (data ? data.country_name : ""),
                 },
                 dataType: "json",
                 success: function (result) {
@@ -259,4 +310,3 @@ function removeActive(x) {
       x[i].classList.remove("autocomplete-active");
   }
 }
-

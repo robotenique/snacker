@@ -37,7 +37,6 @@
           <form class="pl-4 pr-4" onsubmit="changeUserDetails(this);" id="change_user_details"
             name="change_user_details">
             {{ edit_user_form.hidden_tag() }}
-
             {% if current_user.company_name %}
               <div class="row form-group justify-content-center">
                 <div class="col-md-6">
