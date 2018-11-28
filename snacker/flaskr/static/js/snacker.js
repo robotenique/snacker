@@ -22,7 +22,7 @@ function authenticate(form) {
                 data: {
                     "email": form.login_email.value,
                     "password": form.login_password.value,
-                    "last_country": data.country_name,
+                    "last_country": (data ? data.country_name : ""),
                 },
                 dataType: "json",
                 success: function (result) {
@@ -48,7 +48,7 @@ function register_user(form) {
                     "company_name": form.register_company.value,
                     "first_name": form.register_first.value,
                     "last_name": form.register_last.value,
-                    "last_country": data.country_name,
+                    "last_country": (data ? data.country_name : ""),
                 },
                 dataType: "json",
                 success: function (result) {
