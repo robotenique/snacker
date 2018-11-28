@@ -89,8 +89,11 @@ Each user profile will rate the metrics following a collection of normal distrib
 ![bitter-profile](../resources/d3/bitter_profile.png)
 
 
+### Machine Learning model - Learning curve
+Below is the learning curve of the model. The mean squared error displayed is in the trained data itself.
+The final MSE on the TEST data was approx. **0.5**.
 
-
+![learning-curve](../resources/d3/learning_curve.png)
 
 
 IMPORTANT: Procedures when adding information to the production database
@@ -98,7 +101,6 @@ IMPORTANT: Procedures when adding information to the production database
 
 1. Remove the 'delete' from the routes to add new things into the database!
 2. Get app.py from github, then add the new methods there!
-
-* FOR THE TA to run: Create username.txt, and password.txt!!
+* FOR THE TA to run: Create username.txt, and password.txt!! (Will the TA actually run the project??)
 * Change db to remote database
 * DELETE all unnecessary routes

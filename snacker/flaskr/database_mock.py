@@ -6,78 +6,42 @@ import random as rnd
 #import matplotlib.mlab as mlab
 import math
 import numpy as np
+""" Database mock
 
-#@app.route("/add-snacks")
-def add_snacks():
-    # Open database and parse json
-    my_database = mongo[DATABASE]
-    my_file = open("snacks/snacks.json", "rb")
-    parsed = json.loads(my_file.read().decode('unicode-escape'))
-    snacks = parsed
-    s = snacks
-    # For demonstration purposes, this delete every entry in the Snack collection
-    for s in snacks:
-        new_snack = Snack(snack_name=s["title"],
-                          available_at_locations=[s["country"]])
-        if s.get("description"):
-            new_snack.description = s["description"]
-        if s.get("company"):
-            new_snack.snack_brand = s["company"]
-        else:
-            continue
-        new_snack.avg_overall_rating = 0
-        new_snack.avg_bitterness = 0
-        new_snack.avg_saltiness = 0
-        new_snack.avg_sourness = 0
-        new_snack.avg_spiciness = 0
-        new_snack.avg_sweetness = 0
-        new_snack.review_count = 0
-        # Insert images read from folder (snacks/image/snack_name)
-        if s.get("folder_name"):
-            i = SnackImage()
-            for entry in os.scandir("snacks/image/"+s.get("folder_name")):
-                with open(entry.path, "rb") as image_file:
-                    img_name = os.path.basename(image_file.name)
-                    i.img.put(image_file, filename=img_name)
+This file has all the functions used in the process of generating mocked data
+to the recommendation engine. The first part of the file has functions which
+should be put at the app.py file, then each route should be accessed. Then
+the routes should be removed.
 
-                new_snack.photo_files.append(i)
-        # Save the new snacks into the database
+The other functions are needed to cluster snacks based on keywords, generate
+plots about the distributions of how the rates are generated, etc.
+"""
+
+
+# ------------- ADD BELOW FUNCTIONS TO app.py if you want to MOCK database data ------------- #
+
+#@app.route("/add-users")
+def add_users():
+    #users = dbmock.format_mocked_users()
+    users = format_mocked_users()
+    encrypted_password = lambda password_as_string: bcrypt.generate_password_hash(password_as_string)
+    for u in users:
+        # Add user to database.
         try:
-            new_snack.save()
-        except Exception as e:
-            print("Error \n %s" % e, file=sys.stdout)
-    # Retrieving snacks from database
-    max_show = 100  # Maximum number of snacks to send to view
-    sl = []
-    for s in Snack.objects[:max_show]:
-        if s.photo_files:
-            sl.append(s)
-            for file in s.photo_files:
-                photo = file.img
-                # Guess the type of the mimetype to send a good response
-                # mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
-                # resp=Response(photo.read(), mimetype=mimetype)
-                # photo.read() # This is image itself
-                # photo.filename # This is the name of the image
-                # photo.format # This is the format of the image (png, jpg, etc)
-                # photo.thumbnail.read() # This is the thumbnail of the image
-    print("Finished.")
-    print(f"{len(sl)}")
-    return str(sl[:10])
+            new_user = User(email=u['email'], first_name=u['first_name'],
+                        last_name=u['last_name'], password=encrypted_password(str(u['password'])),
+                        is_verified=u["is_verified"])
+            new_user.save()
+        except:
+            print(f"Error. \n Couldn't add user {u}..\n")
+        print(f"Added {u['first_name'] + ' ' + u['last_name']}")
+    return str(User.objects[:10])
 
 #@app.route("/add-reviews")
 def add_reviews():
-    """add_reviews
-    Get all snacks from the database, clusterized by category.
-    Get all users from the database.
-    Generate ~400k of reviews and commit them to the database,
-    according to a specific user profile (the predefined user behavior).
-    Then, saves the user behavior in a file in snacks/users_snack_profiles.json
-    
-    """
-
     snack_from_db = Snack.objects
-    cluster = dbmock.cluster_snacks(snack_from_db)
+    #cluster = dbmock.cluster_snacks(snack_from_db)
+    cluster = cluster_snacks(snack_from_db)
     salty  = cluster["salty"]
     spicy  = cluster["spicy"]
     sour   = cluster["sour"]
@@ -110,44 +74,45 @@ def add_reviews():
         if is_salty(idx):
             add_custom_reviews(user, salty, num=60, snack_type="salty")
             add_custom_reviews(user, get_random_category(), num=22)
-            user_profile["salty"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["salty"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_spicy(idx):
             add_custom_reviews(user, salty, num=60, snack_type="spicy")
             add_custom_reviews(user, get_random_category(), num=22)
-            user_profile["spicy"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["spicy"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_sour(idx):
             add_custom_reviews(user, salty, num=60, snack_type="sour")
             add_custom_reviews(user, get_random_category(), num=22)
-            user_profile["sour"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["sour"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_sweet(idx):
             add_custom_reviews(user, salty, num=60, snack_type="sweet")
             add_custom_reviews(user, get_random_category(), num=22)
-            user_profile["sweet"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["sweet"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_bitter(idx):
             add_custom_reviews(user, salty, num=60, snack_type="bitter")
             add_custom_reviews(user, get_random_category(), num=22)
-            user_profile["bitter"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["bitter"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_mixed_spicy_sweet(idx):
             add_custom_reviews(user, spicy, num=25, snack_type="salty")
             add_custom_reviews(user, sweet, num=25, snack_type="sweet")
             add_custom_reviews(user, remaining_snacks, num=30)
-            user_profile["mixed_spicy_sweet"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["mixed_spicy_sweet"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_mixed_sweet_sour(idx):
             add_custom_reviews(user, spicy, num=25, snack_type="sweet")
             add_custom_reviews(user, sweet, num=25, snack_type="sour")
             add_custom_reviews(user, remaining_snacks, num=30)
-            user_profile["mixed_sweet_sour"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["mixed_sweet_sour"].append((str(user.id), user.email, user.first_name, user.last_name))
         elif is_mixed_salty_sour(idx):
             add_custom_reviews(user, spicy, num=25, snack_type="salty")
             add_custom_reviews(user, sweet, num=25, snack_type="sour")
             add_custom_reviews(user, remaining_snacks, num=30)
-            user_profile["mixed_salty_sour"].append((user.id, user.email, user.first_name, user.last_name))
+            user_profile["mixed_salty_sour"].append((str(user.id), user.email, user.first_name, user.last_name))
         if idx%100 == 0:
             print(f"Finish user {user.first_name}, index = {idx} out of {len(users)}")
     print(f"Number of users = {len(users)}")
     print(f"Number of snacks = {len(users)}")
     # Save user list profile to a json file
-    with open("snacks/users_snack_profiles.json", "rb") as user_prof_file:
+
+    with open("snacks/users_snack_profiles.json", "w") as user_prof_file:
         json.dump(user_profile, user_prof_file)
     return "no reviews added!"
 
@@ -202,7 +167,7 @@ def add_custom_reviews(user, list_of_snacks, num=1, snack_type="", good_rating=T
             sweetness_review = round_valid(2, 1.1) # Not so much sweet
             bitterness_review = round_valid(4.4, .7) # is bitter
         else:
-            # add normal review to the database if it's not any particular profile
+            # add review to the database
             commit_normal_review_database(user, snack, geoloc=geoloc, rating=rating)
             continue
         #print(f"{user}, {snack}, geoloc={geoloc}, rating={rating}, saltiness_review={saltiness_review}, spiciness_review={spiciness_review}, sourness_review={sourness_review},sweetness_review={sweetness_review}, bitterness_review={bitterness_review}")
@@ -214,9 +179,6 @@ def add_custom_reviews(user, list_of_snacks, num=1, snack_type="", good_rating=T
 def commit_normal_review_database(user, snack, geoloc="Canada", rating=1):
     user_id = user.id
     snack_id = snack.id
-    """ Commit a given review to the database, and don't raise any exceptions
-        if it fails (only print a notification message).
-        IMPORTANT: The review should be a normal (without metrics) review!"""
     try:
         new_review = Review(user_id=user_id, snack_id=snack_id,
                             geolocation=geoloc,
@@ -239,9 +201,6 @@ def commit_normal_review_database(user, snack, geoloc="Canada", rating=1):
 def commit_metric_review_database(user, snack, geoloc="Canada", rating=1, saltiness_review=1,
                       spiciness_review=1, sourness_review=1, sweetness_review=1,
                       bitterness_review=1):
-    """ Commit a given review to the database, and don't raise any exceptions
-        if it fails (only print a notification message).
-        IMPORTANT: The review should be a metric review!"""
     user_id = user.id
     snack_id = snack.id
     try:
@@ -282,6 +241,65 @@ def commit_metric_review_database(user, snack, geoloc="Canada", rating=1, saltin
     except:
         print(f"Couldn't add metric review {snack_metric_review}!!")
 
+#@app.route("/add-snacks")
+def add_snacks():
+    # Open database and parse json
+    my_database = mongo[DATABASE]
+    my_file = open("snacks/snacks.json", "rb")
+    parsed = json.loads(my_file.read().decode('unicode-escape'))
+    snacks = parsed
+    s = snacks
+    # For demonstration purposes, this delete every entry in the Snack collection
+    # Snack.objects.delete()
+    for s in snacks:
+        new_snack = Snack(snack_name=s["title"],
+                          available_at_locations=[s["country"]])
+        if s.get("description"):
+            new_snack.description = s["description"]
+        if s.get("company"):
+            new_snack.snack_brand = s["company"]
+        else:
+            continue
+        new_snack.avg_overall_rating = 0
+        new_snack.avg_bitterness = 0
+        new_snack.avg_saltiness = 0
+        new_snack.avg_sourness = 0
+        new_snack.avg_spiciness = 0
+        new_snack.avg_sweetness = 0
+        new_snack.review_count = 0
+        # Insert images read from folder (snacks/image/snack_name)
+        if s.get("folder_name"):
+            i = SnackImage()
+            for entry in os.scandir("snacks/image/"+s.get("folder_name")):
+                with open(entry.path, "rb") as image_file:
+                    img_name = os.path.basename(image_file.name)
+                    i.img.put(image_file, filename=img_name)
+
+                new_snack.photo_files.append(i)
+        # Save the new snacks into the database
+        try:
+            new_snack.save()
+        except Exception as e:
+            print("Error \n %s" % e, file=sys.stdout)
+    # Retrieving snacks from database
+    max_show = 100  # Maximum number of snacks to send to view
+    sl = []
+    for s in Snack.objects[:max_show]:
+        if s.photo_files:
+            sl.append(s)
+            for file in s.photo_files:
+                photo = file.img
+                # Guess the type of the mimetype to send a good response
+                # mimetype = mimetypes.MimeTypes().guess_type(photo.filename)[0]
+                # resp=Response(photo.read(), mimetype=mimetype)
+                # photo.read() # This is image itself
+                # photo.filename # This is the name of the image
+                # photo.format # This is the format of the image (png, jpg, etc)
+                # photo.thumbnail.read() # This is the thumbnail of the image
+    print("Finished.")
+    print(f"{len(sl)}")
+    return str(sl[:10])
+# --------------------------------------- ENDING --------------------------------------------- #
 
 
 def cluster_snacks(all_snacks):
