@@ -56,3 +56,51 @@ This is the basic procedure done by **recommender_training.py**:
 * The training is basically using the SVD idea to use [latent features/variables](https://en.wikipedia.org/wiki/Latent_variable) to approximate the matrix built in the last step. Every entry in the last step matrix which has a value of 0 is considered as 'missing data'. This means that the SGD won't use this data to optimize (minimize [MSE](https://en.wikipedia.org/wiki/Mean_squared_error)). The conditions and hyperparameters of this training can be changed in the file.
 * The result of the training is a matrix **recc**, which predicts the rating that every user would give to every item. The model can be evaluated by calculating the Frobenius norm over the **test** list. [More info about evaluation here!](https://stats.stackexchange.com/questions/97411/evaluating-matrix-factorization-algorithms-for-netflix)
 * Now the model, along with all the mapping dictionaries and relevant information, is saved in a file using Pickle.
+
+**Current mock idea:**
+
+* 5000 Users, no demographic division. Users were generated using [RandomUser API](https://randomuser.me)
+* Approx. 2200 Snacks from all over the world
+* Total = 2mi of possible reviews. Going to generate: 408 000 (.2 times of the data) => ~82 review per user >:D;
+* All users have the same password: 123456
+* The user group will be saved at 'usergroup.json'
+* The base profiles are: salty, spicy, sour, sweet, bitter. Then I put three more: mix(spicy, sweet), mix(sweet, sour), mix(salty, sour)
+* For the base class, the user will rate 60 snacks of that category (salty, sweet, etc) with rating from 4 to 5. Then, choose random snacks from all the snacks, and give them ratings following a more uniform normal distribution for the 22 snacks left to review.
+* For the mixed classes, first there is 1/2 chance of choosing each category, and the user will rate 50 randomly choosen snacks which belongs to one of those categories. Then,it will choose snacks from the 'remaining_snacks' category, and give them ratings from 0 to 4 following a normal distribution.
+* Distribution of classes are like this:
+
+The division of the user profiles will be like this:
+* 14% - Salty
+* 14% - Spicy
+* 14% - Sour
+* 14% - Sweet
+* 14% - Bitter
+* 10% - mix(spicy, sweet) + remaining_snacks
+* 10% - mix(sweet, sour) + remaining_snacks
+* 10% - mix(salty, sour) + remaining_snacks
+
+
+Each user profile will rate the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
+
+![salty-profile](../resources/d3/salty_profile.png)
+![spicy-profile](../resources/d3/spicy_profile.png)
+![sour-profile](../resources/d3/sour_profile.png)
+![sweet-profile](../resources/d3/sweet_profile.png)
+![bitter-profile](../resources/d3/bitter_profile.png)
+
+
+### Machine Learning model - Learning curve
+Below is the learning curve of the model. The mean squared error displayed is in the trained data itself.
+The final MSE on the TEST data was approx. **0.5**.
+
+![learning-curve](../resources/d3/learning_curve.png)
+
+
+IMPORTANT: Procedures when adding information to the production database
+===
+
+1. Remove the 'delete' from the routes to add new things into the database!
+2. Get app.py from github, then add the new methods there!
+* FOR THE TA to run: Create username.txt, and password.txt!! (Will the TA actually run the project??)
+* Change db to remote database
+* DELETE all unnecessary routes
