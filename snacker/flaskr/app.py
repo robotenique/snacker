@@ -2,6 +2,7 @@ import json
 import mimetypes
 import sys
 import urllib
+import os.path
 
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response
 from flask_bcrypt import Bcrypt
@@ -10,10 +11,11 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 from difflib import SequenceMatcher
+from werkzeug import secure_filename
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
     CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm, CreateBrandForm
-from schema import Snack, Review, CompanyUser, User, MetricReview
+from schema import Snack, Review, CompanyUser, User, MetricReview, SnackImage
 
 app = Flask(__name__)
 
@@ -25,7 +27,7 @@ MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
 
 # For snack images
-UPLOAD_FOLDER = ""
+UPLOAD_FOLDER = "./static/images/"
 ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 try:
@@ -442,12 +444,15 @@ def create_snack(selected_brand):
         if request.method == "POST":
             snack_brand = request.form['snack_brand']
             snack_name = request.form['snack_name']
-
-            print(f"{snack_name}", file=sys.stdout)
-
-            # Add snack to db
-            print(f"{current_user}", file=sys.stdout)
             try:
+                photo = None
+                file = request.files['file']
+                filename = secure_filename(file.filename)
+                if filename != "":
+                    file.save(os.path.join(UPLOAD_FOLDER, filename))  # This works!
+                    with open(os.path.join(UPLOAD_FOLDER, filename), "rb") as image_file:
+                        photo = SnackImage()
+                        photo.img.put(os.path.join(UPLOAD_FOLDER, filename), filename=filename)
                 new_snack = Snack(snack_name=request.form['snack_name'],
                                   available_at_locations=[request.form['available_at_locations']],
                                   snack_brand=request.form['snack_brand'],
@@ -460,15 +465,22 @@ def create_snack(selected_brand):
                                   avg_bitterness=0,
                                   avg_sweetness=0,
                                   avg_saltiness=0,
-                                  review_count=0
+                                  review_count=0,
                                   )
+                if photo:
+                    new_snack.photo_files.append(photo)
                 new_snack.save()
+                snack = "snack_id=" + str(new_snack.id)
             except Exception as e:
                 raise Exception(
                     f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
-            return redirect(url_for('index'))
+            response = make_response(json.dumps(snack))
+            response.status_code = 200
+            print(f"{response}", file=sys.stdout)
+
+            return response
 
         # For frontend purposes
         context_dict = {"title": "Add Snack",
@@ -706,7 +718,6 @@ def find_snack_by_filter(filters):
                     queryset = queryset.filter(is_verified=True)
             elif query_index == "category":
                 queryset = queryset.filter(category=query_value)
-            print(f" loop brand {snack_brand}\n", file=sys.stdout)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f" brand2 {snack_brand}\n", file=sys.stdout)
