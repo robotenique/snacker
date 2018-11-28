@@ -631,6 +631,9 @@ def find_reviews_for_snack(filters):
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
+    #remove duplicates
+    queryset_list = list(set(queryset_list))
+    
     context_dict = {"title": "Delicious Snack",
                     "form": review_form,
                     "query": snack_query,
