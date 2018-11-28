@@ -17,6 +17,7 @@ class Recommender(object):
         Keyword Arguments:
             user {User} -- A user instance from mongoengine
             review_from_user {list} -- All reviews made by that user
+            country {str} -- The country in which the user last logged in
             num_snacks {int} -- Number of new snacks to recommend (default: {10})
         """
 
@@ -35,10 +36,8 @@ class Recommender(object):
             """ Need to ignore irrelevant snacks to make the correct recommendation!"""
             # User index in the model matrix
             user_idx = self.userID_to_index[user_id]
-
             # Get idx of all snacks the current user already reviewed (to be removed)
             snacks_idx_already_reviewed = set(self.snackID_to_index[str(r["snack_id"])] for r in review_from_user)
-
             # Get idx of all snacks from the current country
             snacks_idx_current_country = set(self.snackID_to_index[str(s.id)] for s in snacks_in_current_country)
 

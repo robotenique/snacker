@@ -132,17 +132,6 @@ def recsys(mongo, db_name="test"):
         pickle.dump(model, f, pickle.HIGHEST_PROTOCOL)
     print("\nTrained model saved in file 'recc_model.pickle'.")
 
-
-
-    """ num_recommendations = 10
-    ratings = recc[0]
-    # Negative because we want the max
-    ind = np.argpartition(ratings, -num_recommendations)[-num_recommendations:]
-    print(f"Recommendations for user [0]:")
-    print(f"Indexes: {ind}")
-    print(f"Ratings: {ratings[ind]}") """
-
-
 def generate_training_data(my_db):
     """Given a database, generate training data from that specific database
        and return the data generated in a matrix in the form:
@@ -270,7 +259,6 @@ def training_recc_engine(train_data, K=2, train_size=.70, alpha=0.001, beta=0.01
     # Compute the Frobenius norm
     mse = np.mean((X_test[:, 2] - recc[u_id, m_id])**2)
     print(f"Mean Squared Error: {mse}")
-    # Return the trained model
     return recc
 
 if __name__ == '__main__':
