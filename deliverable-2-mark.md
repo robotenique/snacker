@@ -4,9 +4,9 @@
 
 | Component   | 0    |  1   |  2   |  3   |  4   |
 | ----------- | ---- | ---- | ---- | ---- | ---- |
+| `iteration-01.plan.md`   |   |   |   | X |   |
+| `iteration-01.review.md` |   |   |   |   | X |
 | Video             |   |   |   | X |   |
-| `iteration-01.plan.md`   |   |   |   |   | X |
-| `iteration-01.review.md` |   |   |   | X |   |
 
 
  > You TA will be able to provide you with more feedback during tutorial.
