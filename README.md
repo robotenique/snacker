@@ -40,6 +40,10 @@ $ flask run
 ```
 
 To test the code, go to your local url displayed on the console and refresh the page, you should see printed stuff from db operations on your console. If having troubles, ask for help in groupchat.
+
+### Basic Debugging
+If something won't work, first try closing your broswer, re-run flask and open it again in incognito mode. Sometimes new js won't load.
+
 ## Code Style
 
 ### Indentation

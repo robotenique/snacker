@@ -22,6 +22,9 @@ class User(UserMixin, Document):
     wish_list = ListField(StringField())
     authenticated = BooleanField(default=False)
     meta = {'allow_inheritance': True}
+    # This is supposed to be a required field, but I am not gonna specify that since we already have lots of users who
+    # don't have this field in the db and making it required now might raise an error
+    last_country = StringField()
 
     def is_authenticated(self):
         return self.authenticated
