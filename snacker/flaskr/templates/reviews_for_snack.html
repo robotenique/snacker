@@ -18,9 +18,11 @@
         {% endif %}
       {% endfor %}
     </div>
+    {% if review.description %}
     <div class="review-description">
       <p>{{ review.description }}</p>
     </div>
+    {% endif %}
   </div>
   <hr>
 {% endfor %}

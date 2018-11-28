@@ -14,6 +14,7 @@ from difflib import SequenceMatcher
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
     CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm, CreateBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview
+from recommender_recommend import Recommender
 
 app = Flask(__name__)
 
@@ -28,11 +29,12 @@ APP_NAME = "Snacker"
 UPLOAD_FOLDER = ""
 ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
+
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
-    mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
-    # mongo_uri = "mongodb://localhost:27017/"
+    #mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
+    mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -48,6 +50,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 app.url_map.strict_slashes = False
+recommender = Recommender()
 
 
 @app.route('/render-img/<string:snack_id>')
@@ -69,16 +72,15 @@ def serve_img(snack_id):
 @app.route("/topkek")
 @login_required
 def topkek():
-    print(current_user.id)
-    print(User.objects(pk=current_user.id).first());
+    all_countries = []
+    for s in Snack.objects:
+        all_countries += s.available_at_locations
     return "Topkek"
 
 
 @app.route("/")
 @app.route("/index")
 def index():
-    if current_user.is_authenticated:
-        print("ok")
     max_show = 5  # Maximum of snacks to show
     snacks = Snack.objects
     top_snacks = snacks.order_by("-avg_overall_rating")
@@ -89,7 +91,19 @@ def index():
             featured_snacks.append(snack)
             if len(featured_snacks) == max_show:
                 break
-    # TODO: Recommend snacks tailored to user
+    # TODO: Recommend snacks tailored to user, if authenticated
+    if current_user.is_authenticated:
+         country = ""
+        try:
+            country = current_user.last_country
+        except:
+            print("No last country")
+        country = country if country else "Canada" # Default is canada, if not found
+        #country = "China" if current_user.email == "otto.joki@example.com" else country
+        #country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
+        recommended_snacks = recommender.recommend_snacks(current_user, Review.objects(user_id=current_user.id),
+                                                          country, num_snacks=12)
+        featured_snacks = recommended_snacks
     # featured_snacks = top_snacks
 
     # Use JS Queries later
@@ -101,7 +115,9 @@ def index():
 
     snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
     snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
-
+    all_countries = generate_unique_countries()
+    # This is a rare case if the db has NO countries at all
+    all_countries = ["Canada"] if not all_countries else all_countries
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
@@ -109,7 +125,8 @@ def index():
                     "interesting_facts": interesting_facts,
                     "user": current_user,
                     "snack_names": snack_names,
-                    "snack_brands": snack_brands}
+                    "snack_brands": snack_brands,
+                    "all_countries": all_countries}
     return render_template('index.html', **context_dict)
 
 
@@ -432,6 +449,9 @@ def create_snack(selected_brand):
             except Exception as e:
                 raise Exception(
                     f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
+            # Make the server generate a new countries list when a new snack is added (it will be generated when a user acces index)
+            if request.form['available_at_locations'] not in COUNTRIES_LIST:
+                ALREADY_GENERATED = False
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             return redirect(url_for('index'))
@@ -726,6 +746,24 @@ def find_wishlist():
                     "query": result,
                     "user": current_user}
     return render_template('my_list.html', **context_dict)
+
+
+# We don't want to query the database EVERYTIME a user access /index
+# only when there's a change in the snacks database!
+ALREADY_GENERATED = False
+COUNTRIES_LIST = []
+def generate_unique_countries():
+    global ALREADY_GENERATED, COUNTRIES_LIST
+    if not ALREADY_GENERATED:
+        ALREADY_GENERATED = True
+        # Get list of all countries currently available
+        all_countries = []
+        for s in Snack.objects:
+            all_countries += s.available_at_locations
+        # Get unique values, remove the 'Nothing Selected' option
+        all_countries = sorted(list(set(all_countries) - set(["Nothing Selected"])))
+        COUNTRIES_LIST = all_countries
+    return COUNTRIES_LIST
 
 
 if __name__ == '__main__':

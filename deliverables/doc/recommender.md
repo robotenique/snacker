@@ -79,6 +79,11 @@ The division of the user profiles will be like this:
 * 10% - mix(sweet, sour) + remaining_snacks
 * 10% - mix(salty, sour) + remaining_snacks
 
+Examples of users from each category:
+-> Likes spicy and sweet: otto.joki@example.com (China)
+-> Likes Salty and spicy: inmaculada.perez@example.com (Mexico)
+-> Canadian who liked some sweet snacks: juliano@example.com (Canada)
+
 
 Each user profile will rate the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
 
@@ -91,7 +96,6 @@ Each user profile will rate the metrics following a collection of normal distrib
 
 ### Machine Learning model - Learning curve
 Below is the learning curve of the model. The mean squared error displayed is in the trained data itself.
-The final MSE on the TEST data was approx. **0.5**.
 
 ![learning-curve](../resources/d3/learning_curve.png)
 
