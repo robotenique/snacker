@@ -81,10 +81,11 @@ def topkek():
 @app.route("/")
 @app.route("/index")
 def index():
-    max_show = 5  # Maximum of snacks to show
+    max_show = 12  # Maximum of snacks to show
     snacks = Snack.objects
     top_snacks = snacks.order_by("-avg_overall_rating")
     featured_snacks = []
+    recommended_snacks = []
     # Getting snacks that have some image to display
     for snack in top_snacks:
         if snack.photo_files:
@@ -99,12 +100,10 @@ def index():
         except:
             print("No last country")
         country = country if country else "Canada" # Default is canada, if not found
-        #country = "China" if current_user.email == "otto.joki@example.com" else country
-        #country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
+        country = "China" if current_user.email == "otto.joki@example.com" else country
+        country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
         recommended_snacks = recommender.recommend_snacks(current_user, Review.objects(user_id=current_user.id),
                                                           country, num_snacks=12)
-        featured_snacks = recommended_snacks
-    # featured_snacks = top_snacks
 
     # Use JS Queries later
     # Needs to be a divisor of 12
@@ -116,12 +115,13 @@ def index():
     snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
     snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
     all_countries = generate_unique_countries()
-    # This is a rare case if the db has NO countries at all
+    # This is a rare case if the db has NO countries at all, then we just add 'Canada'
     all_countries = ["Canada"] if not all_countries else all_countries
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
-                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "recommended_snacks": recommended_snacks,
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:12],
+                    "popular_snacks": snacks.order_by("-review_count")[:12],
                     "interesting_facts": interesting_facts,
                     "user": current_user,
                     "snack_names": snack_names,
@@ -623,6 +623,7 @@ def find_reviews_for_snack(filters):
                 queryset = queryset.filter(sweetness__gte=query_value)
             elif query_index == "saltiness":
                 queryset = queryset.filter(saltiness__gte=query_value)
+    num_reviews_to_display = 15 # Display a maximum 'num_reviews_to_display'
     queryset = queryset.order_by("-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
@@ -631,14 +632,17 @@ def find_reviews_for_snack(filters):
     if current_user.is_authenticated:
         if len(queryset.filter(user_id=current_user.id)):
             reviewed = True
-
+    # Get best and worst reviews!
+    queryset_list = list(queryset)
+    queryset_list = queryset_list[:int(1 + num_reviews_to_display/2)] + queryset_list[::-1][:int(1 + num_reviews_to_display/2)]
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
     context_dict = {"title": "Delicious Snack",
                     "form": review_form,
                     "query": snack_query,
-                    "reviews": queryset,
+                    "num_reviews_to_display": num_reviews_to_display,
+                    "reviews": queryset_list,
                     "reviewed": reviewed,
                     "verified": verified,
                     "user": current_user}
