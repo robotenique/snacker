@@ -21,11 +21,14 @@
             </div>
             <div class="snack-query-title">
               <a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name|truncate(60) }}</a>
-              {% if snack.is_verified %}
+              {% if snack.is_verified%}
                 <span class="verified_block">
-                    Verified Snack</span>
-              {% elif current_user.is_authenticated and snack.snack_brand in current_user.company_snackbrands and not snack.is_verified %}
-                <button onclick="verify_snack('{{ query.first().id }}'); return false;" class="verify-button">Verify Snack</button>
+                    Verified</span>
+              {% elif current_user.is_authenticated and snack.snack_brand in current_user.company_snackbrands
+                and not snack.is_verified %}
+                <button onclick="verify_snack('{{ query.first().id }}'); return false;" class="verify-button">
+                    Verify Snack
+                </button>
               {% endif %}
             </div>
 
