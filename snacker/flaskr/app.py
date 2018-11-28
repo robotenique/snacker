@@ -33,8 +33,8 @@ ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
-    #mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
-    mongo_uri = "mongodb://localhost:27017/"
+    mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
+    #mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -42,7 +42,8 @@ try:
 except Exception as inst:
     raise Exception("Error in database connection:", inst)
 
-# TODO: Need to change this to an env variable later
+# If we were running this in a production environment
+# these would be acessed through environment variables
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 app.config['DEBUG'] = True
 login_manager = LoginManager()
@@ -67,15 +68,6 @@ def serve_img(snack_id):
     # Returning the thumbnail for now
     resp = Response(photo.thumbnail.read(), mimetype=get_mimetype(photo.filename))
     return resp
-
-
-@app.route("/topkek")
-@login_required
-def topkek():
-    all_countries = []
-    for s in Snack.objects:
-        all_countries += s.available_at_locations
-    return "Topkek"
 
 
 @app.route("/")
@@ -408,7 +400,6 @@ def verify_snack():
 
 
 # Tested
-# TODO: Need to still add image element
 @app.route("/create-snack/<string:selected_brand>", methods=["GET", "POST"])
 @login_required
 def create_snack(selected_brand):

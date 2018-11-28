@@ -308,6 +308,38 @@ def update_review_count():
         s.update(set__review_count=len(Review.objects(snack_id=s.id)))
     return "Finish updating snacks"
 
+#@app.route("/update-ratings")
+#@login_required
+def update_ratings():
+    """ Maintenance route to update snack ratings from the database"""
+    rev_objs = Review.objects
+    for s in Snack.objects:
+        avg_overall_rating = rev_objs.filter(snack_id=s.id).average('overall_rating')
+        s.update(set__avg_overall_rating=avg_overall_rating)
+        try:
+            avg_sourness = rev_objs.filter \
+                (Q(snack_id=s.id) & Q(sourness__exists=True)).average("sourness")
+            avg_spiciness = rev_objs.filter \
+                (Q(snack_id=s.id) & Q(spiciness__exists=True)).average("spiciness")
+            avg_bitterness = rev_objs.filter \
+                (Q(snack_id=s.id) & Q(bitterness__exists=True)).average("bitterness")
+            avg_sweetness = rev_objs.filter \
+                (Q(snack_id=s.id) & Q(sweetness__exists=True)).average("sweetness")
+            avg_saltiness = rev_objs.filter \
+                (Q(snack_id=s.id) & Q(saltiness__exists=True)).average("saltiness")
+
+            s.update(set__avg_sourness=avg_sourness)
+            s.update(set__avg_spiciness=avg_spiciness)
+            s.update(set__avg_bitterness=avg_bitterness)
+            s.update(set__avg_sweetness=avg_sweetness)
+            s.update(set__avg_saltiness=avg_saltiness)
+        except:
+            print("Current snack has no metric review, continue...")
+        print(f"Updated snack {s.snack_name}")
+
+    return "Finish updating snacks"
+
+
 # --------------------------------------- ENDING --------------------------------------------- #
 
 

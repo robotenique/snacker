@@ -52,7 +52,7 @@ The recommender system uses the **overall_rating** to recommended the features t
 ![visualization](https://cdn-images-1.medium.com/max/1600/1*Zhm1NMlmVywn0G18w3exog.png)
 
 
-The first recommender algorithm uses Matrix Factorization, optimizing using SGD (Stochastic Gradient Descent). MF is very stable and have good performance, and is very utilized because it's highly scalable, differently than other neighbor comparing metrics such as the *Cosine Distance*, *Pearson Coefficient*, etc. More information about this procedure can be found [here](http://www.albertauyeung.com/post/python-matrix-factorization/).
+The recommender algorithm uses Matrix Factorization, optimizing using SGD (Stochastic Gradient Descent). MF is very stable and have good performance, and is very utilized because it's highly scalable, differently than other neighbor comparing metrics such as the *Cosine Distance*, *Pearson Coefficient*, etc. More information about this procedure can be found [here](http://www.albertauyeung.com/post/python-matrix-factorization/).
 
 This is the basic procedure done by **recommender_training.py**:
 
