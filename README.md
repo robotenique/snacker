@@ -22,6 +22,7 @@ $ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Ta
 
 2. **Create database access files**
 In the folder ```snacker/flaskr``` create two files: ```username.txt``` and ```password.txt```. Inside them, put the names of any member of this team (first name), for example, in BOTH files, write just "Juliano" (without quotes, and notice the capitalized letter).
+OBS: If you want to test with a local database, we have a dump of the database which can be downloaded [here](https://drive.google.com/open?id=145Mzq3XrnMTMX1boBqd2Hqk7bqvRDT1V). You need to use *mongorestore* with the *--dir* flag to restore it.
 
 3. **Download the Machine Learning Recommender model**
 You could train the model yourself by using ```snacker/flaskr/recommender_training.py```, but the best approach is to download the model file, which is hosted [here](https://drive.google.com/file/d/1lkAtTsvf7FWqAManP8KsZkWrq0bHYlt6/view?usp=sharing). Download the file, and put it in the folder ```snacker/flaskr```. This model is loaded by the file ```snacker/flaskr/recommender_recommend.py```, so make sure you downloaded and the filename is correct (should be **recc_model.pickle**).

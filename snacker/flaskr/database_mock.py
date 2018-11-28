@@ -299,6 +299,15 @@ def add_snacks():
     print("Finished.")
     print(f"{len(sl)}")
     return str(sl[:10])
+
+#@app.route("/update-review-count")
+#@login_required
+def update_review_count():
+    """ Maintenance route to update snack review count from the database"""
+    for s in Snack.objects:
+        s.update(set__review_count=len(Review.objects(snack_id=s.id)))
+    return "Finish updating snacks"
+
 # --------------------------------------- ENDING --------------------------------------------- #
 
 

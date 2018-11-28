@@ -89,7 +89,7 @@ class Recommender(object):
     def _retrain_model(self):
         # TODO: REMOVE LOCAL DATABASE
         """ Retrain a model if the information of the new user is inconsistent """
-        mongo = prepare_mongodb(mongo_uri="mongodb://localhost:27017/")
+        mongo = prepare_mongodb(mongo_uri="")
         recsys(mongo, db_name="test")
         self.update_model()
 
@@ -111,8 +111,7 @@ class Recommender(object):
 if __name__ == "__main__":
     # TESTING with:
     # Salty user Katrina beck, ID: 5bfcc6e767afee10a880f8f5
-    # TODO: REMOVE LOCAL MONGO DB
-    mongo = prepare_mongodb(mongo_uri="mongodb://localhost:27017/")
+    mongo = prepare_mongodb(mongo_uri="mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true")
     salty_user_id = "5bfcc6e767afee10a880f8f5"
     katrina = User.objects(id=salty_user_id)[0]
     country_katrina = "Vietnam"
