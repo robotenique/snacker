@@ -35,6 +35,57 @@ function authenticate(form) {
         });
 }
 
+function changePassword(form) {
+    console.log(form);
+    $.ajax({
+        type: "POST",
+        url: "/change_password",
+        data: {
+            "password": form.edit_password.value
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid password');
+            window.location.href = "account";
+        }
+    });
+}
+
+function changeUserDetails(form) {
+    console.log(form);
+    company = "";
+    try {
+        if(document.getElementById("edit_company")) {
+        company = form.edit_company.value;
+        }
+    } catch (e) {
+    }
+    $.ajax({
+        type: "POST",
+        url: "/change_user_details",
+        data: {
+            "email": form.edit_email.value,
+            "company_name": company,
+            "first_name": form.edit_first.value,
+            "last_name": form.edit_last.value,
+        },
+        dataType: "json",
+        success: function (result) {
+            console.log(result);
+            window.location.href = "account";
+        },
+        error: function (result) {
+            alert('invalid data');
+        }
+    });
+}
+
+
+
 /*Login the user*/
 function register_user(form) {
     $.getJSON( "https://ipapi.co/json/", function( data ) {})
@@ -66,25 +117,25 @@ function createSnack(form, selected_snack_brand) {
     var location = form.available_at_location.value;
     $.getJSON( "https://ipapi.co/json/", function( data ) {})
         .always( function( data ) {
-            $.ajax({
-                type: "POST",
-                url: "/create-snack/selected_brand=" + selected_snack_brand,
-                data: {
-                    "snack_name": form.snack_name.value,
-                    "available_at_locations": (location != "Nothing Selected" ? location
+            let form = document.getElementById('create-snack-form');
+            let formData = new FormData(form);
+            formData.set("available_at_locations", (location != "Nothing Selected" ? location
                                                 : data ? data.country_name
-                                                : null),
-                    "snack_brand": form.snack_brand.value,
-                    "category": form.category.value,
-                    "description": form.description.value,
-                },
-                success: function (result) {
-                    window.location.replace("/index");
-                },
-                error: function (result) {
-                    alert('Something wrong ' + result);
+                                                : null));
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (xhr.status === 200) {
+                        window.location.href="/snack_reviews/"+ response
+                    } else {
+                        console.log('failed');
+                    }
                 }
-            });
+            }
+
+            xhr.open('POST', "/create-snack/selected_brand=" + selected_snack_brand, true);
+            xhr.send(formData);
         });
 }
 

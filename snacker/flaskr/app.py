@@ -2,6 +2,7 @@ import json
 import mimetypes
 import sys
 import urllib
+import os.path
 
 from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response
 from flask_bcrypt import Bcrypt
@@ -10,10 +11,11 @@ from mongoengine import connect
 from mongoengine.queryset.visitor import Q
 from werkzeug.contrib.fixers import ProxyFix
 from difflib import SequenceMatcher
+from werkzeug import secure_filename
 
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
     CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm, CreateBrandForm
-from schema import Snack, Review, CompanyUser, User, MetricReview
+from schema import Snack, Review, CompanyUser, User, MetricReview, SnackImage
 from recommender_recommend import Recommender
 
 app = Flask(__name__)
@@ -26,7 +28,7 @@ MONGO_SERVER = "csc301-v3uno.mongodb.net"
 APP_NAME = "Snacker"
 
 # For snack images
-UPLOAD_FOLDER = ""
+UPLOAD_FOLDER = "./static/images/"
 ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 
@@ -303,6 +305,41 @@ def account():
         return render_template('account.html', **context_dict)
 
 
+@app.route("/change_user_details", methods=["POST"])
+def change_user_details():
+    form = UpdateUserForm(request.form)
+    if request.method == "POST":
+        try:
+            print(f"User {form} \n")
+            current_user.update(email=request.form['email'], first_name=request.form['first_name'],
+                                last_name=request.form['last_name'])
+            if isinstance(current_user, CompanyUser):
+                current_user.update(company_name=request.form['company_name'])
+            current_user.save()
+            response = make_response()
+            response.status_code = 200
+            print(f"changed details response {response}\n")
+            return response
+        except Exception as e:
+            raise Exception(f"Error {e}. \n Couldn't change the details of the user,\n with following form: {form}")
+
+
+@app.route("/change_password", methods=["POST"])
+def change_password():
+    form = UpdatePasswordForm(request.form)
+    if request.method == "POST":
+        try:
+            current_user.update(password=bcrypt.generate_password_hash(request.form["password"]).decode('utf-8'))
+            current_user.save()
+            print(f"User {form} \n")
+            response = make_response()
+            response.status_code = 200
+            print(f"response change password {response}\n")
+            return response
+        except Exception as e:
+            raise Exception(f"Error {e}. \n Couldn't change the password of the user,\n with following form: {form}")
+
+
 # Tested
 @app.route("/create-brand", methods=["GET", "POST"])
 @login_required
@@ -418,12 +455,15 @@ def create_snack(selected_brand):
         if request.method == "POST":
             snack_brand = request.form['snack_brand']
             snack_name = request.form['snack_name']
-
-            print(f"{snack_name}", file=sys.stdout)
-
-            # Add snack to db
-            print(f"{current_user}", file=sys.stdout)
             try:
+                photo = None
+                file = request.files['file']
+                filename = secure_filename(file.filename)
+                if filename != "":
+                    file.save(os.path.join(UPLOAD_FOLDER, filename))  # This works!
+                    with open(os.path.join(UPLOAD_FOLDER, filename), "rb") as image_file:
+                        photo = SnackImage()
+                        photo.img.put(os.path.join(UPLOAD_FOLDER, filename), filename=filename)
                 new_snack = Snack(snack_name=request.form['snack_name'],
                                   available_at_locations=[request.form['available_at_locations']],
                                   snack_brand=request.form['snack_brand'],
@@ -436,9 +476,12 @@ def create_snack(selected_brand):
                                   avg_bitterness=0,
                                   avg_sweetness=0,
                                   avg_saltiness=0,
-                                  review_count=0
+                                  review_count=0,
                                   )
+                if photo:
+                    new_snack.photo_files.append(photo)
                 new_snack.save()
+                snack = "snack_id=" + str(new_snack.id)
             except Exception as e:
                 raise Exception(
                     f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
@@ -447,7 +490,11 @@ def create_snack(selected_brand):
                 ALREADY_GENERATED = False
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
-            return redirect(url_for('index'))
+            response = make_response(json.dumps(snack))
+            response.status_code = 200
+            print(f"{response}", file=sys.stdout)
+
+            return response
 
         # For frontend purposes
         context_dict = {"title": "Add Snack",
@@ -694,7 +741,6 @@ def find_snack_by_filter(filters):
                     queryset = queryset.filter(is_verified=True)
             elif query_index == "category":
                 queryset = queryset.filter(category=query_value)
-            print(f" loop brand {snack_brand}\n", file=sys.stdout)
     queryset = queryset.order_by("snack_name")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f" brand2 {snack_brand}\n", file=sys.stdout)

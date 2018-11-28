@@ -4,10 +4,10 @@
 
     <section class="ftco-section bg-light">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12 col-lg-8 mb-5">
-                    <form class="p-5 bg-white" onsubmit="createSnack(this,'{{ selected_snack_brand }}');return false;"
-                          name="create_snack">
+            <form class="p-5 bg-white" onsubmit="createSnack(this,'{{ selected_snack_brand }}');return false;"
+                          name="create_snack" enctype = "multipart/form-data" id="create-snack-form">
+                <div class="row">
+                    <div class="col-md-12 col-lg-8 mb-5">
                         {{ form.hidden_tag() }}
 
                         <div class="row form-group">
@@ -62,21 +62,18 @@
                                 <input class="btn btn-primary px-3 px-lg-5" type="submit" name="submit" value="Submit">
                             </div>
                         </div>
-                    </form>
-                    {% if error %}
-                        <p class="error"><strong>Error:</strong>{{ error }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="col-lg-4">
-
-                    <div class="p-4 mb-3 bg-white text-center">
-                        <h3 class="h5 text-black mb-3">Upload photos of your Snack (NOT WORKING YET)</h3>
-                            <p><a href="#" class="btn btn-secondary px-3 px-lg-5">Upload</a></p>
                     </div>
-
+                    <div class="col-lg-4">
+                        <div class="p-4 mb-3 bg-white text-center">
+                            <h3 class="h5 text-black mb-3">Upload photos of your Snack</h3>
+                            <input id="snack-img" type = "file" name = "file" class="btn btn-secondary px-3 px-lg-5"/>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
+            {% if error %}
+                <p class="error"><strong>Error:</strong>{{ error }}</p>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
