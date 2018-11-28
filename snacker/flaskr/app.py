@@ -92,7 +92,7 @@ def index():
             featured_snacks.append(snack)
             if len(featured_snacks) == max_show:
                 break
-    # TODO: Recommend snacks tailored to user, if authenticated
+    # Recommends tailored snacks to the user (if logged in)
     if current_user.is_authenticated:
         country = ""
         try:
@@ -100,8 +100,10 @@ def index():
         except:
             print("No last country")
         country = country if country else "Canada" # Default is canada, if not found
+        # Some special user cases for demonstration purposes
         country = "China" if current_user.email == "otto.joki@example.com" else country
         country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
+        country = "Brazil" if current_user.email == "gertrudes.silva@example.com" else country
         recommended_snacks = recommender.recommend_snacks(current_user, Review.objects(user_id=current_user.id),
                                                           country, num_snacks=12)
 

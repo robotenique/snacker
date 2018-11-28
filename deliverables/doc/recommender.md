@@ -98,6 +98,8 @@ Below is the learning curve of the model. The mean squared error displayed is in
 
 ![learning-curve](../resources/d3/learning_curve.png)
 
+Download ML model: https://drive.google.com/file/d/1lkAtTsvf7FWqAManP8KsZkWrq0bHYlt6/view?usp=sharing
+
 
 IMPORTANT: Procedures when adding information to the production database
 ===
