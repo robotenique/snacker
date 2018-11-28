@@ -134,6 +134,30 @@ function verify_snack(snack_id) {
     });
 }
 
+
+function add_to_fav(snack_id) {
+
+    var prev_url = window.location.href;
+
+    console.log(snack_id);
+    $.ajax({
+        type: "POST",
+        url: "/add_to_fav",
+        data: {
+            "snack_id": snack_id,
+            "prev_url": prev_url,
+            "test":"test"
+        },
+        dataType: "json",
+        success: function (result) {
+            alert("Snack added to favourite!");
+        },
+        error: function (result) {
+            alert("snacker added to fav");
+        }
+    });
+}
+
 // Adapted W3schools autocomplete
 
 var currentFocus;
@@ -235,3 +259,4 @@ function removeActive(x) {
       x[i].classList.remove("autocomplete-active");
   }
 }
+
