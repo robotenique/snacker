@@ -288,7 +288,7 @@ def account():
         return render_template('account.html', **context_dict)
 
 
-@app.route("/change_user_details", methods=["GET", "POST"])
+@app.route("/change_user_details", methods=["POST"])
 def change_user_details():
     form = UpdateUserForm(request.form)
     if request.method == "POST":
@@ -307,7 +307,7 @@ def change_user_details():
             raise Exception(f"Error {e}. \n Couldn't change the details of the user,\n with following form: {form}")
 
 
-@app.route("/change_password", methods=["GET", "POST"])
+@app.route("/change_password", methods=["POST"])
 def change_password():
     form = UpdatePasswordForm(request.form)
     if request.method == "POST":
