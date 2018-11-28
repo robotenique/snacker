@@ -70,19 +70,23 @@ This is the basic procedure done by **recommender_training.py**:
 * Distribution of classes are like this:
 
 The division of the user profiles will be like this:
-14% - Salty
-14% - Spicy
-14% - Sour
-14% - Sweet
-14% - Bitter
-10% - mix(spicy, sweet) + remaining_snacks
-10% - mix(sweet, sour) + remaining_snacks
-10% - mix(salty, sour) + remaining_snacks
+* 14% - Salty
+* 14% - Spicy
+* 14% - Sour
+* 14% - Sweet
+* 14% - Bitter
+* 10% - mix(spicy, sweet) + remaining_snacks
+* 10% - mix(sweet, sour) + remaining_snacks
+* 10% - mix(salty, sour) + remaining_snacks
 
 
 Each user profile will rate the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
 
 ![salty-profile](../resources/d3/salty_profile.png)
+![spicy-profile](../resources/d3/spicy_profile.png)
+![sour-profile](../resources/d3/sour_profile.png)
+![sweet-profile](../resources/d3/sweet_profile.png)
+![bitter-profile](../resources/d3/bitter_profile.png)
 
 
 

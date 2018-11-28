@@ -116,7 +116,7 @@ def recsys(mongo, db_name="test"):
     my_db = mongo[db_name]
     print(f"Collections found in the current database: {my_db.collection_names()}\n")
     tr_data = generate_training_data(my_db)
-    recc = training_recc_engine(tr_data)
+    recc = training_recc_engine(tr_data, K=30)
     # Create a dict with all the relevant model information
     model = {"model": recc,
              "snackID_to_index": tr_data["snackID_to_index"],
@@ -173,7 +173,7 @@ def generate_training_data(my_db):
               'as': 'review'}
          }])
     for c in cursor:
-        # Add current user into the
+        # Add current user into the maps
         if userID_to_index.get(str(c["_id"])) == None:
             userID_to_index[str(c["_id"])] = index_user
             index_to_userID[index_user] =  str(c["_id"])
@@ -184,7 +184,7 @@ def generate_training_data(my_db):
             for review in c['review']:
                 # Add current snack to the mapping if not already there
                 if snackID_to_index.get(str(review["snack_id"])) == None:
-                    print("Adicionando: ", str(review["snack_id"]))
+                    print("Adding new snack with id: ", str(review["snack_id"]))
                     snackID_to_index[str(review["snack_id"])] = index_snack
                     index_to_snackID[index_snack] =  str(review["snack_id"])
                     index_snack += 1
@@ -205,13 +205,13 @@ def generate_training_data(my_db):
     col = np.array(col).reshape(-1, 1).astype(float)
     data = np.array(data).reshape(-1, 1).astype(float)
 
-    #=====================Test example (comment to disable)=====================
+    """ #=====================Test example (comment to disable)=====================
     row = np.arange(10).reshape(-1, 1).astype(float)                          #
     col = np.arange(10).reshape(-1, 1).astype(float)                          #
     data = (np.random.rand(10)*10 + 1).reshape(-1, 1)                         #
     index_user = len(row)                                                     #
     index_snack = len(col)                                                    #
-    #=====================Test example (comment to disable)=====================
+    #=====================Test example (comment to disable)===================== """
 
 
     """
@@ -240,7 +240,7 @@ def generate_training_data(my_db):
 
 def training_recc_engine(train_data, K=2, train_size=.70, alpha=0.001, beta=0.01, iterations=30):
     # IMPORTANT: 'K' (num latent features) Should be <= min(len(rows), len(cols))
-
+    #assert K <= min(train_data.shape[0],train_data.shape[1])
     # Supress scientific notation
     np.set_printoptions(suppress=True, linewidth=300)
     all_data = train_data["rating_data"]
