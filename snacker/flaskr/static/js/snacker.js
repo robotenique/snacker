@@ -186,25 +186,52 @@ function verify_snack(snack_id) {
 }
 
 
-function add_to_fav(snack_id) {
-
-    var prev_url = window.location.href;
-
+function change_to_fav(snack_id) {
     console.log(snack_id);
     $.ajax({
         type: "POST",
-        url: "/add_to_fav",
+        url: "/change_to_fav",
         data: {
             "snack_id": snack_id,
-            "prev_url": prev_url,
-            "test":"test"
         },
         dataType: "json",
         success: function (result) {
-            alert("Snack added to favourite!");
+            if (String(result) == "subscribed") {
+                document.getElementById(snack_id).title = "Unsubscribe from wishlist";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.color = "#f85959";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = null;
+            } else {
+                document.getElementById(snack_id).title = "Subscribe to wishlist";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.color = "#FFFFFF";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = "0px 0px 4px #f85959";
+            }
         },
         error: function (result) {
-            alert("snacker added to fav");
+            alert("Error");
+        }
+    });
+}
+
+
+function change_to_fav_wishlist(snack_id) {
+    console.log(snack_id);
+    $.ajax({
+        type: "POST",
+        url: "/change_to_fav",
+        data: {
+            "snack_id": snack_id,
+        },
+        dataType: "json",
+        success: function (result) {
+            if (String(result) == "subscribed") {
+                alert("something wrong, this item shouldn't be in wishlist");
+            } else {
+                let node = document.getElementById(snack_id);
+                node.parentNode.removeChild(node);
+            }
+        },
+        error: function (result) {
+            alert("Error");
         }
     });
 }

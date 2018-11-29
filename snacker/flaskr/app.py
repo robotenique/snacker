@@ -369,35 +369,32 @@ def create_brand():
         return redirect(url_for('index'))
 
 
-@app.route("/add_to_fav", methods=["POST"])
+@app.route("/change_to_fav", methods=["POST"])
 @login_required
-def add_to_fav():
+def change_to_fav():
     if current_user.is_authenticated:
-        print(f"ADD TO FAVOURITE")
-        print(f"User is authenticated", file=sys.stdout)
+        print(f"User is authenticated\n", file=sys.stdout)
         if request.method == "POST":
-            user_obj = User.objects(pk=current_user.id)
+            response_text = "subscribed"
             snack_id = request.form["snack_id"]
-
-            snack = "snack_id=" + snack_id
-            prev_url = request.form["prev_url"]
-
-            print(f"Added this snack to favourites/watchlist: {request.form}", file=sys.stdout)
             try:
-                user_obj.update(add_to_set__wish_list=snack_id)
+                if snack_id not in current_user.wish_list:
+                    current_user.update(add_to_set__wish_list=snack_id)
+                else:
+                    current_user.update(pull__wish_list=snack_id)
+                    response_text = "unsubscribed"
             except Exception as e:
                 raise Exception(
-                    f"Error {e}. \n Couldn't add {snack_id} to watchlist ")
-
-            print(f"length of watchlist{len(current_user.wish_list)}", file=sys.stdout)
-            print(f"Added this snack to favourites/watchlist: {snack_id}", file=sys.stdout)
-            #return redirect(url_for('find_snack_by_filter', filters=snack))
-            #return redirect(url_for('index'))
-            return redirect(url_for('find_reviews_for_snack', filters=snack))
+                    f"Error {e}. \n Couldn't change {snack_id} in wishlist ")
+            print(f"Changed this snack in favourites/watchlist: {snack_id}\n", file=sys.stdout)
+            response = make_response(json.dumps(response_text))
+            response.status_code = 200
+            print(f"{response}\n", file=sys.stdout)
+            return response
         else:
             return redirect(url_for('index'))
     else:
-        return redirect(url_for('index')) # cannot add to wish list if user is not authenticated
+        return redirect(url_for('index'))
 
 
 @app.route("/verify-snack", methods=["POST"])

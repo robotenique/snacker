@@ -7,9 +7,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-        <hr>
         {% for snack in query %}
-          <div class="item">
+          <div class="item" id="{{ snack.id }}">
             <!-- set image size with css style for different media devices -->
             <img class="query-img" style="width: 210px; height: 210px; float: left; padding: 1em;"
                 src={{ url_for('serve_img', snack_id=snack.id) }}>
@@ -107,8 +106,15 @@
               <p>{{ snack.description|truncate(320) }}</p>
               {% endif %}
             </div>
-          </div>
+            <div>
+                <a href="#" title="Unsubscribe from wishlist" style="float:left;">
+                <button onclick="change_to_fav_wishlist('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                    <i class="icon-heart nav-link" style="font-size: 1.5em; color:#f85959"></i>
+                </button>
+              </a>
+            </div>
           <hr>
+          </div>
         {% endfor %}
         {% block reviews %}
         {% endblock %}
