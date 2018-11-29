@@ -20,7 +20,8 @@ class Recommender(object):
             country {str} -- The country in which the user last logged in
             num_snacks {int} -- Number of new snacks to recommend (default: {10})
         """
-
+        # Remove 'none' from a set, to prevent 'None' errors in the dictionary
+        filt_none = lambda set_obj: set(filter(None, set_obj))
         user_id = str(user.id)
         # Get snacks from the current country
         if country:
@@ -40,11 +41,14 @@ class Recommender(object):
             # User index in the model matrix
             user_idx = self.userID_to_index[user_id]
             # Get idx of all snacks the current user already reviewed (to be removed)
-            snacks_idx_already_reviewed = set(self.snackID_to_index[str(r["snack_id"])] for r in review_from_user)
+            snacks_idx_already_reviewed = set(self.snackID_to_index.get(str(r["snack_id"])) for r in review_from_user)
+            snacks_idx_already_reviewed = filt_none(snacks_idx_already_reviewed)
             # Get idx of all snacks from the current country
-            snacks_idx_current_country = set(self.snackID_to_index[str(s.id)] for s in snacks_in_current_country)
+            snacks_idx_current_country = set(self.snackID_to_index.get(str(s.id)) for s in snacks_in_current_country)
+            snacks_idx_current_country = filt_none(snacks_idx_current_country)
             # Snacks with no image don't go to recommendation :)
-            snacks_without_image = set(self.snackID_to_index[str(s.id)] for s in snacks_in_current_country if not s.photo_files)
+            snacks_without_image = set(self.snackID_to_index.get(str(s.id)) for s in snacks_in_current_country if not s.photo_files)
+            snacks_without_image = filt_none(snacks_without_image)
 
             # The snacks to be KEPT in the matrix is the set difference of them:
             to_be_kept = np.array(list((snacks_idx_current_country - snacks_idx_already_reviewed) - snacks_without_image))
@@ -62,7 +66,8 @@ class Recommender(object):
                 num_remaining = num_snacks - len(calculated_recommendation)
                 # If we need to get more snacks to recommend, get from outside_country
             if num_remaining > 0:
-                snacks_without_image = set(self.snackID_to_index[str(s.id)] for s in Snack.objects if not s.photo_files)
+                snacks_without_image = set(self.snackID_to_index.get(str(s.id)) for s in Snack.objects if not s.photo_files)
+                snacks_without_image = filt_none(snacks_without_image)
                 # Snacks which are not reviewed by the current user, but are not bound by the country
                 to_be_kept_other_countries = set(range(self.index_snack)) - snacks_idx_already_reviewed
                 to_be_kept_other_countries = np.array(list(to_be_kept_other_countries - snacks_without_image))
