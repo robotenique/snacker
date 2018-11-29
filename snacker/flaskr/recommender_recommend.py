@@ -103,7 +103,7 @@ class Recommender(object):
     def update_model(self):
         model_file = Path(self.model_filename)
         if not model_file.is_file():
-            raise FileNotFoundError(f"The model file does not exists ({self.model_filename})")
+            raise FileNotFoundError(f"The model file does not exists ({self.model_filename}). Please refer to the README.md for instructions about how to download the trained ML model!")
         # Update current model attributes from the file
         with open(self.model_filename, 'rb') as f:
             self.model = pickle.load(f)
