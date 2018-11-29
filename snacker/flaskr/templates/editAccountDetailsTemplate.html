@@ -34,7 +34,7 @@
         </div>
 
         <div class="tab-pane fade" id="v-pills-mission" role="tabpanel" aria-labelledby="v-pills-mission-tab">
-          <form class="pl-4 pr-4" onsubmit="changeUserDetails(this);" id="change_user_details"
+          <form class="pl-4 pr-4" onsubmit="changeUserDetails(this);return false;" id="change_user_details"
             name="change_user_details">
             {{ edit_user_form.hidden_tag() }}
             {% if current_user.company_name %}
@@ -69,7 +69,7 @@
 
             <div class="row form-group justify-content-center">
               <div class="col-md-6">
-                {{ edit_user_form.submit(class='btn btn-primary px-3 px-lg-5') }}
+                {{ edit_user_form.submit(class='btn btn-primary px-3 px-lg-5', id='EditDetailsSubmit') }}
               </div>
             </div>
 
@@ -80,7 +80,7 @@
         </div>
 
         <div class="pl-4 pr-4 tab-pane fade" id="v-pills-goal" role="tabpanel" aria-labelledby="v-pills-goal-tab">
-          <form class="pl-4 pr-4" onsubmit="changePassword(this);" id="change_password"
+          <form class="pl-4 pr-4" onsubmit="changePassword(this);return false;" id="change_password"
             name="change_password">
 
             <div class="row form-group justify-content-center">
@@ -99,7 +99,7 @@
 
             <div class="row form-group justify-content-center">
               <div class="col-md-6">
-                {{ edit_password_form.submit(class='btn btn-primary px-3 px-sm-4') }}
+                {{ edit_password_form.submit(class='btn btn-primary px-3 px-sm-4', id='PasswordSubmit') }}
               </div>
             </div>
           </form>

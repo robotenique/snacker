@@ -4,7 +4,7 @@ import sys
 import urllib
 import os.path
 
-from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response
+from flask import Flask, render_template, request, flash, redirect, url_for, make_response, Response, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user, logout_user, login_user
 from mongoengine import connect
@@ -318,7 +318,7 @@ def change_user_details():
             if isinstance(current_user, CompanyUser):
                 current_user.update(company_name=request.form['company_name'])
             current_user.save()
-            response = make_response()
+            response = jsonify(url_for('account'))
             response.status_code = 200
             print(f"changed details response {response}\n")
             return response
@@ -663,7 +663,7 @@ def find_reviews_for_snack(filters):
             elif query_index == "saltiness":
                 queryset = queryset.filter(saltiness__gte=query_value)
     num_reviews_to_display = 15 # Display a maximum 'num_reviews_to_display'
-    queryset = queryset.order_by("-overall_rating")
+    queryset = queryset.order_by("-overall_rating", "-description")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
     review_form = CreateReviewForm(request.form)
@@ -681,8 +681,14 @@ def find_reviews_for_snack(filters):
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
-    #remove duplicates
-    queryset_list = list(set(queryset_list))
+    # Finds reviewers first and last name using their ids
+    # Stored in username as first_name + last_name
+    usernames = {}
+    users = User.objects
+    for review in queryset_list[:num_reviews_to_display]:
+        user_id = review.user_id
+        user = users.with_id(user_id)
+        usernames[user_id] = user.first_name + " " + user.last_name
     
     context_dict = {"title": "Delicious Snack",
                     "form": review_form,
@@ -690,6 +696,7 @@ def find_reviews_for_snack(filters):
                     "num_reviews_to_display": num_reviews_to_display,
                     "reviews": queryset_list,
                     "reviewed": reviewed,
+                    "usernames": usernames,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
 
