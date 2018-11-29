@@ -24,10 +24,8 @@ class Recommender(object):
         filt_none = lambda set_obj: set(filter(None, set_obj))
         user_id = str(user.id)
         # Get snacks from the current country
-        if country:
-            snacks_in_current_country = Snack.objects(Q(available_at_locations__in=[country]))
-        else: # If no country provided, search for everything!
-            snacks_in_current_country = Snack.objects
+        # If no country provided, search for everything!
+        snacks_in_current_country = Snack.objects(Q(available_at_locations__in=[country])) if country else Snack.objects
         calculated_recommendation = []
         # Check if the current user is in the trained model
         user_is_trained = user_id in self.userID_to_index.keys()

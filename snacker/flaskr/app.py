@@ -809,8 +809,7 @@ def generate_unique_countries():
         for s in Snack.objects:
             all_countries += s.available_at_locations
         # Get unique values, remove the 'Nothing Selected' option
-        all_countries = sorted(list(set(all_countries) - set(["Nothing Selected"])))
-        COUNTRIES_LIST = all_countries
+        COUNTRIES_LIST = sorted(list(set(all_countries) - set(["Nothing Selected"])))
     return COUNTRIES_LIST
 
 
