@@ -44,7 +44,6 @@
 }
 
 .text {
-  background-color: #4CAF50;
   color: white;
   font-size: 16px;
   padding: 16px 32px;
@@ -110,17 +109,28 @@
   color: LightSlateGrey;
 }
 
+.add-searched-snack-button {
+  background: dodgerblue;
+  color: white;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 18px;
+}
+
 .verify-button {
-    background-color:  #f85959;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+  background: dodgerblue;
+  color: white;
+  border-radius: 4px;
+  padding: 3px;
+  font-size: 12px;
+}
+
+.verified_block {
+  background: green;
+  color: white;
+  border-radius: 4px;
+  padding: 3px;
+  font-size: 12px;
 }
 
 .autocomplete {
