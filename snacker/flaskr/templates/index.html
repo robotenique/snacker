@@ -43,13 +43,13 @@
           <p>Or browse by categories</p>
           <p class="browse d-md-flex">
             	<span class="d-flex justify-content-md-center align-items-md-center">
-                    <a href="/find_snacks/category=Cookies"><i class="flaticon-fork"></i>Cookies</a></span>
+                    <a href="/find_snacks/category=Cookies">Cookies</a></span>
             <span class="d-flex justify-content-md-center align-items-md-center">
-                    <a href="/find_snacks/category=Chips"><i class="flaticon-hotel"></i>Chips</a></span>
+                    <a href="/find_snacks/category=Chips">Chips</a></span>
             <span class="d-flex justify-content-md-center align-items-md-center">
-                    <a href="/find_snacks/category=Chocolate"><i class="flaticon-meeting-point"></i>Chocolate</a></span>
+                    <a href="/find_snacks/category=Chocolate">Chocolate</a></span>
             <span class="d-flex justify-content-md-center align-items-md-center">
-                    <a href="/find_snacks/category=Candies"><i class="flaticon-shopping-bag"></i>Candies</a></span>
+                    <a href="/find_snacks/category=Candies">Candies</a></span>
           </p>
         </div>
       </div>
@@ -123,17 +123,15 @@
                 {% for snack in featured_snacks %}
                   <div class="item">
                     <div class="destination">
-                      <!-- TODO: We should a link to the appropriate snack image.
-                         Search the snack on-click when the searching feature is implemented -->
-                      <a href="#" class="img d-flex justify-content-center align-items-center"
+                      <a href="/find_snacks/snack_name={{ snack.snack_name }}"
+                         class="img d-flex justify-content-center align-items-center"
                          style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
                         <div class="icon d-flex justify-content-center align-items-center">
                           <span class="icon-search2"></span>
                         </div>
                       </a>
-                      <!-- TODO: Add the reference to the snack page -->
-                      <div class="text p-3">
-                        <h3><a href="#">{{ snack.snack_name }}</a></h3>
+                      <div class="text">
+                        <h3><a href="/find_snacks/snack_name={{ snack.snack_name }}">{{ snack.snack_name }}</a></h3>
                         <p class="rate">
                           <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
                           {% for n in range(5) %}
@@ -145,7 +143,7 @@
                               <i class="icon-star-o"></i>
                             {% endif %}
                           {% endfor %}
-                          <span>({{ snack.review_count }})</span>
+                          <span style="color: black;">({{ snack.review_count }})</span>
                         </p>
                       </div>
                     </div>

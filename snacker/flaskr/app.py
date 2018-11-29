@@ -400,9 +400,7 @@ def verify_snack():
             company_user_object = CompanyUser.objects(id=current_user.id)
             snack = "snack_id=" + str(snack_id)
 
-            print(snack_id)
-
-            if company_user_object[0].company_name == snack_object[0].snack_company_name:
+            if snack_object[0].snack_brand in company_user_object[0].company_snackbrands:
                 try:
                     snack_object.update(set__is_verified=True)
                     print("ayyyyy")
@@ -440,6 +438,7 @@ def create_snack(selected_brand):
         selected_brand = ""
         if len(parts) == 2:
             selected_brand = parts[1]
+
         print(selected_brand)
 
         if request.method == "POST":
@@ -616,13 +615,13 @@ def find_reviews_for_snack(filters):
     Results currently ordered by descending overall rating
     /snack_reviews/snack_id=abc+overall_rating=3...
     """
-    print(f"FILTER IN FIND_REVIEWS{filters}\n", file=sys.stdout)
+    print(f"FILTER IN FIND_REVIEWS {filters}\n", file=sys.stdout)
     all_filters = filters.split("+")
     print(f"{all_filters}\n", file=sys.stdout)
     queryset = Review.objects
     snack_query = None
     reviewed = False
-    verified = False
+
     # all reviews will be returned if nothing specified
     if "=" in filters:
         for individual_filter in all_filters:
@@ -634,8 +633,6 @@ def find_reviews_for_snack(filters):
             elif query_index == "snack_id":
                 queryset = queryset.filter(snack_id=query_value)
                 snack_query = Snack.objects(id=query_value)
-                if Snack.objects(id=query_value)[0].is_verified:
-                    verified = True
             elif query_index == "overall_rating":
                 queryset = queryset.filter(overall_rating__gte=query_value)
             elif query_index == "geolocation":
@@ -656,6 +653,7 @@ def find_reviews_for_snack(filters):
     review_form = CreateReviewForm(request.form)
 
     if current_user.is_authenticated:
+        print(len(queryset.filter(user_id=current_user.id)))
         if len(queryset.filter(user_id=current_user.id)):
             reviewed = True
 
@@ -667,7 +665,6 @@ def find_reviews_for_snack(filters):
                     "query": snack_query,
                     "reviews": queryset,
                     "reviewed": reviewed,
-                    "verified": verified,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
 
