@@ -107,9 +107,9 @@
               {% endif %}
             </div>
             <div>
-              <a href="#" title="remove from wishlist" style="float:left;">
-              <button onclick="change_to_fav_wishlist('{{ snack.id }}')" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
-                    <i class="icon-trash" style="color: #f85959;font-size: 1.5em;"></i>
+                <a href="#" title="Unsubscribe from wishlist" style="float:left;">
+                <button onclick="change_to_fav_wishlist('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                    <i class="icon-heart nav-link" style="font-size: 1.5em; color:#f85959"></i>
                 </button>
               </a>
             </div>
