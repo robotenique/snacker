@@ -674,7 +674,10 @@ def find_reviews_for_snack(filters):
             reviewed = True
     # Get best and worst reviews!
     queryset_list = list(queryset)
-    queryset_list = queryset_list[:int(1 + num_reviews_to_display/2)] + queryset_list[::-1][:int(1 + num_reviews_to_display/2)]
+    if len(queryset_list) >= 2*int(1 + num_reviews_to_display/2): # If we have enough reviews, divide
+        queryset_list = queryset_list[:int(1 + num_reviews_to_display/2)] + queryset_list[::-1][:int(1 + num_reviews_to_display/2)]
+    else: # Just get whatever we can from the best
+        queryset_list = queryset_list[:num_reviews_to_display]
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
