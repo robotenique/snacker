@@ -26,14 +26,9 @@
                   <div class="icon"><span class="ion-ios-arrow-down"></span></div>
                   <select name="" id="index_search_location" class="form-control" placeholder="Keyword search">
                     <option value="all">Where</option>
-                    <option value="Argentina">Argentina</option>
-                    <option value="Austria">Austria</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Brazil">Brazil</option>
-                    <option value="USA">USA</option>
-                    <option value="Canada">Canada</option>
-                    <option value="UK">UK</option>
-                    <option value="Mexico">Mexico</option>
+                    {% for country in all_countries %}
+                    <option value={{ country }}>{{ country }}</option>
+                    {% endfor %}
                   </select>
                 </div>
               </div>
@@ -107,6 +102,59 @@
     </div>
   </section>
 
+  {% block recommended_snacks %}
+    {% if current_user.is_authenticated and recommended_snacks and not current_user.company_name %}
+      <section class="ftco-section ftco-destination">
+        <div class="container">
+          <div class="row justify-content-start mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate">
+              <span class="subheading">Recommended Snacks</span>
+              {% if not notification_messages %}
+              <h2 class="mb-4"><strong>Recommended</strong> snacks for you, {{ current_user.first_name }}</h2>
+              {% else %}
+              <h2 class="mb-4"> Sorry {{ current_user.first_name }}, {{ notification_messages[0] }}</h2>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="destination-slider owl-carousel ftco-animate">
+                {% for snack in recommended_snacks %}
+                  <div class="item">
+                    <div class="destination">
+                      <a href="/snack_reviews/snack_id={{snack.id}}" class="img d-flex justify-content-center align-items-center"
+                         style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
+                        <div class="icon d-flex justify-content-center align-items-center">
+                          <span class="icon-search2"></span>
+                        </div>
+                      </a>
+                      <div class="text p-3">
+                        <h3><a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name }}</a></h3>
+                        <p class="rate">
+                          <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
+                          {% for n in range(5) %}
+                            {% if n+1 <= snack.avg_overall_rating %}
+                              <i class="icon-star"></i>
+                            {% elif n+0.5 <= snack.avg_overall_rating %}
+                              <i class="icon-star-half-empty"></i>
+                            {% else %}
+                              <i class="icon-star-o"></i>
+                            {% endif %}
+                          {% endfor %}
+                          <span>({{ snack.review_count }})</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endblock %}
+
   {% block featured_snacks %}
     {% if featured_snacks %}
       <section class="ftco-section ftco-destination">
@@ -114,7 +162,7 @@
           <div class="row justify-content-start mb-5 pb-3">
             <div class="col-md-7 heading-section ftco-animate">
               <span class="subheading">Featured</span>
-              <h2 class="mb-4"><strong>Featured</strong> Snacks</h2>
+              <h2 class="mb-4"><strong>Featured</strong> Snacks - Top rated snacks</h2>
             </div>
           </div>
           <div class="row">
@@ -123,15 +171,14 @@
                 {% for snack in featured_snacks %}
                   <div class="item">
                     <div class="destination">
-                      <a href="/find_snacks/snack_name={{ snack.snack_name }}"
-                         class="img d-flex justify-content-center align-items-center"
+                      <a href="/snack_reviews/snack_id={{snack.id}}" class="img d-flex justify-content-center align-items-center"
                          style="background-image: url({{ url_for('serve_img', snack_id=snack.id) }}">
                         <div class="icon d-flex justify-content-center align-items-center">
                           <span class="icon-search2"></span>
                         </div>
                       </a>
-                      <div class="text">
-                        <h3><a href="/find_snacks/snack_name={{ snack.snack_name }}">{{ snack.snack_name }}</a></h3>
+                      <div class="text p-3">
+                        <h3><a href="/snack_reviews/snack_id={{snack.id}}">{{ snack.snack_name }}</a></h3>
                         <p class="rate">
                           <span style="color:orange; font-size:130%;">{{ snack.avg_overall_rating }}</span>
                           {% for n in range(5) %}

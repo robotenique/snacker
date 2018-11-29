@@ -2,7 +2,7 @@
 {% block title_block %}Snacker{% endblock %}
 
 {% block reviews %}
-{% for review in reviews %}
+{% for review in reviews[:num_reviews_to_display] %}
   <div class="review">
     <div class="review-user">
       <span>User: {{ review.user_id }}</span>
@@ -18,9 +18,11 @@
         {% endif %}
       {% endfor %}
     </div>
+    {% if review.description %}
     <div class="review-description">
       <p>{{ review.description }}</p>
     </div>
+    {% endif %}
   </div>
   <hr>
 {% endfor %}

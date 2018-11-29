@@ -3,21 +3,47 @@ CSC301, Fall 2018, team project.
 
 [Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
 
-# Setup (Backend)
+# Setup
 
 We are using Python with the Flask framework, and the PyCharm IDE.
-
 Links:
 
 Flask: http://flask.pocoo.org/
 
 Pycharm IDE: https://www.jetbrains.com/pycharm/ (Download community version)
 
-Install Required libraries:
+1. **Install Required libraries**
+
+OBS: Some libraries are related to the recommender system ML training, you can skip those if you don't want to train the model by yourself.
+You can always check the **requirements.txt** for all the libraries.
 
 ```bash
-$ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Table flask_login pycountry numpy scipy
+$ pip install Flask flask-bcrypt dnspython mongoengine Flask-WTF Pillow Flask-Table flask_login pycountry numpy matplotlib
 ```
+
+2. **Create database access files**
+
+In the folder ```snacker/flaskr``` create two files: ```username.txt``` and ```password.txt```. Inside them, put the names of any member of this team (first name), for example, in BOTH files, write just "Juliano" (without quotes, and notice the capitalized letter).
+OBS: If you want to test with a local database, we have a dump of the database which can be downloaded [here](https://drive.google.com/open?id=145Mzq3XrnMTMX1boBqd2Hqk7bqvRDT1V). You need to use *mongorestore* with the *--dir* flag to restore it.
+
+3. **Download the Machine Learning Recommender model**
+
+You could train the model yourself by using ```snacker/flaskr/recommender_training.py```, but the best approach is to download the model file, which is hosted [here](https://drive.google.com/file/d/1lkAtTsvf7FWqAManP8KsZkWrq0bHYlt6/view?usp=sharing). Download the file, and put it in the folder ```snacker/flaskr```. This model is loaded by the file ```snacker/flaskr/recommender_recommend.py```, so make sure you downloaded and the filename is correct (should be **recc_model.pickle**).
+
+4. **Login information**
+
+For testing purposes, we have added ~5000 users to the application. Here are some users you can log in. Some users are made to be as though they are accessing the application from a specific country. If country not specified, it will use the current country the user last logged in.
+
+**Normal users**
+
+* email: otto.joki@example.com , password: 123456   (Likes spicy and sweet, user is accessing from China)
+* email: inmaculada.perez@example.com , password: 123456 (Likes salty and spicy, user is accessing from Mexico)
+* email: gertrudes.silva@example.com, password: 123456 (Likes sweet and salty, user is accessing from Brazil)
+* email: juliano@example.com , password: 123456
+
+**Company users**
+* email: Test2@Test2.com , password: Test2
+
 
 ### Run the application
 

@@ -16,6 +16,7 @@ from werkzeug import secure_filename
 from forms import RegistrationForm, LoginForm, CreateReviewForm, CreateSnackForm, CompanyAddBrandForm, \
     CompanySearchBrandForm, UpdateUserForm, UpdatePasswordForm, CreateBrandForm
 from schema import Snack, Review, CompanyUser, User, MetricReview, SnackImage
+from recommender_recommend import Recommender
 
 app = Flask(__name__)
 
@@ -30,11 +31,12 @@ APP_NAME = "Snacker"
 UPLOAD_FOLDER = "./static/images/"
 ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
+
 try:
     username = open(USERNAME_FILE, 'r').read().strip().replace("\n", "")
     pw = urllib.parse.quote(open(PASSWORD_FILE, 'r').read().strip().replace("\n", ""))
     mongo_uri = f"mongodb+srv://Jayde:Jayde@csc301-v3uno.mongodb.net/test?retryWrites=true"
-    # mongo_uri = "mongodb://localhost:27017/"
+    #mongo_uri = "mongodb://localhost:27017/"
     app.config["MONGO_URI"] = mongo_uri
     mongo = connect(host=mongo_uri)
     # This is necessary for user tracking
@@ -42,7 +44,8 @@ try:
 except Exception as inst:
     raise Exception("Error in database connection:", inst)
 
-# TODO: Need to change this to an env variable later
+# If we were running this in a production environment
+# these would be acessed through environment variables
 app.config["SECRET_KEY"] = "2a0ca44c88db3d509085f32f2d4ed2e6"
 app.config['DEBUG'] = True
 login_manager = LoginManager()
@@ -50,6 +53,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
 app.url_map.strict_slashes = False
+recommender = Recommender()
 
 
 @app.route('/render-img/<string:snack_id>')
@@ -68,31 +72,35 @@ def serve_img(snack_id):
     return resp
 
 
-@app.route("/topkek")
-@login_required
-def topkek():
-    print(current_user.id)
-    print(User.objects(pk=current_user.id).first());
-    return "Topkek"
-
-
 @app.route("/")
 @app.route("/index")
 def index():
-    if current_user.is_authenticated:
-        print("ok")
-    max_show = 5  # Maximum of snacks to show
+    max_show = 12  # Maximum of snacks to show
     snacks = Snack.objects
     top_snacks = snacks.order_by("-avg_overall_rating")
     featured_snacks = []
+    recommended_snacks = []
+    notification_messages = [] # Some useful messages can be registered here
     # Getting snacks that have some image to display
     for snack in top_snacks:
         if snack.photo_files:
             featured_snacks.append(snack)
             if len(featured_snacks) == max_show:
                 break
-    # TODO: Recommend snacks tailored to user
-    # featured_snacks = top_snacks
+    # Recommends tailored snacks to the user (if logged in)
+    if current_user.is_authenticated:
+        country = ""
+        try:
+            country = current_user.last_country
+        except:
+            print("No last country")
+        country = country if country else "Canada" # Default is canada, if not found
+        # Some special user cases for demonstration purposes
+        country = "China" if current_user.email == "otto.joki@example.com" else country
+        country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
+        country = "Brazil" if current_user.email == "gertrudes.silva@example.com" else country
+        recommended_snacks = recommender.recommend_snacks(current_user, Review.objects(user_id=current_user.id),
+                                                          country, num_snacks=12, msgs=notification_messages)
 
     # Use JS Queries later
     # Needs to be a divisor of 12
@@ -103,15 +111,20 @@ def index():
 
     snack_names = sorted(list(set(snacks.all().values_list('snack_name'))))
     snack_brands = sorted(list(set(snacks.all().values_list('snack_brand'))))
-
+    all_countries = generate_unique_countries()
+    # This is a rare case if the db has NO countries at all, then we just add 'Canada'
+    all_countries = ["Canada"] if not all_countries else all_countries
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
-                    "top_snacks": snacks.order_by("-avg_overall_rating")[:5],
-                    "popular_snacks": snacks.order_by("-review_count")[:5],
+                    "recommended_snacks": recommended_snacks,
+                    "notification_messages": notification_messages,
+                    "top_snacks": snacks.order_by("-avg_overall_rating")[:12],
+                    "popular_snacks": snacks.order_by("-review_count")[:12],
                     "interesting_facts": interesting_facts,
                     "user": current_user,
                     "snack_names": snack_names,
-                    "snack_brands": snack_brands}
+                    "snack_brands": snack_brands,
+                    "all_countries": all_countries}
     return render_template('index.html', **context_dict)
 
 
@@ -424,7 +437,6 @@ def verify_snack():
 
 
 # Tested
-# TODO: Need to still add image element
 @app.route("/create-snack/<string:selected_brand>", methods=["GET", "POST"])
 @login_required
 def create_snack(selected_brand):
@@ -474,6 +486,9 @@ def create_snack(selected_brand):
             except Exception as e:
                 raise Exception(
                     f"Error {e}. \n Couldn't add a new snack,\n with following creation form: {create_snack_form}")
+            # Make the server generate a new countries list when a new snack is added (it will be generated when a user acces index)
+            if request.form['available_at_locations'] not in COUNTRIES_LIST:
+                ALREADY_GENERATED = False
             print(f"A new snack submitted the creation form: {snack_brand} => {snack_name}", file=sys.stdout)
 
             response = make_response(json.dumps(snack))
@@ -647,6 +662,7 @@ def find_reviews_for_snack(filters):
                 queryset = queryset.filter(sweetness__gte=query_value)
             elif query_index == "saltiness":
                 queryset = queryset.filter(saltiness__gte=query_value)
+    num_reviews_to_display = 15 # Display a maximum 'num_reviews_to_display'
     queryset = queryset.order_by("-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
@@ -656,14 +672,23 @@ def find_reviews_for_snack(filters):
         print(len(queryset.filter(user_id=current_user.id)))
         if len(queryset.filter(user_id=current_user.id)):
             reviewed = True
-
+    # Get best and worst reviews!
+    queryset_list = list(queryset)
+    if len(queryset_list) >= 2*int(1 + num_reviews_to_display/2): # If we have enough reviews, divide
+        queryset_list = queryset_list[:int(1 + num_reviews_to_display/2)] + queryset_list[::-1][:int(1 + num_reviews_to_display/2)]
+    else: # Just get whatever we can from the best
+        queryset_list = queryset_list[:num_reviews_to_display]
     # Return results in a table, the metrics such as sourness are not displayed because if they are null, they give
     #   the current simple front end table an error, but it is there for use
 
+    #remove duplicates
+    queryset_list = list(set(queryset_list))
+    
     context_dict = {"title": "Delicious Snack",
                     "form": review_form,
                     "query": snack_query,
-                    "reviews": queryset,
+                    "num_reviews_to_display": num_reviews_to_display,
+                    "reviews": queryset_list,
                     "reviewed": reviewed,
                     "user": current_user}
     return render_template('reviews_for_snack.html', **context_dict)
@@ -769,6 +794,23 @@ def find_wishlist():
                     "query": result,
                     "user": current_user}
     return render_template('my_list.html', **context_dict)
+
+
+# We don't want to query the database EVERYTIME a user access /index
+# only when there's a change in the snacks database!
+ALREADY_GENERATED = False
+COUNTRIES_LIST = []
+def generate_unique_countries():
+    global ALREADY_GENERATED, COUNTRIES_LIST
+    if not ALREADY_GENERATED:
+        ALREADY_GENERATED = True
+        # Get list of all countries currently available
+        all_countries = []
+        for s in Snack.objects:
+            all_countries += s.available_at_locations
+        # Get unique values, remove the 'Nothing Selected' option
+        COUNTRIES_LIST = sorted(list(set(all_countries) - set(["Nothing Selected"])))
+    return COUNTRIES_LIST
 
 
 if __name__ == '__main__':
