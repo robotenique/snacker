@@ -122,14 +122,25 @@
               <p>{{ snack.description|truncate(320) }}</p>
               {% endif %}
             </div>
-
-            <div>
-              <a href="#" title="Header" style="float:left;">
-                <button onclick="add_to_fav('{{ snack.id }}')" style="border-radius: 80%;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
-                    <i class="icon-heart nav-link" style="color: #f85959;font-size: 1.5em;"></i>
-                </button>
-              </a>
-            </div>
+            {% if current_user.is_authenticated %}
+            {% if snack.id|string in current_user.wish_list %}
+                <div>
+                    <a href="#" id="{{ snack.id }}" title="Unsubscribe from wishlist" style="float:left;">
+                    <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                        <i class="icon-heart nav-link" style="font-size: 1.5em; color:#f85959"></i>
+                    </button>
+                    </a>
+                </div>
+            {% else %}
+                <div>
+                    <a href="#" id="{{ snack.id }}" title="Subscribe to wishlist" style="float:left;">
+                    <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                        <i class="icon-heart nav-link heart-shadow" style="font-size: 1.5em; color:#FFFFFF; text-shadow: 0px 0px 4px #f85959 !important"></i>
+                    </button>
+                    </a>
+                </div>
+            {% endif %}
+            {% endif %}
 
           </div>
           <hr>
@@ -238,6 +249,26 @@
                   <p>{{ snack.description|truncate(320) }}</p>
                   {% endif %}
                 </div>
+                {% if current_user.is_authenticated %}
+                {% if snack.id|string in current_user.wish_list %}
+                <div>
+                    <a href="#" id="{{ snack.id }}" title="Unsubscribe from wishlist" style="float:left;">
+                    <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                        <i class="icon-heart nav-link" style="font-size: 1.5em; color:#f85959"></i>
+                    </button>
+                    </a>
+                </div>
+                {% else %}
+                <div>
+                    <a href="#" id="{{ snack.id }}" title="Subscribe to wishlist" style="float:left;">
+                    <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
+                        <i class="icon-heart nav-link heart-shadow" style="font-size: 1.5em; color:#FFFFFF; text-shadow: 0px 0px 4px #f85959 !important"></i>
+                    </button>
+                    </a>
+                </div>
+                {% endif %}
+                {% endif %}
+
               </div>
             {% endfor %}
         {% endif %}
