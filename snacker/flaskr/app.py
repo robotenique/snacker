@@ -80,6 +80,7 @@ def index():
     top_snacks = snacks.order_by("-avg_overall_rating")
     featured_snacks = []
     recommended_snacks = []
+    notification_messages = [] # Some useful messages can be registered here
     # Getting snacks that have some image to display
     for snack in top_snacks:
         if snack.photo_files:
@@ -99,7 +100,7 @@ def index():
         country = "Mexico" if current_user.email == "inmaculada.perez@example.com" else country
         country = "Brazil" if current_user.email == "gertrudes.silva@example.com" else country
         recommended_snacks = recommender.recommend_snacks(current_user, Review.objects(user_id=current_user.id),
-                                                          country, num_snacks=12)
+                                                          country, num_snacks=12, msgs=notification_messages)
 
     # Use JS Queries later
     # Needs to be a divisor of 12
@@ -116,6 +117,7 @@ def index():
     context_dict = {"title": "Index",
                     "featured_snacks": featured_snacks,
                     "recommended_snacks": recommended_snacks,
+                    "notification_messages": notification_messages,
                     "top_snacks": snacks.order_by("-avg_overall_rating")[:12],
                     "popular_snacks": snacks.order_by("-review_count")[:12],
                     "interesting_facts": interesting_facts,

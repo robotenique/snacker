@@ -103,13 +103,17 @@
   </section>
 
   {% block recommended_snacks %}
-    {% if current_user.is_authenticated and recommended_snacks %}
+    {% if current_user.is_authenticated and recommended_snacks and not current_user.company_name %}
       <section class="ftco-section ftco-destination">
         <div class="container">
           <div class="row justify-content-start mb-5 pb-3">
             <div class="col-md-7 heading-section ftco-animate">
               <span class="subheading">Recommended Snacks</span>
+              {% if not notification_messages %}
               <h2 class="mb-4"><strong>Recommended</strong> snacks for you, {{ current_user.first_name }}</h2>
+              {% else %}
+              <h2 class="mb-4"> Sorry {{ current_user.first_name }}, {{ notification_messages[0] }}</h2>
+              {% endif %}
             </div>
           </div>
           <div class="row">

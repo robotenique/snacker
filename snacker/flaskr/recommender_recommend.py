@@ -11,7 +11,7 @@ class Recommender(object):
         self.model_filename = model_filename
         self.update_model()
 
-    def recommend_snacks(self, user, review_from_user, country, num_snacks=10):
+    def recommend_snacks(self, user, review_from_user, country, num_snacks=10, msgs=list()):
         """recommend_snacks
 
         Keyword Arguments:
@@ -80,6 +80,10 @@ class Recommender(object):
 
             return calculated_recommendation
         else:
+            if not user_is_trained or not snacks_are_trained:
+                msgs.append("your recommendations aren't ready yet, check these snacks instead!")
+            elif not user_review_at_least_10:
+                msgs.append(f"your need to review at least {10 - len(review_from_user)} more snacks to get recommendations!")
             # If we have enough snacks from the current country, just return best snacks from current country
             if len(snacks_in_current_country) >= num_snacks:
                 return rnd.sample(list(snacks_in_current_country), num_snacks)
