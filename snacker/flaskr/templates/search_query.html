@@ -127,15 +127,15 @@
                 <div>
                     <a href="#" id="{{ snack.id }}" title="Unsubscribe from wishlist" style="float:left;">
                     <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
-                        <i class="icon-trash" style="font-size: 1.5em; color:#f85959"></i>
+                        <i class="icon-heart nav-link" style="font-size: 1.5em; color:#f85959"></i>
                     </button>
                     </a>
                 </div>
-            {% else %}
+                {% else %}
                 <div>
                     <a href="#" id="{{ snack.id }}" title="Subscribe to wishlist" style="float:left;">
                     <button onclick="change_to_fav('{{ snack.id }}'); return false;" style="border: none;" name=current_url class="btn btn-outline-primary" data-toggle="popover" data-trigger="hover" data-content="Some content">
-                        <i class="icon-heart" style="font-size: 1.5em; color:#f85959"></i>
+                        <i class="icon-heart nav-link heart-shadow" style="font-size: 1.5em; color:#FFFFFF; text-shadow: 0px 0px 4px #f85959 !important"></i>
                     </button>
                     </a>
                 </div>

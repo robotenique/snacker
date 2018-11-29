@@ -55,3 +55,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# ML Model
+.pickle
+recc_model.pickle
