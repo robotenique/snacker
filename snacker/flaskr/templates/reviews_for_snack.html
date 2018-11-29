@@ -5,7 +5,7 @@
 {% for review in reviews[:num_reviews_to_display] %}
   <div class="review">
     <div class="review-user">
-      <span>User: {{ review.user_id }}</span>
+      <span>User: {{ usernames[review.user_id] }}</span>
     </div>
     <div class="review-overall-rating">
       {% for n in range(5) %}
