@@ -199,11 +199,11 @@ function change_to_fav(snack_id) {
             if (String(result) == "subscribed") {
                 document.getElementById(snack_id).title = "Unsubscribe from wishlist";
                 document.getElementById(snack_id).getElementsByTagName("i")[0].style.color = "#f85959";
-                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = "0px 0px 4px #f85959";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = null;
             } else {
                 document.getElementById(snack_id).title = "Subscribe to wishlist";
-                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = null;
                 document.getElementById(snack_id).getElementsByTagName("i")[0].style.color = "#FFFFFF";
+                document.getElementById(snack_id).getElementsByTagName("i")[0].style.textShadow = "0px 0px 4px #f85959";
             }
         },
         error: function (result) {
