@@ -337,7 +337,3 @@ function removeActive(x) {
       x[i].classList.remove("autocomplete-active");
   }
 }
-
-function toString(objectID) {
-    return objectID.toString();
-}
