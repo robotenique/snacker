@@ -24,9 +24,8 @@
               {% if snack.is_verified%}
                 <span class="verified_block">
                     Verified</span>
-              {% elif current_user.is_authenticated and snack.snack_brand in current_user.company_snackbrands
-                and not snack.is_verified %}
-                <button onclick="verify_snack('{{ query.first().id }}'); return false;" class="verify-button">
+              {% elif current_user.is_authenticated and (snack.snack_brand in current_user.company_snackbrands)%}
+                <button onclick="verify_snack('{{ snack.id }}'); return false;" class="verify-button">
                     Verify Snack
                 </button>
               {% endif %}

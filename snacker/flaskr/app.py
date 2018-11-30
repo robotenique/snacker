@@ -411,6 +411,7 @@ def verify_snack():
             snack = "snack_id=" + str(snack_id)
 
             if snack_object[0].snack_brand in company_user_object[0].company_snackbrands:
+                print(f"ddd Jay\n", file=sys.stdout)
                 try:
                     snack_object.update(set__is_verified=True)
                     print("ayyyyy")
@@ -419,7 +420,10 @@ def verify_snack():
                     raise Exception(
                         f"Error {e}. \n Couldn't verify {snack_id}")
                 print(f"The company user verified this snack: {snack_id}", file=sys.stdout)
-                return redirect(url_for('find_reviews_for_snack', filters=snack))
+                response = make_response(json.dumps(snack_id))
+                response.status_code = 200
+                print(f"{response}\n", file=sys.stdout)
+                return response
             else:
                 print(f"User is not the snack's company: {current_user.id}", file=sys.stdout)
                 # we want to give the user an error message
