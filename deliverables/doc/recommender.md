@@ -1,4 +1,4 @@
-Recommender System dev - Snacker
+Recommender System documentation - Snacker
 ========================
 Do experiments in the file recommender_training.py.
 It's recommended to use a **local** database for experiments! For that, make sure you've downloaded mongodb,
@@ -67,31 +67,32 @@ This is the basic procedure done by **recommender_training.py**:
 
 * 5000 Users, no demographic division. Users were generated using [RandomUser API](https://randomuser.me)
 * Approx. 2200 Snacks from all over the world
-* Total = 2mi of possible reviews. Our database have: ~408 000 (.2 times of the data) => ~82 review per user;
+* Total = 10 milions of possible reviews. Our database have: ~400 000 reviews => ~82 review per user;
 * All (mocked) users have the same password: 123456
 * The user group is saved at ```snacker/flaskr/snacks/users_snack_profiles.json```
-* The base profiles are: salty, spicy, sour, sweet, bitter. Then I put three more: mix(spicy, sweet), mix(sweet, sour), mix(salty, sour)
+* The base profiles are: salty, spicy, sour, sweet, bitter. Then we have three more: mix(spicy, sweet), mix(sweet, sour), mix(salty, sour)
 * For the base class, the user will rate 60 snacks of that category (salty, sweet, etc) with rating from 4 to 5. Then, choose random snacks from all the snacks, and give them ratings following a more uniform normal distribution for the 22 snacks left to review.
 * For the mixed classes, first there is 1/2 chance of choosing each category, and the user will rate 50 randomly choosen snacks which belongs to one of those categories. Then,it will choose snacks from the 'remaining_snacks' category, and give them ratings from 0 to 4 following a normal distribution.
-* Users are not completely biased, most of them like chips and potatoes, for example.
-* Distribution of classes are like this:
+* Users are not completely biased, most of them like chips and potatoes, for example. We don't want to create a skewed dataset, to reduce the selection bias. For example, we could create a dataset where users from the class 'sweet' only likes sweet snacks and hates all others, and in the demo the results would be more *clear*. But that's very unrealistic, most users like a variety of snacks!
 
-The division of the user profiles will be like this:
-* 14% - Salty
+The division of the user profiles are:
+* 14% - Salty (i.e. 14% of our user base will be from the 'Salty' class)
 * 14% - Spicy
 * 14% - Sour
 * 14% - Sweet
 * 14% - Bitter
-* 10% - mix(spicy, sweet) + remaining_snacks
+* 10% - mix(spicy, sweet) + remaining_snacks*
 * 10% - mix(sweet, sour) + remaining_snacks
 * 10% - mix(salty, sour) + remaining_snacks
 
+*Remaining snacks are snacks which don't fit in any of the base classes
+
 Examples of users from each category:
--> Likes spicy and sweet: otto.joki@example.com (China)
--> Likes Salty and spicy: inmaculada.perez@example.com (Mexico)
+* Likes spicy and sweet: otto.joki@example.com (China)
+* Likes Salty and spicy: inmaculada.perez@example.com (Mexico)
 
 
-Each user profile rated the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those.
+Each user profile rated the metrics following a collection of normal distributions. These are the normal distributions patterns for each basic profile. The mixed classes will combine two of those. Below, we have, for each profile of users, a graph with the distributions that they rated each snacks from their category.
 
 ![salty-profile](../resources/d3/salty_profile.png)
 ![spicy-profile](../resources/d3/spicy_profile.png)
@@ -108,8 +109,3 @@ Below is the learning curve of the model. The mean squared error displayed is in
 Download ML model: https://drive.google.com/file/d/1lkAtTsvf7FWqAManP8KsZkWrq0bHYlt6/view?usp=sharing
 
 
-IMPORTANT: Procedures when adding information to the production database
-===
-
-TODO's:
---> Maybe change user id in the reviews to be user first_name (or last name)
