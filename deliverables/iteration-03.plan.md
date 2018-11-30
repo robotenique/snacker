@@ -7,16 +7,7 @@
 
 ## Process
 
-(Optional:) Quick introduction
-
 #### Changes from previous iteration
-
-List the most significant changes you made to your process (if any).
-
- * At most 3 items
- * Start with the most significant change
- * For each change, explain why you are making it and what you are hoping to achieve from it
- * Ideally, for each change, you will define a clear success metric (i.e. something you can measure at the end of the iteration to determine whether the change you made was successful)
 
  * We should start assigning deadlines to tasks on trello and members who decide to take on a task needs to finish it by the task’s deadline. This is to avoid the problem we have experienced with the current deliverable where lots of work is being done in the last week. This is especially important for cases where one task has to be done before another important task can be done. And it is especially important for deliverable 3 since we must finish everything by the due date and can’t afford to push unfinished stuff onward.
  * We should also consistently hold weekly progress review meeting every Sat night to make sure the tasks can be done in time and if a member can’t finish their chosen part in time, the rest of team can offer help during the weekend and resolve the issue early. The current plan is every member report by 6pm on Sat on their progress and whether or not they need help to finish their task in time, this is also an opportunity to ask for help if any member gets stuck on something.
@@ -53,27 +44,12 @@ Weekly Sat Night Progress Report Meeting
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to organize your team.       
-
- * Artifacts can be to-do lists, task boards, schedule(s), etc.
- * We want to understand:
-   * How do you keep track of what needs to get done?
-   * How do you prioritize tasks?
-   * How do tasks get assigned to team members?
 * The most important artifact is our [Trello Board](https://trello.com/b/78v6AhWR/csc301-project). This artifact is where we: Keep track of tasks we need to do, keep track of the priority and scope of the task (backend, frontend, documentation, etc.) and will also serve as the schedule (by giving each task a deadline). The assignment of the task depends on the initiative of the team member, he assigns a task to him/herself on the trello board when available;
 
 * Another important artifact for this iteration will be a documentation of the recommendation system, which will be written in our repo [here]((https://github.com/csc301-fall-2018/project-team-16/blob/master/deliverables/doc/recommender.md). This is an important artifact because the recommendation system is not as straightforward to understand as the usual backend/frontend tasks, just by looking at the code; In data science, the code not always can be self explanatory (or not enough), so the process and the model of how it was built needs to be documented.
 
 
 #### Git / GitHub workflow
-
-Describe your Git / GitHub workflow.     
-Essentially, we want to understand how your team members share a codebase and avoid conflicts.
-
- * Be concise, yet precise.      
-For example, "we use pull-requests" is not a precise statement since it leaves too many open questions - Pull-requests from where to where? Who reviews the pull-requests? Who is responsible for merging them? etc.
- * If applicable, specify any naming conventions or standards you decide to adopt.
- * Don't forget to **explain why** you chose this workflow.
 
 Each member should open their own branch off master when working on their tasks and they should issue pull requests back to master when they finish their work. Any member of the team can review pull request and everyone should contribute by reviewing pull requests. Several reviewers’ opinions are needed before a pull request can be merged to master.
 We avoid most conflicts by using the updated code in the branches. That is, a branch shouldn’t be opened for a long time, because the code of the master could change a lot, and this would lead to unnecessary conflicts when a pull-request is made for the current branch.
@@ -101,10 +77,4 @@ The account page needs to be finished by 24th (Sat) since wishlist and other fea
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
-
- * Artifacts can be text, code, images, videos, interactive mockups and/or any other useful artifact you can think of.
- * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
- * Be concise, yet precise.         
-   For example: "Build the website" is not precise at all, but "Build a static home page and upload it somewhere, so that it is publicly accessible" is much clearer.
 We will present our website that would be locally run on a group member’s laptop. Along with the live demo, we will have a powerpoint presentation with slides for the technical discussion and process distribution. We will showcase the tech stack we used through images or text. We will include code snippets to show the style we implemented and the quality of our code. To show off our process distribution, we present our trello board that has the tasks and which stage each task is in. 

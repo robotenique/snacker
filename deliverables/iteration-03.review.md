@@ -21,15 +21,6 @@
 
 #### Decisions that turned out well
 
-List process-related (i.e. team organization) decisions that, in retrospect, turned out to be successful.
-
-
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Explain why (i.e. give a supporting argument) you consider a decision to be successful.
- * Feel free to refer/link to process artifact(s).
-
-
 * Assigning deadlines to tasks on Trello, so that members who decide to take on a task need to finish it by the task’s deadline. Apart from a few small slips, we did it pretty well and almost everybody who decided to pick the ticket with the deadline actually met the deadline. This was very important because last iteration we had some problems in doing tasks that weren’t done in time (only by the last minute). Our Trello board can be accessed [here](https://trello.com/b/78v6AhWR/csc301-project)
 
 * Getting more people to do pull request reviews. This allowed us to avoid having many bugs on master and also enabled us to improve the code quality that is on the master branch. Moreover, many of the members benefited from having other members suggest improvements in their code, as it allowed us to learn different syntax and code writing styles, that other people use.
@@ -39,25 +30,12 @@ List process-related (i.e. team organization) decisions that, in retrospect, tur
 
 #### Decisions that did not turn out as well as we hoped
 
-List process-related (i.e. team organization) decisions that, in retrospect, were not as successful as you thought they would be.
-
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Feel free to refer/link to process artifact(s).
-
  * We didn’t manage to consistently hold our weekly progress review meetings, however, we kept a good communication on the group chat, which almost eliminated the need for the meeting. We were consistently discussing the issues and implementation during the most intense period of coding.
 
  * Consistent contributions to the project, throughout the entire period of a few weeks. Again, members were making excuses of having exams and other coursework and therefore the majority of work was forced to be done at the end of the “sprint”, which means, we were implementing the code close to the deadline on 30 Nov.
 
 
-
-
 #### Planned changes
-
-List any process-related changes you are planning to make (if there are any)
-
- * Ordered from most to least important.
- * Explain why you are making a change.
 
 Assuming this means what changes we have in mind if there would be a D4. One good change would be having members decide which tasks they are gonna do during every in-person meeting so the tasks for the week can become equally assigned before everyone leaves. This will help with the problem of people avoiding taking enough tasks on their own voluntarily through Trello which results in unequal workload divide among members.
 
@@ -83,7 +61,6 @@ Our Snack recommender system uses a Matrix Factorization algorithm, based on the
 Most of the information we acquired to mock our data regarding snacks, was from a website called [Taquitos](https://www.taquitos.net/). The mocked users were generated with the [Random User API](https://randomuser.me).
 
 
-
 #### Goals and/or tasks that were planned but not met/completed:
 
 
@@ -98,12 +75,7 @@ Competitor/pay-attention watchlist for company users
 
 Going into the next iteration, our main insights are:
 
- * 2 - 4 items
- * Short (no more than one short paragraph per item)
- * High-level concepts that should guide your work for the next iteration.
- * These concepts should help you decide on where to focus your efforts.
- * Can be related to product and/or process.
-
 1. Adding search and query functionality for our reviews.
 2. Making sure we spend more time testing not before the deadline. Testing should be a higher priority.
+3. Having members decide which tasks they are gonna do during every in-person meeting so tasks for the week/sprint can become equally assigned before everyone leaves.
 
