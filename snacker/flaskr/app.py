@@ -664,7 +664,7 @@ def find_reviews_for_snack(filters):
             elif query_index == "saltiness":
                 queryset = queryset.filter(saltiness__gte=query_value)
     num_reviews_to_display = 15 # Display a maximum 'num_reviews_to_display'
-    queryset = queryset.order_by("-overall_rating", "-description")
+    queryset = queryset.order_by("-description", "-overall_rating")
     print(f"snack_reviews: {queryset}", file=sys.stdout)
     print(f"snack_reviews: {snack_query}", file=sys.stdout)
     review_form = CreateReviewForm(request.form)
