@@ -3,6 +3,8 @@ CSC301, Fall 2018, team project.
 
 [Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
 
+[Final demo](https://www.youtube.com/watch?v=ZIszrKrW3gM)
+
 # Setup
 
 We are using Python with the Flask framework, and the PyCharm IDE.
