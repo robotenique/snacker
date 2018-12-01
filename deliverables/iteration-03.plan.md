@@ -48,7 +48,7 @@ Weekly Sat Night Progress Report Meeting
 
 * The most important artifact is our [Trello Board](https://trello.com/b/78v6AhWR/csc301-project). This artifact is where we: Keep track of tasks we need to do, keep track of the priority and scope of the task (backend, frontend, documentation, etc.) and will also serve as the schedule (by giving each task a deadline). The assignment of the task depends on the initiative of the team members, members assign tasks to themselves on the trello board when available;
 
-* Another important artifact for this iteration will be a documentation of the recommendation system, which will be written in our repo [here]((https://github.com/csc301-fall-2018/project-team-16/blob/master/deliverables/doc/recommender.md). This is an important artifact because the recommendation system is not as straightforward to understand as the usual backend/frontend tasks, just by looking at the code; In data science, the code not always can be self explanatory (or not enough), so the process and the model of how it was built needs to be documented.
+* Another important artifact for this iteration will be a documentation of the recommendation system, which will be written in our repo [here](https://github.com/csc301-fall-2018/project-team-16/blob/master/deliverables/doc/recommender.md). This is an important artifact because the recommendation system is not as straightforward to understand as the usual backend/frontend tasks, just by looking at the code; In data science, the code not always can be self explanatory (or not enough), so the process and the model of how it was built needs to be documented.
 
 #### Git / GitHub workflow
 
