@@ -18,7 +18,7 @@ Some roles members take on:
  * Scrum master: Juliano
  * Everyone is a developer
 
-Some responsibilities members take on that can't be demonstrated by code commits:
+Some responsibilities members take on that aren't shown in code commits:
  * Juliano: populated the database with thousands of users, snacks, and reviews
  * Giuliano: verified thousands of snacks in the databse according to whether they had 10 reviews or not
  * Jayde and Harry: demo video script writing and video making
