@@ -73,6 +73,7 @@ Each member should open their own branch off master when working on their tasks 
 14. Search snack real time ajax feedback (27th)
 15. Users able to change their info in their account page (27th)
 16. Polish everything (29th)
+The dates in brackets after each task are the dates by which we plan to finish each task.
 
 #### Artifacts
 
