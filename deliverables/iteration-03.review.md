@@ -9,7 +9,7 @@
 
  * Planning: Again, Trello board was used with success, new tasks were created as issues came up and a large task was broken down into simpler tasks in trello, which made it clear what exactly needed to be implemented. The control flow of “tickets to do”, “in progress”, “testing”, and “done” was very useful and our team was good at updating the board regularly. The work was individually selected based on our specialties and preferred development roles. A majority of people were flexible between backend and frontend which meant tickets did not require a lot of overhead and members were able to complete bigger chunks of work. 
 
- * Development: We met most of our weekly deadlines, however, once again we pushed some tasks that were supposed to be done by the week before to the last week. We had quite a few bugs which were only fixed a day before the deadline. By Nov 17th our first weekly progress meeting, only 2 members out of the 7 reported implementing anything significant.
+ * Development: We met most of our weekly deadlines, however, once again we pushed some tasks that were supposed to be done by the week before to the last week. We had quite a few bugs which were only fixed a day before the deadline. By Nov 17th our first weekly progress meeting, less than half of the memberes implemented anything significant.
 
 * Our GitHub workflow improved significantly - members were reviewing and testing pull requests and contributing with useful comments. When it comes to requests that were changing some significant features or their implementation, we were seeking more members of team to review the pull request, which was also quite successful. There was one time we had a major merge conflict, and the issuer of the pull request solved it by creating a new branch and redoing the feature based off the new master.
 
@@ -25,7 +25,7 @@
 
 #### Decisions that did not turn out as well as we hoped
 
- * We didn’t manage to consistently hold our weekly progress review meetings. In the first online meeting on Nov 17th, during which members should report their progress by 6pm, only 3 people did so. And out of the 3 people, only 2 people did any significant amount of work. However, we kept a good communication on the group chat. We were consistently discussing the issues and implementation during the most intense period of coding.
+ * We didn’t manage to consistently hold our weekly progress review meetings. In the first online meeting on Nov 17th, during which members should report their progress by 6pm, only 3 people did so. And out of the 3 people who reported on Nov 17th, only 2 people did any significant amount of work. However, we kept a good communication on the group chat. We were consistently discussing the issues and implementation during the most intense period of coding.
 
  * Allowing members to voluntarily choose tasks off trello whenever they want to. This results in inconsistent contributions to the project throughout the entire period of a few weeks. Again, some members were making excuses of having exams and other coursework at the start of the sprint and therefore the majority of work was forced to be done at the end of the “sprint”, which means, we were implementing the code close to the deadline on 30 Nov. 
 
