@@ -39,22 +39,22 @@ Assuming this means what changes we have in mind if there would be a D4. One goo
 
 #### Goals and/or tasks that were met/completed:
 
-1. Distinguish between regular and company user in register backend (20th)
-2. Front end regular vs company user register differentiation register (20th)
+1. Distinguish between regular and company user in register backend
+2. Front end regular vs company user register differentiation register
 3. A machine learning based snack recommendation system
-4. Basic account page for company and regular user (20th)
-5. Company users can’t review a snack (20th)
-6. After 10 reviews have been created, a snack becomes automatically verified (20th)
-7. Automatically get user geolocation in the backend (figure out which country the user is from) when create a snack/review (20th)
-8. Company users can add brands to their company (20th)
-9. Company users can create automatically verified snacks belonging to one of their brands (20th)
-10. Company users can see brands and snacks belong to their company from their account page (27th)
-11. Company users can verify existing snacks that belong to one of their brands (27th)
-12. Wishlist for normal users or Competitor/pay-attention watchlist for company users (27th)
-13. Change frontend to give similar snack suggestions and prompt the users to create a snack if the search turns out empty (27th)
-14. Search snack real time ajax feedback (27th)
-15. Users able to change their info in their account page (27th)
-16. Polish everything (29th)
+4. Basic account page for company and regular user
+5. Company users can’t review a snack
+6. After 10 reviews have been created, a snack becomes automatically verified
+7. Automatically get user geolocation in the backend (figure out which country the user is from) when create a snack/review
+8. Company users can add brands to their company
+9. Company users can create automatically verified snacks belonging to one of their brands
+10. Company users can see brands and snacks belong to their company from their account page
+11. Company users can verify existing snacks that belong to one of their brands
+12. Wishlist for normal users or Competitor/pay-attention watchlist for company users
+13. Change frontend to give similar snack suggestions and prompt the users to create a snack if the search turns out empty
+14. Search snack real time ajax feedback
+15. Users able to change their info in their account page
+16. Polish everything
 
 We met all of our goals! 
 
