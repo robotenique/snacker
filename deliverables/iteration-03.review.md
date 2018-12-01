@@ -18,7 +18,7 @@
 
 * Assigning deadlines to tasks on Trello, so that members who decide to take on a task need to finish it by the task’s deadline. Apart from a few small slips, we did it pretty well and almost everybody who decided to pick the ticket with the deadline actually met the deadline. However, this plan backfired somewhat as some members didn't assign any of the earlier-due tasks to themselves on trello seeing the deadlines, which resulted in heavier pressures on other members during a already busy week in order to meet the weekly deadline of the team. Our Trello board can be accessed [here](https://trello.com/b/78v6AhWR/csc301-project)
 
-* Getting more people to do pull request reviews. This allowed us to avoid having many bugs on master and also enabled us to improve the code quality that is on the master branch. Moreover, many of the members benefited from having other members suggest improvements in their code, as it allowed us to learn different syntax and code writing styles, that other people use.
+* Getting more people to do pull request reviews. This allowed us to avoid having many bugs on master and also enabled us to improve the code quality that is on the master branch. Moreover, many of the members benefited from having other members suggest improvements in their code, as it allowed us to learn different syntax and code writing styles that other people use.
 
 * A few people did code clean-ups, which made the code more readable and easier to understand for all the members of the team.
 
