@@ -2,6 +2,8 @@
 
 Your best snacking buddy. Your place to go for all snack related information. Browse and review any snacks and get personalized recommendations!
 
+<p align="center"> <img width="700" height="auto" src="deliverables/resources/demo_title.png"/></p>
+
 [Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
 
 [Final demo](https://www.youtube.com/watch?v=ZIszrKrW3gM)
@@ -15,6 +17,12 @@ Your best snacking buddy. Your place to go for all snack related information. Br
 * **Alex Chum** - [@AlexChum](https://github.com/AlexChum)
 * **Harry Chen** - [@hchen96](https://github.com/hchen96)
 * **Giuliano Celani** - [@Giuliano-C](https://github.com/Giuliano-C)
+
+# Screenshots
+
+<p align="center"> <img width="700" height="auto" src="deliverables/resources/demo_featured.png"/></p>
+<p align="center"> <img width="700" height="auto" src="deliverables/resources/demo_about.png"/></p>
+<p align="center"> <img width="700" height="auto" src="deliverables/resources/demo_wishlist.png"/></p>
 
 
 # Setup
@@ -83,51 +91,3 @@ To test the code, go to your local url displayed on the console and refresh the 
 
 ### Basic Debugging
 If something won't work, first try closing your broswer, re-run flask and open it again in incognito mode. Sometimes new js won't load.
-
-## Code Style
-
-### Indentation
-
-Indent your code blocks with *4 spaces*.Never use tabs or mix tabs and spaces. In cases of implied line continuation, you should align wrapped elements vertically:
-```python
-       foo = long_function_name(var_one, var_two,
-                                var_three, var_four)
-
-       # Aligned with opening delimiter in a dictionary
-       foo = {
-           long_dictionary_key: value1 +
-                                value2,
-           ...
-       }
-```
-
-### Naming
-
-`module_name`,
-`package_name`,
-`ClassName`,
-`method_name`,
-`ExceptionName`,
-`function_name`,
-`GLOBAL_CONSTANT_NAME`,
-`global_var_name`,
-`instance_var_name`,
-`function_parameter_name`,
-`local_var_name`.
-
-Function names, variable names, and filenames should be descriptive; eschew
-abbreviation. In particular, do not use abbreviations that are ambiguous
-to the readers not involved in your part of the project.
-Do not abbreviate by deleting
-letters within a word.
-
-Always use a `.py` filename extension. Never use dashes.
-
-#### Names to Avoid
-
--   single character names except for counters or iterators. You may use "e" as
-    an exception identifier in try/except statements.
--   dashes (`-`) in any package/module name
--   `__double_leading_and_trailing_underscore__` names (reserved by Python)
-
-Create a mongo account and tell Jayde your mongo email address.
