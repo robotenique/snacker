@@ -1,8 +1,21 @@
 # Snacker
 
+Your best snacking buddy. Your place to go for all snack related information. Browse and review any snacks and get personalized recommendations!
+
 [Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
 
 [Final demo](https://www.youtube.com/watch?v=ZIszrKrW3gM)
+
+# Contributors
+
+* **Jayde Yue** - [@JaydeYue](https://github.com/JaydeYue)
+* **Juliano Garcia** - [@robotenique](https://github.com/robotenique)
+* **Adam** - [@Adam5i](https://github.com/Adam5i)
+* **Flora Shi** - [@tjflorashi](https://github.com/tjflorashi)
+* **Alex Chum** - [@AlexChum](https://github.com/AlexChum)
+* **Harry Chen** - [@hchen96](https://github.com/hchen96)
+* **Giuliano Celani** - [@Giuliano-C](https://github.com/Giuliano-C)
+
 
 # Setup
 
