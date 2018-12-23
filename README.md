@@ -1,4 +1,4 @@
-# Snacker
+# Snacker :birthday:  :cookie:
 
 Your best snacking buddy. Your place to go for all snack related information. Browse and review any snacks and get personalized recommendations!
 
