@@ -6,7 +6,7 @@ Your best snacking buddy. Your place to go for all snack related information. Br
 
 [intermediary demo (video)](https://youtu.be/FosvNqKSG8o)
 
-[Final dem (video)](https://www.youtube.com/watch?v=ZIszrKrW3gM)
+[Final demo (video)](https://www.youtube.com/watch?v=ZIszrKrW3gM)
 
 # Contributors
 
