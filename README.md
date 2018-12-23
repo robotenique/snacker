@@ -4,9 +4,9 @@ Your best snacking buddy. Your place to go for all snack related information. Br
 
 <p align="center"> <img width="700" height="auto" src="deliverables/resources/demo_title.png"/></p>
 
-[Deliverable 2 demo](https://youtu.be/FosvNqKSG8o)
+[intermediary demo (video)](https://youtu.be/FosvNqKSG8o)
 
-[Final demo](https://www.youtube.com/watch?v=ZIszrKrW3gM)
+[Final dem (video)](https://www.youtube.com/watch?v=ZIszrKrW3gM)
 
 # Contributors
 
