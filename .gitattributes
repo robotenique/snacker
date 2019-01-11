@@ -1,2 +1,1 @@
-* linguist-vendored
-*.py linguist-vendored=false
+snacker/snacker/flaskr/static/* linguist-vendored
