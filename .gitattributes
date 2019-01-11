@@ -1,1 +1,4 @@
 snacker/snacker/flaskr/static/* linguist-vendored
+snacker/flaskr/static/* linguist-vendored
+flaskr/static/* linguist-vendored
+
